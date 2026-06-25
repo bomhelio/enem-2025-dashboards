@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matriz Educação — ENEM 2025</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --azul: #1a3a5c;
+    --azul-m: #2563eb;
+    --laranja: #f97316;
+    --cinza-bg: #f1f5f9;
+    --cinza-card: #ffffff;
+    --cinza-borda: #e2e8f0;
+    --texto: #1e293b;
+    --texto-sec: #64748b;
+    --verde: #16a34a;
+    --vermelho: #dc2626;
+    --amarelo: #d97706;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cinza-bg); color: var(--texto); }
+  header { background: linear-gradient(135deg, #0a6e3e 0%, #043520 100%); color: white; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+  header p { font-size: 0.85rem; color: #cbd5e1; margin-top: 4px; }
+  .badge { background: #f97316; color: #1a3a5c; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+  main { max-width: 1400px; margin: 0 auto; padding: 24px 16px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi { background: var(--cinza-card); border-radius: 12px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .kpi-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-sec); font-weight: 600; }
+  .kpi-value { font-size: 2rem; font-weight: 800; color: var(--azul); line-height: 1.1; margin: 6px 0 2px; }
+  .kpi-sub { font-size: 0.78rem; color: var(--texto-sec); }
+  .kpi.destaque .kpi-value { color: var(--azul-m); }
+  .filtro-card { background: transparent; border: none; box-shadow: none; padding: 6px 0; margin-bottom: 20px; }
+  .filtro-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+  .chip-unidade { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px;
+    border-radius: 20px; border: 2px solid; cursor: pointer; font-size: 0.8rem; font-weight: 500;
+    transition: background 0.15s, font-weight 0.1s; user-select: none; background: transparent; }
+  .chip-unidade.ativo { font-weight: 700; }
+  .btn-todas { display: inline-flex; align-items: center; background: white;
+    color: var(--texto-sec); padding: 5px 14px; border-radius: 20px;
+    border: 2px solid #cbd5e1; cursor: pointer; font-size: 0.8rem; font-weight: 700;
+    transition: border-color 0.15s, color 0.15s; }
+  .btn-todas:hover { border-color: #94a3b8; color: var(--texto); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-red3 { display: grid; grid-template-columns: 0.7fr 1.2fr 1.6fr; gap: 16px; margin-bottom: 16px; }
+  .grid-red3 .card { display: flex; flex-direction: column; }
+  .card { background: var(--cinza-card); border-radius: 12px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card-titulo { font-size: 0.85rem; font-weight: 700; color: var(--texto); margin-bottom: 4px; }
+  .card-sub { font-size: 0.75rem; color: var(--texto-sec); margin-bottom: 16px; }
+  .chart-wrap { position: relative; height: 280px; }
+  .chart-wrap.tall { height: 340px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { background: var(--azul); color: white; padding: 10px 12px; text-align: center; font-weight: 600; white-space: nowrap; font-size: 0.74rem; letter-spacing: 0.04em; }
+  th:first-child { text-align: left; }
+  td { padding: 9px 12px; text-align: center; border-bottom: 1px solid var(--cinza-borda); font-size: 0.8rem; }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:hover td { background: #f8fafc; }
+  tr.linha-geral td { background: #eff6ff; font-weight: 700; border-top: 2px solid var(--azul-m); }
+  tr.linha-brasil td { background: #fef9ef; color: var(--amarelo); font-style: italic; border-top: 1px dashed var(--amarelo); }
+  .acima { color: var(--verde); font-weight: 700; }
+  .abaixo { color: var(--vermelho); }
+  .igual { color: var(--amarelo); }
+  .comp-bar-wrap { flex: 1; display: flex; align-items: center; }
+  .comp-row { display: flex; align-items: center; gap: 12px; width: 100%; }
+  .comp-nome { font-size: 0.78rem; color: var(--texto-sec); width: 180px; flex-shrink: 0; line-height: 1.3; }
+  .comp-bar-bg { flex: 1; height: 36px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+  .comp-bar { height: 100%; border-radius: 6px; transition: width 0.4s; display: flex; align-items: center; padding-left: 10px; }
+  .comp-bar span { font-size: 0.82rem; color: white; font-weight: 700; }
+  #compBars { display: flex; flex-direction: column; justify-content: space-between; flex: 1; }
+  .presenca-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+  .presenca-seg { display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; color: white; transition: width 0.4s; }
+  .section-titulo { display:flex; align-items:center; gap:14px; margin:32px 0 24px;
+    font-size:1.05rem; font-weight:700; text-transform:uppercase; letter-spacing:0.10em;
+    color:#2563eb; white-space:nowrap; }
+  .section-titulo::before, .section-titulo::after { content:''; flex:1; height:1px; background:var(--cinza-borda); }
+  .rank-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .rank-tab { padding: 7px 18px; border-radius: 20px; border: 2px solid var(--cinza-borda); background: white; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--texto-sec); transition: all 0.15s; }
+  .rank-tab.ativo { background: var(--azul); border-color: var(--azul); color: white; }
+  .rank-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--cinza-borda); }
+  .rank-item:last-child { border-bottom: none; }
+  .rank-pos { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
+  .rank-pos.p1 { background: #fef08a; color: #854d0e; border: 2px solid #eab308; }
+  .rank-pos.p2 { background: #e2e8f0; color: #475569; border: 2px solid #94a3b8; }
+  .rank-pos.p3 { background: #fed7aa; color: #9a3412; border: 2px solid #f97316; }
+  .rank-pos.pn { background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; }
+  .rank-nome { font-weight: 600; font-size: 0.85rem; flex: 1; }
+  .rank-bar-bg { flex: 2; height: 18px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+  .rank-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .rank-valor { font-weight: 700; font-size: 0.9rem; width: 52px; text-align: right; }
+  .rank-delta { font-size: 0.72rem; width: 56px; text-align: right; }
+  .heatmap-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .heatmap-table th { background: var(--azul); color: white; padding: 10px 12px; text-align: center; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.04em; }
+  .heatmap-table th:first-child { text-align: left; }
+  .heatmap-table td { padding: 9px 14px; text-align: center; border-bottom: 1px solid var(--cinza-borda); }
+  .heatmap-table td:first-child { text-align: left; font-weight: 600; }
+  .rank-cell { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
+  .rc1 { background: #fef08a; color: #854d0e; } .rc2 { background: #e2e8f0; color: #374151; }
+  .rc3 { background: #fed7aa; color: #9a3412; } .rc4 { background: #dbeafe; color: #1e40af; }
+  .rc5 { background: #dcfce7; color: #166534; } .rc6 { background: #f3e8ff; color: #6b21a8; }
+  .rc7 { background: #ffe4e6; color: #9f1239; } .rc8 { background: #f1f5f9; color: #94a3b8; }
+  footer { text-align: center; padding: 20px; color: var(--texto-sec); font-size: 0.75rem; border-top: 1px solid var(--cinza-borda); margin-top: 32px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* Wave 1 */
+  .chart-empty { display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:10px; height:100%; color:#94a3b8;
+    font-size:0.83rem; font-weight:500; text-align:center; padding:20px; }
+
+  /* Benchmark municipal */
+  .bench-section { margin-bottom: 16px; }
+  .delta-pos { color: #16a34a; font-weight: 700; }
+  .delta-neg { color: #dc2626; font-weight: 700; }
+  .delta-neu { color: #d97706; font-weight: 700; }
+  .bench-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .bench-table th { background: #334155; color: white; padding: 9px 12px; text-align: center; font-size: 0.74rem; letter-spacing: 0.04em; }
+  .bench-table th:first-child { text-align: left; }
+  .bench-table td { padding: 9px 12px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+  .bench-table td:first-child { text-align: left; font-weight: 600; }
+  .bench-table tr.tr-bench td { background: #f8fafc; font-style: italic; color: #64748b; border-top: 1px dashed #94a3b8; }
+  .bench-table tr.tr-bench td:first-child { font-weight: 500; }
+  .delta-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .delta-bar-mid { width: 80px; height: 14px; background: #e2e8f0; border-radius: 3px; position: relative; flex-shrink: 0; }
+  .delta-bar-fill { height: 100%; border-radius: 3px; position: absolute; top: 0; }
+
+
+  /* Benchmark bairro */
+  .bairro-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .bairro-tab { padding: 6px 14px; border-radius: 20px; border: 2px solid #e2e8f0;
+                background: white; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+                color: #64748b; transition: all 0.15s; }
+  .bairro-tab.ativo { background: #334155; border-color: #334155; color: white; }
+  .bairro-badge { display: inline-flex; align-items: center; gap: 6px;
+                  background: #f1f5f9; border-radius: 8px; padding: 6px 14px;
+                  font-size: 0.78rem; font-weight: 600; margin-bottom: 14px; }
+  .pos-badge { display: inline-flex; align-items: center; justify-content: center;
+               width: 32px; height: 32px; border-radius: 50%; font-weight: 800;
+               font-size: 0.9rem; flex-shrink: 0; }
+  .pos-1 { background: #fef08a; color: #854d0e; border: 2px solid #eab308; }
+  .pos-2 { background: #e2e8f0; color: #374151; border: 2px solid #94a3b8; }
+  .pos-3 { background: #fed7aa; color: #9a3412; border: 2px solid #f97316; }
+  .pos-n { background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; }
+  .nossa-linha td { background: #eff6ff !important; font-weight: 700; }
+  .nossa-linha td:first-child::before { content: "★ "; color: #2563eb; }
+  .bench-linha td { background: #f8fafc; font-style: italic; color: #64748b;
+                    border-top: 1px dashed #94a3b8; font-size: 0.75rem; }
+  .conc-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .conc-table th { background: #334155; color: white; padding: 8px 10px;
+                   text-align: center; font-size: 0.72rem; letter-spacing: 0.04em; }
+  .conc-table th:first-child, .conc-table th:nth-child(2) { text-align: left; }
+  .conc-table td { padding: 7px 10px; text-align: center;
+                   border-bottom: 1px solid #e2e8f0; }
+  .conc-table td:nth-child(2) { text-align: left; font-size: 0.72rem; }
+
+
+  /* Wave 2 */
+  header { position: sticky; top: 0; z-index: 100; }
+  .nav-anchors { display: flex; gap: 16px; align-items: center; }
+  .nav-anchors a { color: rgba(255,255,255,0.7); font-size: 0.75rem; font-weight: 600;
+    text-decoration: none; letter-spacing: 0.04em; white-space: nowrap;
+    transition: color 0.15s; }
+  .nav-anchors a:hover { color: white; }
+
+  /* Posição Competitiva — container transparente, título igual section-titulo */
+  .manchete-card { background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 0; }
+  .manchete-titulo { display:flex; align-items:center; gap:14px; margin:32px 0 24px;
+    font-size:1.05rem; font-weight:700; text-transform:uppercase; letter-spacing:0.10em;
+    color:#2563eb; white-space:nowrap; }
+  .manchete-titulo::before, .manchete-titulo::after { content:''; flex:1; height:1px; background:var(--cinza-borda,#e2e8f0); }
+  .manchete-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,280px));
+    gap: 12px; margin-bottom: 20px; justify-content: center; }
+  /* Cards de unidade — mesmo padrão de sintese-mini */
+  .manchete-item { background: #fff; border: 1px solid var(--cinza-borda,#e2e8f0);
+    border-top: 3px solid var(--azul,#065f46); border-radius: 10px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px; }
+  .manchete-unidade { font-size: 0.85rem; font-weight: 600; color: var(--texto,#1e293b);
+    display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+  .manchete-pos-grande { font-size: 1.4rem; font-weight: 900; line-height: 1; color: #d97706; }
+  .manchete-pos-ctx { font-size: 0.72rem; color: var(--texto-sec,#64748b); font-weight: 400; }
+  .manchete-linha { font-size: 0.76rem; color: var(--texto,#1e293b);
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9;
+    display: flex; flex-direction: column; gap: 3px; }
+  .manchete-area-label { font-size: 0.67rem; color: var(--texto-sec,#64748b);
+    text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .manchete-rank { font-weight: 400; color: var(--texto,#1e293b); font-size: 0.8rem; }
+  .manchete-gap { font-size: 0.75rem; font-weight: 700; margin-top: 2px; }
+  .manchete-ctx { font-size: 0.72rem; color: var(--texto-sec,#64748b); }
+  /* KPI cards — borda superior com cor da marca */
+  .kpi { border-top: 3px solid var(--azul) !important; }
+
+  .sintese-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .sintese-mini { background: #fff; border: 1px solid var(--cinza-borda,#e2e8f0);
+    border-radius: 10px; padding: 16px; border-top: 3px solid var(--azul,#065f46);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px; }
+  .sintese-mini-tipo { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700; margin-bottom: 4px; }
+  .sintese-mini-titulo { font-size: 0.9rem; font-weight: 600; color: var(--texto,#1e293b);
+    line-height: 1.3; }
+  .sintese-mini-sub { font-size: 0.73rem; color: var(--texto-sec,#64748b); }
+  .sintese-mini-valor { font-size: 0.82rem; font-weight: 700; margin-top: 6px;
+    padding-top: 6px; border-top: 1px solid var(--cinza-borda,#e2e8f0); }
+  @media (max-width: 900px) { .sintese-grid { grid-template-columns: repeat(2,1fr); } }
+
+  .comp-unit-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .comp-unit-tab { padding: 6px 14px; border-radius: 20px; border: 2px solid #e2e8f0;
+    background: white; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    color: #64748b; transition: all 0.15s; }
+  .comp-unit-tab.ativo { background: #334155; border-color: #334155; color: white; }
+  .comp-unit-bar-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .comp-unit-label { font-size: 0.72rem; color: #64748b; width: 160px; flex-shrink: 0; line-height: 1.3; }
+  .comp-unit-bg { flex: 1; height: 18px; background: #e2e8f0; border-radius: 4px; overflow: hidden; position: relative; }
+  .comp-unit-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .comp-unit-fill-avg { position: absolute; top: 0; height: 100%; background: rgba(0,0,0,0.12); border-radius: 4px; }
+  .comp-unit-val { font-size: 0.78rem; font-weight: 700; width: 56px; text-align: right; }
+  .comp-unit-delta { font-size: 0.7rem; width: 46px; text-align: right; }
+  .cu-pos { color: #16a34a; } .cu-neg { color: #dc2626; } .cu-neu { color: #d97706; }
+
+
+  /* Wave 3 */
+  .aviso-amostra { display:inline-flex; align-items:center; gap:3px; background:#fef3c7;
+    color:#92400e; border:1px solid #fde68a; border-radius:4px;
+    padding:1px 6px; font-size:0.67rem; font-weight:700; margin-left:6px; vertical-align:middle; }
+  tr.unit-hidden { display:none; }
+
+  /* Painel de Prioridades — tabs + tabela */
+  .prio-tabs { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .prio-tab { padding:6px 16px; border-radius:20px; border:2px solid var(--cinza-borda,#e2e8f0);
+    background:white; cursor:pointer; font-size:0.8rem; font-weight:600;
+    color:var(--texto-sec,#64748b); transition:all 0.15s; }
+  .prio-tab.ativo { background:var(--azul); border-color:var(--azul); color:white; }
+  .prio-summary { display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    background:#f8fafc; border:1px solid var(--cinza-borda,#e2e8f0);
+    border-radius:8px; padding:10px 16px; margin-bottom:14px; }
+  .prio-summary-label { font-size:0.82rem; font-weight:800; color:var(--azul); white-space:nowrap; }
+  .prio-summary-val { font-size:0.8rem; color:var(--texto,#1e293b); }
+  .prio-summary-val b { font-weight:700; }
+  .prio-table-wrap { background:white; border-radius:10px; border:1px solid var(--cinza-borda,#e2e8f0);
+    box-shadow:0 1px 3px rgba(0,0,0,0.06); overflow:hidden; }
+  .prio-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+  .prio-table th { background:var(--azul); color:white; padding:10px 12px;
+    text-align:center; font-size:0.74rem; letter-spacing:0.04em; font-weight:600; }
+  .prio-table th:first-child { text-align:left; }
+  .prio-table td { padding:9px 12px; border-bottom:1px solid var(--cinza-borda,#e2e8f0);
+    text-align:center; vertical-align:middle; background:white; }
+  .prio-table td:first-child { text-align:left; }
+  .prio-table tr:last-child td { border-bottom:none; }
+  .prio-table tr:hover td { background:#f8fafc; }
+  .prio-pos { color:#16a34a; font-weight:700; }
+  .prio-neg { color:#dc2626; font-weight:700; }
+  .prio-neu { color:#d97706; font-weight:700; }
+  .prio-badge { padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:700;
+    white-space:nowrap; }
+
+</style>
+</head>
+<body>
+<header style="background:linear-gradient(135deg, #0a6e3e 0%, #043520 100%);padding:6px 32px;display:flex;align-items:center;justify-content:flex-start;gap:0;box-shadow:0 4px 12px rgba(0,0,0,0.25);">
+  <img src="data:image/png;base64,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" alt="Matriz Educação" style="height:126px;flex-shrink:0">
+  <div style="width:1px;height:96px;background:rgba(255,255,255,0.35);margin:0 24px;flex-shrink:0"></div>
+  <p style="color:#ffffff;font-size:1.05rem;font-weight:500;margin:0">Análise de Performance - Enem 2025</p>
+</header>
+<main>
+
+
+<!-- Manchete de Posição -->
+<div class="manchete-card" id="mancheteCard">
+  <div class="manchete-titulo">Posição Competitiva</div>
+  <div class="manchete-grid" id="mancheteGrid">
+    <div class="manchete-item"><div class="manchete-ctx">Carregando dados de posicionamento...</div></div>
+  </div>
+</div>
+
+
+<!-- Síntese de Diagnóstico -->
+<p class="section-titulo">Leitura Rápida</p>
+<div class="sintese-grid" id="sinteseGrid"></div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-label">Inscritos</div><div class="kpi-value" id="kInscritos">494</div><div class="kpi-sub">8 unidades</div></div>
+  <div class="kpi"><div class="kpi-label">Presentes 2 dias</div><div class="kpi-value" id="kPresentes">448</div><div class="kpi-sub" id="kTaxaP">90.7% de presença</div></div>
+  <div class="kpi destaque"><div class="kpi-label">Nota Geral</div><div class="kpi-value" id="kGeral">577.7</div><div class="kpi-sub">média 5 áreas</div></div>
+  <div class="kpi"><div class="kpi-label">Média Redação</div><div class="kpi-value" id="kRedacao">674.9</div><div class="kpi-sub">Brasil: 618,8</div></div>
+  <div class="kpi"><div class="kpi-label">Média MT</div><div class="kpi-value" id="kMT">578.0</div><div class="kpi-sub">Brasil MT: 513,8</div></div>
+</div>
+
+<p class="section-titulo">Filtrar por Unidade</p>
+<div class="filtro-card">
+  <div class="filtro-chips" id="filtroChips"><button class="btn-todas" onclick="toggleTodas()">Selecionar Todas</button></div>
+</div>
+
+
+<!-- Painel de Prioridades W3 -->
+<p class="section-titulo" id="sec-prioridades">Painel de Prioridades</p>
+<div id="priorityCards"></div>
+
+<p class="section-titulo" id="sec-notas">Notas por Área Objetiva</p>
+<div class="grid-3">
+  <div class="card"><div class="card-titulo">Médias por Área — Comparativo entre Unidades</div><div class="card-sub">Linha tracejada = média nacional</div><div class="chart-wrap tall"><canvas id="chartAreas"></canvas></div></div>
+  <div class="card"><div class="card-titulo">Radar de Performance</div><div class="card-sub">Unidades selecionadas vs. Brasil</div><div class="chart-wrap tall"><canvas id="chartRadar"></canvas></div></div>
+</div>
+
+<div class="grid-2">
+  <div class="card"><div class="card-titulo">% de Alunos com Nota ≥ 600 por Área</div><div class="card-sub">Referência: rede privada nacional</div><div class="chart-wrap"><canvas id="chartPct600"></canvas></div></div>
+  <div class="card"><div class="card-titulo">% de Alunos com Nota ≥ 700 por Área</div><div class="card-sub">Destaque de alto desempenho</div><div class="chart-wrap"><canvas id="chartPct700"></canvas></div></div>
+</div>
+
+<p class="section-titulo" id="sec-redacao">Redação</p>
+<div class="grid-red3">
+  <div class="card"><div class="card-titulo">Média da Redação por Unidade</div><div class="card-sub">Linha tracejada = média nacional 618,8</div><div class="chart-wrap"><canvas id="chartRedacao"></canvas></div></div>
+  <div class="card"><div class="card-titulo">Competências da Redação — Geral Matriz Educação</div><div class="card-sub">Nota máxima por competência: 200 pontos</div><div id="compBars"></div></div>
+  <div class="card">
+<div class="card-titulo" style="margin-bottom:4px">Competências de Redação por Unidade</div>
+<div class="card-sub" style="margin-bottom:12px">Barras coloridas = unidade &nbsp;·&nbsp; Cinza = média da marca &nbsp;·&nbsp; Delta (±) vs marca</div>
+<div id="compUnitTabs" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+  <button onclick="compUnitAtivo='Duque de Caxias';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.8)"></span>Duque de Caxias</button>
+  <button onclick="compUnitAtivo='Campo Grande';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316"></span>Campo Grande</button>
+  <button onclick="compUnitAtivo='Nova Iguaçu';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a"></span>Nova Iguaçu</button>
+  <button onclick="compUnitAtivo='Taquara';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#9333ea"></span>Taquara</button>
+  <button onclick="compUnitAtivo='Bangu';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626"></span>Bangu</button>
+  <button onclick="compUnitAtivo='São João de Meriti';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0891b2"></span>São João de Meriti</button>
+  <button onclick="compUnitAtivo='Rocha Miranda';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0d9488"></span>Rocha Miranda</button>
+  <button onclick="compUnitAtivo='Madureira';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#475569"></span>Madureira</button>
+</div>
+<div id="compUnitConteudo" style="display:flex;flex-direction:column;justify-content:space-between;flex:1;">
+  <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C1 Domínio da Língua</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:65.7%;background:#3b82f6;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:65.0%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#3b82f6">131.3</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#d97706">+1.2</div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C2 Compreensão da Proposta</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:75.9%;background:#06b6d4;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:73.9%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#06b6d4">151.8</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#16a34a">+4.0</div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C3 Seleção de Argumentos</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:65.4%;background:#8b5cf6;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:64.5%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#8b5cf6">130.8</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#d97706">+1.8</div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C4 Mecanismos de Coesão</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:73.8%;background:#f59e0b;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:70.0%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#f59e0b">147.7</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#16a34a">+7.6</div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C5 Proposta de Intervenção</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:64.1%;background:#64748b;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:63.9%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#64748b">128.2</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#d97706">+0.4</div></div>
+<div style="font-size:0.68rem;color:#94a3b8;margin-top:6px;border-top:1px dashed #e2e8f0;padding-top:6px">Barra cinza = média da marca. Delta (+/-) vs média da marca.</div>
+</div>
+</div>
+</div>
+
+<p class="section-titulo">Tabela Comparativa Detalhada</p>
+<div class="card">
+  <div class="card-sub" style="margin-bottom:12px">Médias sobre presentes em cada área. <span style="color:var(--verde)">Verde</span> = acima da média geral Matriz Educação &nbsp;·&nbsp; <span style="color:var(--vermelho)">Vermelho</span> = abaixo &nbsp;·&nbsp; Linha de referência = entrada Top 100 Brasil.</div>
+  <div class="table-wrap"><table id="tabelaComparativa"></table></div>
+</div>
+
+<p class="section-titulo">Taxa de Presença por Unidade</p>
+<div class="card" id="presencaBars"></div>
+
+
+
+<p class="section-titulo" id="sec-ranking">Ranking por Área do Conhecimento</p>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-sub" style="margin-bottom:14px">Unidades ordenadas pela média em cada área.</div>
+  <div class="rank-tabs" id="rankAreaTabs"></div>
+  <div id="rankAreaConteudo"></div>
+</div>
+
+
+
+<p class="section-titulo" id="sec-ranking">Ranking por Unidade — Posição em Cada Área</p>
+<div class="card">
+  <div class="card-sub" style="margin-bottom:16px">Posição em cada área. <span style="background:#fef08a;color:#854d0e;padding:1px 6px;border-radius:4px;font-weight:700">1º</span> = melhor da marca. Linhas ordenadas por pontuação acumulada.</div>
+  <div class="table-wrap"><table class="heatmap-table" id="heatmapTabela"></table></div>
+</div>
+
+
+<!-- Benchmark Municipal -->
+<p class="section-titulo">Posição na Rede Privada Municipal</p>
+<div class="card bench-section">
+  <div class="card-sub" style="margin-bottom:14px">
+    Delta = diferença entre a nota da unidade e a média da rede privada do mesmo município.
+    <span class="delta-pos">Verde</span> = acima &nbsp;·&nbsp; <span class="delta-neg">Vermelho</span> = abaixo &nbsp;·&nbsp; <span class="delta-neu">Amarelo</span> = dentro de ±5 pontos.
+  </div>
+  <div id="benchmarkSection"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Unidade</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Benchmark</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">Reda&ccedil;&atilde;o</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; Red.</th></tr></thead><tbody><tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2563eb;margin-right:6px"></span>Duque de Caxias</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Duque de Caxias &mdash; 24 esc.</td><td style="text-align:center">524.1</td><td style="text-align:center;color:#d97706;font-weight:700">+4.7</td><td style="text-align:center">545.1</td><td style="text-align:center;color:#16a34a;font-weight:700">+7.9</td><td style="text-align:center">566.7</td><td style="text-align:center;color:#16a34a;font-weight:700">+6.9</td><td style="text-align:center">566.8</td><td style="text-align:center;color:#d97706;font-weight:700">+4.4</td><td style="text-align:center">689.7</td><td style="text-align:center;color:#d97706;font-weight:700">-2.1</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:6px"></span>Campo Grande</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Rio de Janeiro &mdash; 417 esc.</td><td style="text-align:center">537.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-11.4</td><td style="text-align:center">558.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-10.2</td><td style="text-align:center">572.5</td><td style="text-align:center;color:#dc2626;font-weight:700">-8.1</td><td style="text-align:center">588.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-35.3</td><td style="text-align:center">706.3</td><td style="text-align:center;color:#dc2626;font-weight:700">-29.2</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px"></span>Nova Iguaçu</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Nova Iguaçu &mdash; 42 esc.</td><td style="text-align:center">524.9</td><td style="text-align:center;color:#16a34a;font-weight:700">+7.0</td><td style="text-align:center">544.0</td><td style="text-align:center;color:#16a34a;font-weight:700">+8.7</td><td style="text-align:center">562.9</td><td style="text-align:center;color:#16a34a;font-weight:700">+7.2</td><td style="text-align:center">564.4</td><td style="text-align:center;color:#d97706;font-weight:700">-0.1</td><td style="text-align:center">678.4</td><td style="text-align:center;color:#d97706;font-weight:700">+4.8</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#9333ea;margin-right:6px"></span>Taquara</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Rio de Janeiro &mdash; 417 esc.</td><td style="text-align:center">504.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-44.4</td><td style="text-align:center">529.1</td><td style="text-align:center;color:#dc2626;font-weight:700">-39.7</td><td style="text-align:center">557.4</td><td style="text-align:center;color:#dc2626;font-weight:700">-23.2</td><td style="text-align:center">570.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-53.3</td><td style="text-align:center">658.3</td><td style="text-align:center;color:#dc2626;font-weight:700">-77.2</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626;margin-right:6px"></span>Bangu</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Rio de Janeiro &mdash; 417 esc.</td><td style="text-align:center">513.1</td><td style="text-align:center;color:#dc2626;font-weight:700">-35.5</td><td style="text-align:center">528.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-40.2</td><td style="text-align:center">561.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-19.0</td><td style="text-align:center">594.3</td><td style="text-align:center;color:#dc2626;font-weight:700">-29.2</td><td style="text-align:center">656.9</td><td style="text-align:center;color:#dc2626;font-weight:700">-78.6</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0891b2;margin-right:6px"></span>São João de Meriti</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">São João de Meriti &mdash; 11 esc.</td><td style="text-align:center">525.0</td><td style="text-align:center;color:#16a34a;font-weight:700">+14.3</td><td style="text-align:center">516.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-12.9</td><td style="text-align:center">542.4</td><td style="text-align:center;color:#dc2626;font-weight:700">-10.0</td><td style="text-align:center">580.8</td><td style="text-align:center;color:#16a34a;font-weight:700">+32.0</td><td style="text-align:center">694.6</td><td style="text-align:center;color:#16a34a;font-weight:700">+19.4</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0d9488;margin-right:6px"></span>Rocha Miranda</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Rio de Janeiro &mdash; 417 esc.</td><td style="text-align:center">491.0</td><td style="text-align:center;color:#dc2626;font-weight:700">-57.6</td><td style="text-align:center">526.9</td><td style="text-align:center;color:#dc2626;font-weight:700">-41.9</td><td style="text-align:center">552.9</td><td style="text-align:center;color:#dc2626;font-weight:700">-27.7</td><td style="text-align:center">549.0</td><td style="text-align:center;color:#dc2626;font-weight:700">-74.5</td><td style="text-align:center">664.9</td><td style="text-align:center;color:#dc2626;font-weight:700">-70.6</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#475569;margin-right:6px"></span>Madureira</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Rio de Janeiro &mdash; 417 esc.</td><td style="text-align:center">527.8</td><td style="text-align:center;color:#dc2626;font-weight:700">-20.8</td><td style="text-align:center">552.8</td><td style="text-align:center;color:#dc2626;font-weight:700">-16.0</td><td style="text-align:center">569.0</td><td style="text-align:center;color:#dc2626;font-weight:700">-11.6</td><td style="text-align:center">596.8</td><td style="text-align:center;color:#dc2626;font-weight:700">-26.7</td><td style="text-align:center">638.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-96.9</td></tr>
+<tr style="background:#f8fafc;font-style:italic;color:#64748b;border-top:1px dashed #94a3b8"><td colspan="2" style="padding:8px 10px">Benchmark Municipal (ref.)</td><td colspan="2" style="text-align:center">519.4</td><td colspan="2" style="text-align:center">537.2</td><td colspan="2" style="text-align:center">559.8</td><td colspan="2" style="text-align:center">562.4</td><td colspan="2" style="text-align:center">691.8</td></tr></tbody></table></div></div>
+</div>
+
+
+<!-- Benchmark por Bairro -->
+<div id="benchDeltaWrap" style="margin-top:0;position:relative;height:0;overflow:hidden;transition:height 0.3s ease"></div>
+<p class="section-titulo" id="sec-concorrentes">Concorrentes por Bairro e Adjacências</p>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-sub" style="margin-bottom:14px">
+    Escolas privadas com dados no ENEM 2025 no mesmo bairro de cada unidade.
+    <strong>★</strong> = nossa unidade. Ordenado por Nota Geral (média CN+CH+LC+MT+Redação).
+  </div>
+  <div class="bairro-tabs" id="bairroTabs"></div>
+  <div id="bairroConteudo"></div>
+</div>
+
+</main>
+<footer>Dados: INEP — Microdados ENEM 2025 &nbsp;|&nbsp; Elaboração: Gestão Pedagógica Multimarcas &nbsp;|&nbsp; Junho 2026</footer>
+
+<script>
+const DADOS = {"geral": {"n_inscritos": 494, "n_presentes": 448, "taxa_presenca": 90.7, "n_redacao_valida": 452, "pct_problema_redacao": 8.5, "areas": {"CN": {"n": 450, "media": 519.6, "mediana": 522.0, "dp": 82.4, "p25": 468.8, "p75": 573.9, "min": 0.0, "max": 725.9, "pct_500": 62.7, "pct_600": 14.9, "pct_700": 1.1, "pct_800": 0.0, "histograma": [1, 0, 0, 32, 135, 215, 62, 5, 0, 0]}, "CH": {"n": 465, "media": 539.2, "mediana": 553.7, "dp": 89.4, "p25": 487.3, "p75": 599.7, "min": 0.0, "max": 728.1, "pct_500": 71.6, "pct_600": 24.9, "pct_700": 0.6, "pct_800": 0.0, "histograma": [3, 0, 0, 25, 104, 217, 113, 3, 0, 0]}, "LC": {"n": 465, "media": 562.1, "mediana": 569.4, "dp": 57.0, "p25": 532.7, "p75": 599.0, "min": 342.6, "max": 709.9, "pct_500": 86.7, "pct_600": 24.3, "pct_700": 0.6, "pct_800": 0.0, "histograma": [0, 0, 0, 5, 57, 290, 110, 3, 0, 0]}, "MT": {"n": 450, "media": 578.0, "mediana": 581.9, "dp": 123.0, "p25": 482.1, "p75": 667.1, "min": 0.0, "max": 899.4, "pct_500": 70.4, "pct_600": 44.9, "pct_700": 18.0, "pct_800": 2.2, "histograma": [1, 0, 0, 30, 102, 115, 121, 71, 10, 0]}}, "redacao": {"n": 452, "media": 674.9, "mediana": 660.0, "dp": 139.4, "p25": 580.0, "p75": 780.0, "min": 320.0, "max": 960.0, "pct_500": 90.0, "pct_600": 70.6, "pct_700": 46.0, "pct_800": 22.6, "histograma": [0, 0, 0, 7, 38, 88, 111, 106, 78, 24]}, "competencias": {"1": {"n": 452, "media": 130.1, "mediana": 120.0, "dp": 22.4, "p25": 120.0, "p75": 140.0, "min": 40.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 452, "media": 147.8, "mediana": 140.0, "dp": 29.4, "p25": 120.0, "p75": 180.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 452, "media": 129.0, "mediana": 120.0, "dp": 24.7, "p25": 120.0, "p75": 140.0, "min": 60.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 452, "media": 140.1, "mediana": 140.0, "dp": 32.0, "p25": 120.0, "p75": 160.0, "min": 60.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 452, "media": 127.8, "mediana": 140.0, "dp": 57.5, "p25": 100.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 440, "media": 577.7, "mediana": 579.9, "dp": 73.0, "p25": 529.3, "p75": 626.2, "min": 386.5, "max": 759.2, "pct_500": 85.7, "pct_600": 38.9, "pct_700": 5.2, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 7, "400-600": 126, "600-800": 217, "800-1000": 102, "1000": 0}, "unidades_n": 8, "estados": ["RJ"]}, "unidades": {"Duque de Caxias": {"n_inscritos": 41, "n_presentes": 38, "taxa_presenca": 92.7, "n_redacao_valida": 39, "pct_problema_redacao": 4.9, "areas": {"CN": {"n": 38, "media": 524.1, "mediana": 515.0, "dp": 66.5, "p25": 475.0, "p75": 563.6, "min": 373.2, "max": 658.1, "pct_500": 63.2, "pct_600": 21.1, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 1, 13, 16, 8, 0, 0, 0]}, "CH": {"n": 40, "media": 545.1, "mediana": 552.2, "dp": 78.3, "p25": 489.7, "p75": 610.2, "min": 380.8, "max": 699.7, "pct_500": 67.5, "pct_600": 32.5, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 2, 11, 14, 13, 0, 0, 0]}, "LC": {"n": 40, "media": 566.7, "mediana": 568.5, "dp": 54.4, "p25": 535.3, "p75": 607.8, "min": 447.4, "max": 669.9, "pct_500": 90.0, "pct_600": 27.5, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 4, 25, 11, 0, 0, 0]}, "MT": {"n": 38, "media": 566.8, "mediana": 600.7, "dp": 129.4, "p25": 457.1, "p75": 673.6, "min": 362.6, "max": 804.3, "pct_500": 55.3, "pct_600": 50.0, "pct_700": 15.8, "pct_800": 2.6, "histograma": [0, 0, 0, 3, 14, 2, 13, 5, 1, 0]}}, "redacao": {"n": 39, "media": 689.7, "mediana": 700.0, "dp": 127.4, "p25": 610.0, "p75": 780.0, "min": 340.0, "max": 920.0, "pct_500": 94.9, "pct_600": 82.1, "pct_700": 51.3, "pct_800": 20.5, "histograma": [0, 0, 0, 1, 1, 5, 12, 12, 7, 1]}, "competencias": {"1": {"n": 39, "media": 131.3, "mediana": 140.0, "dp": 28.2, "p25": 120.0, "p75": 160.0, "min": 40.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 39, "media": 151.8, "mediana": 160.0, "dp": 27.0, "p25": 140.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 39, "media": 130.8, "mediana": 120.0, "dp": 21.4, "p25": 120.0, "p75": 150.0, "min": 80.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 39, "media": 147.7, "mediana": 160.0, "dp": 32.0, "p25": 120.0, "p75": 180.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 39, "media": 128.2, "mediana": 120.0, "dp": 54.0, "p25": 120.0, "p75": 160.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 37, "media": 581.3, "mediana": 569.0, "dp": 69.6, "p25": 545.8, "p75": 634.7, "min": 421.3, "max": 727.5, "pct_500": 86.5, "pct_600": 40.5, "pct_700": 5.4, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 1, "400-600": 6, "600-800": 24, "800-1000": 8, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Campo Grande": {"n_inscritos": 98, "n_presentes": 89, "taxa_presenca": 90.8, "n_redacao_valida": 89, "pct_problema_redacao": 9.2, "areas": {"CN": {"n": 90, "media": 537.2, "mediana": 548.2, "dp": 94.9, "p25": 495.0, "p75": 587.9, "min": 0.0, "max": 723.1, "pct_500": 72.2, "pct_600": 21.1, "pct_700": 2.2, "pct_800": 0.0, "histograma": [1, 0, 0, 2, 22, 46, 17, 2, 0, 0]}, "CH": {"n": 90, "media": 558.6, "mediana": 564.5, "dp": 69.0, "p25": 527.7, "p75": 600.8, "min": 382.9, "max": 728.1, "pct_500": 82.2, "pct_600": 26.7, "pct_700": 2.2, "pct_800": 0.0, "histograma": [0, 0, 0, 3, 13, 50, 22, 2, 0, 0]}, "LC": {"n": 90, "media": 572.5, "mediana": 571.6, "dp": 55.8, "p25": 543.1, "p75": 602.5, "min": 431.6, "max": 709.9, "pct_500": 92.2, "pct_600": 25.6, "pct_700": 3.3, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 7, 60, 20, 3, 0, 0]}, "MT": {"n": 90, "media": 588.2, "mediana": 587.8, "dp": 134.1, "p25": 499.3, "p75": 672.1, "min": 0.0, "max": 898.8, "pct_500": 74.4, "pct_600": 47.8, "pct_700": 22.2, "pct_800": 4.4, "histograma": [1, 0, 0, 3, 19, 24, 23, 16, 4, 0]}}, "redacao": {"n": 89, "media": 706.3, "mediana": 720.0, "dp": 146.8, "p25": 580.0, "p75": 840.0, "min": 360.0, "max": 960.0, "pct_500": 89.9, "pct_600": 73.0, "pct_700": 59.6, "pct_800": 31.5, "histograma": [0, 0, 0, 2, 7, 15, 12, 25, 22, 6]}, "competencias": {"1": {"n": 89, "media": 135.5, "mediana": 140.0, "dp": 21.1, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 89, "media": 150.8, "mediana": 160.0, "dp": 30.0, "p25": 120.0, "p75": 180.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 89, "media": 135.7, "mediana": 140.0, "dp": 27.9, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 89, "media": 149.0, "mediana": 160.0, "dp": 34.2, "p25": 120.0, "p75": 180.0, "min": 60.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 89, "media": 135.3, "mediana": 160.0, "dp": 57.3, "p25": 100.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 88, "media": 595.2, "mediana": 593.7, "dp": 74.0, "p25": 544.1, "p75": 642.6, "min": 414.1, "max": 753.5, "pct_500": 92.0, "pct_600": 45.5, "pct_700": 10.2, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 2, "400-600": 22, "600-800": 37, "800-1000": 28, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Nova Iguaçu": {"n_inscritos": 75, "n_presentes": 67, "taxa_presenca": 89.3, "n_redacao_valida": 64, "pct_problema_redacao": 14.7, "areas": {"CN": {"n": 67, "media": 524.9, "mediana": 522.5, "dp": 89.3, "p25": 472.2, "p75": 587.9, "min": 330.4, "max": 725.9, "pct_500": 62.7, "pct_600": 16.4, "pct_700": 3.0, "pct_800": 0.0, "histograma": [0, 0, 0, 5, 20, 31, 9, 2, 0, 0]}, "CH": {"n": 70, "media": 544.0, "mediana": 554.0, "dp": 83.9, "p25": 483.5, "p75": 604.5, "min": 341.4, "max": 681.9, "pct_500": 67.1, "pct_600": 28.6, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 4, 19, 27, 20, 0, 0, 0]}, "LC": {"n": 70, "media": 562.9, "mediana": 568.3, "dp": 56.2, "p25": 535.2, "p75": 601.2, "min": 430.6, "max": 677.1, "pct_500": 82.9, "pct_600": 25.7, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 12, 40, 18, 0, 0, 0]}, "MT": {"n": 67, "media": 564.4, "mediana": 572.2, "dp": 126.7, "p25": 465.1, "p75": 677.2, "min": 340.8, "max": 795.5, "pct_500": 62.7, "pct_600": 38.8, "pct_700": 16.4, "pct_800": 0.0, "histograma": [0, 0, 0, 7, 18, 16, 15, 11, 0, 0]}}, "redacao": {"n": 64, "media": 678.4, "mediana": 660.0, "dp": 135.6, "p25": 575.0, "p75": 780.0, "min": 420.0, "max": 940.0, "pct_500": 92.2, "pct_600": 68.8, "pct_700": 45.3, "pct_800": 23.4, "histograma": [0, 0, 0, 0, 5, 15, 15, 14, 11, 4]}, "competencias": {"1": {"n": 64, "media": 128.4, "mediana": 120.0, "dp": 23.9, "p25": 120.0, "p75": 140.0, "min": 80.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 64, "media": 148.4, "mediana": 140.0, "dp": 28.5, "p25": 120.0, "p75": 180.0, "min": 100.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 64, "media": 131.6, "mediana": 120.0, "dp": 23.6, "p25": 120.0, "p75": 145.0, "min": 100.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 64, "media": 140.3, "mediana": 140.0, "dp": 29.7, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 64, "media": 129.7, "mediana": 140.0, "dp": 58.3, "p25": 100.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 63, "media": 581.1, "mediana": 572.6, "dp": 76.8, "p25": 527.1, "p75": 609.8, "min": 409.5, "max": 759.2, "pct_500": 85.7, "pct_600": 36.5, "pct_700": 7.9, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 0, "400-600": 20, "600-800": 29, "800-1000": 15, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Taquara": {"n_inscritos": 59, "n_presentes": 58, "taxa_presenca": 98.3, "n_redacao_valida": 58, "pct_problema_redacao": 1.7, "areas": {"CN": {"n": 58, "media": 504.2, "mediana": 509.9, "dp": 76.7, "p25": 450.5, "p75": 548.2, "min": 333.7, "max": 689.7, "pct_500": 55.2, "pct_600": 8.6, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 6, 20, 27, 5, 0, 0, 0]}, "CH": {"n": 59, "media": 529.1, "mediana": 539.0, "dp": 84.4, "p25": 466.2, "p75": 594.2, "min": 334.5, "max": 717.6, "pct_500": 66.1, "pct_600": 20.3, "pct_700": 1.7, "pct_800": 0.0, "histograma": [0, 0, 0, 4, 16, 27, 11, 1, 0, 0]}, "LC": {"n": 59, "media": 557.4, "mediana": 566.1, "dp": 46.3, "p25": 522.7, "p75": 585.4, "min": 414.2, "max": 661.7, "pct_500": 88.1, "pct_600": 15.3, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 7, 43, 9, 0, 0, 0]}, "MT": {"n": 58, "media": 570.2, "mediana": 582.8, "dp": 107.2, "p25": 503.1, "p75": 644.4, "min": 353.6, "max": 774.1, "pct_500": 74.1, "pct_600": 39.7, "pct_700": 12.1, "pct_800": 0.0, "histograma": [0, 0, 0, 5, 10, 20, 16, 7, 0, 0]}}, "redacao": {"n": 58, "media": 658.3, "mediana": 660.0, "dp": 152.8, "p25": 560.0, "p75": 780.0, "min": 400.0, "max": 940.0, "pct_500": 82.8, "pct_600": 63.8, "pct_700": 43.1, "pct_800": 20.7, "histograma": [0, 0, 0, 0, 10, 11, 12, 13, 8, 4]}, "competencias": {"1": {"n": 58, "media": 126.6, "mediana": 120.0, "dp": 20.0, "p25": 120.0, "p75": 140.0, "min": 80.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 58, "media": 144.1, "mediana": 140.0, "dp": 30.4, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 58, "media": 125.2, "mediana": 120.0, "dp": 26.6, "p25": 100.0, "p75": 140.0, "min": 80.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 58, "media": 136.6, "mediana": 120.0, "dp": 33.1, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 58, "media": 125.9, "mediana": 140.0, "dp": 67.1, "p25": 80.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 57, "media": 565.3, "mediana": 565.8, "dp": 72.8, "p25": 516.1, "p75": 612.3, "min": 403.7, "max": 745.2, "pct_500": 84.2, "pct_600": 29.8, "pct_700": 5.3, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 0, "400-600": 21, "600-800": 25, "800-1000": 12, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Bangu": {"n_inscritos": 86, "n_presentes": 77, "taxa_presenca": 89.5, "n_redacao_valida": 78, "pct_problema_redacao": 9.3, "areas": {"CN": {"n": 77, "media": 513.1, "mediana": 522.7, "dp": 73.2, "p25": 465.3, "p75": 568.2, "min": 362.5, "max": 659.5, "pct_500": 59.7, "pct_600": 10.4, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 6, 25, 38, 8, 0, 0, 0]}, "CH": {"n": 81, "media": 528.6, "mediana": 557.9, "dp": 112.2, "p25": 496.1, "p75": 595.2, "min": 0.0, "max": 692.6, "pct_500": 72.8, "pct_600": 18.5, "pct_700": 0.0, "pct_800": 0.0, "histograma": [2, 0, 0, 4, 16, 44, 15, 0, 0, 0]}, "LC": {"n": 81, "media": 561.6, "mediana": 569.5, "dp": 52.4, "p25": 538.6, "p75": 596.9, "min": 389.4, "max": 669.2, "pct_500": 87.7, "pct_600": 22.2, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 1, 9, 53, 18, 0, 0, 0]}, "MT": {"n": 77, "media": 594.3, "mediana": 613.2, "dp": 127.0, "p25": 526.1, "p75": 676.9, "min": 320.8, "max": 899.4, "pct_500": 76.6, "pct_600": 51.9, "pct_700": 20.8, "pct_800": 3.9, "histograma": [0, 0, 0, 6, 12, 19, 24, 13, 3, 0]}}, "redacao": {"n": 78, "media": 656.9, "mediana": 630.0, "dp": 134.7, "p25": 580.0, "p75": 740.0, "min": 360.0, "max": 920.0, "pct_500": 93.6, "pct_600": 64.1, "pct_700": 34.6, "pct_800": 19.2, "histograma": [0, 0, 0, 2, 3, 23, 23, 12, 9, 6]}, "competencias": {"1": {"n": 78, "media": 127.2, "mediana": 120.0, "dp": 25.2, "p25": 120.0, "p75": 140.0, "min": 60.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 78, "media": 146.9, "mediana": 140.0, "dp": 28.8, "p25": 120.0, "p75": 175.0, "min": 100.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 78, "media": 127.7, "mediana": 120.0, "dp": 21.9, "p25": 120.0, "p75": 140.0, "min": 80.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 78, "media": 134.4, "mediana": 120.0, "dp": 30.9, "p25": 120.0, "p75": 160.0, "min": 60.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 78, "media": 120.8, "mediana": 110.0, "dp": 51.8, "p25": 80.0, "p75": 160.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 76, "media": 575.2, "mediana": 576.8, "dp": 69.4, "p25": 536.7, "p75": 627.0, "min": 386.5, "max": 719.6, "pct_500": 85.5, "pct_600": 38.2, "pct_700": 1.3, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 2, "400-600": 26, "600-800": 35, "800-1000": 15, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "São João de Meriti": {"n_inscritos": 42, "n_presentes": 33, "taxa_presenca": 78.6, "n_redacao_valida": 37, "pct_problema_redacao": 11.9, "areas": {"CN": {"n": 33, "media": 525.0, "mediana": 532.8, "dp": 75.9, "p25": 469.1, "p75": 578.0, "min": 329.7, "max": 651.8, "pct_500": 66.7, "pct_600": 15.2, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 3, 8, 17, 5, 0, 0, 0]}, "CH": {"n": 38, "media": 516.6, "mediana": 555.8, "dp": 121.6, "p25": 459.3, "p75": 591.8, "min": 0.0, "max": 673.5, "pct_500": 68.4, "pct_600": 21.1, "pct_700": 0.0, "pct_800": 0.0, "histograma": [1, 0, 0, 4, 7, 18, 8, 0, 0, 0]}, "LC": {"n": 38, "media": 542.4, "mediana": 574.4, "dp": 77.7, "p25": 498.7, "p75": 601.3, "min": 342.6, "max": 623.9, "pct_500": 73.7, "pct_600": 28.9, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 3, 7, 17, 11, 0, 0, 0]}, "MT": {"n": 33, "media": 580.8, "mediana": 601.5, "dp": 125.4, "p25": 487.9, "p75": 677.3, "min": 340.4, "max": 812.5, "pct_500": 72.7, "pct_600": 51.5, "pct_700": 24.2, "pct_800": 3.0, "histograma": [0, 0, 0, 3, 6, 7, 9, 7, 1, 0]}}, "redacao": {"n": 37, "media": 694.6, "mediana": 680.0, "dp": 136.2, "p25": 600.0, "p75": 800.0, "min": 320.0, "max": 940.0, "pct_500": 91.9, "pct_600": 81.1, "pct_700": 48.6, "pct_800": 27.0, "histograma": [0, 0, 0, 1, 2, 4, 12, 8, 8, 2]}, "competencias": {"1": {"n": 37, "media": 130.3, "mediana": 140.0, "dp": 21.4, "p25": 120.0, "p75": 140.0, "min": 100.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 37, "media": 150.8, "mediana": 160.0, "dp": 29.7, "p25": 120.0, "p75": 180.0, "min": 100.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 37, "media": 129.2, "mediana": 120.0, "dp": 23.4, "p25": 120.0, "p75": 140.0, "min": 60.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 37, "media": 142.7, "mediana": 140.0, "dp": 34.0, "p25": 120.0, "p75": 160.0, "min": 60.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 37, "media": 141.6, "mediana": 140.0, "dp": 50.0, "p25": 120.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 33, "media": 575.8, "mediana": 602.2, "dp": 75.5, "p25": 525.0, "p75": 625.8, "min": 394.6, "max": 688.6, "pct_500": 81.8, "pct_600": 54.5, "pct_700": 0.0, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 1, "400-600": 6, "600-800": 20, "800-1000": 10, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Rocha Miranda": {"n_inscritos": 47, "n_presentes": 44, "taxa_presenca": 93.6, "n_redacao_valida": 45, "pct_problema_redacao": 4.3, "areas": {"CN": {"n": 44, "media": 491.0, "mediana": 504.5, "dp": 84.2, "p25": 420.2, "p75": 541.2, "min": 344.7, "max": 674.4, "pct_500": 50.0, "pct_600": 11.4, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 8, 14, 17, 5, 0, 0, 0]}, "CH": {"n": 45, "media": 526.9, "mediana": 537.7, "dp": 83.7, "p25": 471.7, "p75": 600.0, "min": 357.3, "max": 655.1, "pct_500": 66.7, "pct_600": 26.7, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 4, 11, 18, 12, 0, 0, 0]}, "LC": {"n": 45, "media": 552.9, "mediana": 564.9, "dp": 60.6, "p25": 513.2, "p75": 596.5, "min": 422.7, "max": 668.1, "pct_500": 82.2, "pct_600": 24.4, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 8, 26, 11, 0, 0, 0]}, "MT": {"n": 44, "media": 549.0, "mediana": 531.9, "dp": 100.6, "p25": 479.1, "p75": 612.6, "min": 335.7, "max": 759.3, "pct_500": 63.6, "pct_600": 27.3, "pct_700": 9.1, "pct_800": 0.0, "histograma": [0, 0, 0, 2, 14, 16, 8, 4, 0, 0]}}, "redacao": {"n": 45, "media": 664.9, "mediana": 660.0, "dp": 139.2, "p25": 560.0, "p75": 760.0, "min": 400.0, "max": 900.0, "pct_500": 88.9, "pct_600": 71.1, "pct_700": 40.0, "pct_800": 22.2, "histograma": [0, 0, 0, 0, 5, 8, 14, 8, 9, 1]}, "competencias": {"1": {"n": 45, "media": 131.6, "mediana": 140.0, "dp": 19.8, "p25": 120.0, "p75": 140.0, "min": 80.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 45, "media": 147.1, "mediana": 160.0, "dp": 30.2, "p25": 120.0, "p75": 160.0, "min": 100.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 45, "media": 127.1, "mediana": 120.0, "dp": 26.0, "p25": 120.0, "p75": 140.0, "min": 80.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 45, "media": 137.3, "mediana": 140.0, "dp": 30.9, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 45, "media": 121.8, "mediana": 120.0, "dp": 63.6, "p25": 100.0, "p75": 180.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 44, "media": 558.1, "mediana": 541.5, "dp": 75.6, "p25": 506.8, "p75": 624.5, "min": 432.5, "max": 706.8, "pct_500": 77.3, "pct_600": 34.1, "pct_700": 4.5, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 0, "400-600": 13, "600-800": 22, "800-1000": 10, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}, "Madureira": {"n_inscritos": 46, "n_presentes": 42, "taxa_presenca": 91.3, "n_redacao_valida": 42, "pct_problema_redacao": 8.7, "areas": {"CN": {"n": 43, "media": 527.8, "mediana": 530.3, "dp": 75.5, "p25": 478.9, "p75": 562.8, "min": 326.2, "max": 719.7, "pct_500": 67.4, "pct_600": 14.0, "pct_700": 2.3, "pct_800": 0.0, "histograma": [0, 0, 0, 1, 13, 23, 5, 1, 0, 0]}, "CH": {"n": 42, "media": 552.8, "mediana": 546.6, "dp": 68.8, "p25": 500.4, "p75": 611.7, "min": 432.6, "max": 695.1, "pct_500": 73.8, "pct_600": 28.6, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 0, 11, 19, 12, 0, 0, 0]}, "LC": {"n": 42, "media": 569.0, "mediana": 574.5, "dp": 57.2, "p25": 542.5, "p75": 606.1, "min": 388.3, "max": 668.8, "pct_500": 90.5, "pct_600": 28.6, "pct_700": 0.0, "pct_800": 0.0, "histograma": [0, 0, 0, 1, 3, 26, 12, 0, 0, 0]}, "MT": {"n": 43, "media": 596.8, "mediana": 600.7, "dp": 118.5, "p25": 517.5, "p75": 688.6, "min": 318.7, "max": 870.4, "pct_500": 76.7, "pct_600": 51.2, "pct_700": 20.9, "pct_800": 2.3, "histograma": [0, 0, 0, 1, 9, 11, 13, 8, 1, 0]}}, "redacao": {"n": 42, "media": 638.6, "mediana": 640.0, "dp": 124.0, "p25": 560.0, "p75": 735.0, "min": 360.0, "max": 880.0, "pct_500": 85.7, "pct_600": 69.0, "pct_700": 42.9, "pct_800": 9.5, "histograma": [0, 0, 0, 1, 5, 7, 11, 14, 4, 0]}, "competencias": {"1": {"n": 42, "media": 129.0, "mediana": 120.0, "dp": 17.2, "p25": 120.0, "p75": 140.0, "min": 100.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "2": {"n": 42, "media": 141.9, "mediana": 130.0, "dp": 30.5, "p25": 120.0, "p75": 160.0, "min": 80.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "3": {"n": 42, "media": 119.0, "mediana": 120.0, "dp": 21.2, "p25": 100.0, "p75": 120.0, "min": 80.0, "max": 160.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "4": {"n": 42, "media": 130.0, "mediana": 120.0, "dp": 26.2, "p25": 120.0, "p75": 155.0, "min": 60.0, "max": 180.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}, "5": {"n": 42, "media": 118.6, "mediana": 120.0, "dp": 54.4, "p25": 100.0, "p75": 160.0, "min": 0.0, "max": 200.0, "pct_500": 0.0, "pct_600": 0.0, "pct_700": 0.0, "pct_800": 0.0}}, "nota_geral": {"n": 42, "media": 576.3, "mediana": 586.1, "dp": 66.8, "p25": 540.1, "p75": 619.4, "min": 387.5, "max": 703.7, "pct_500": 85.7, "pct_600": 33.3, "pct_700": 2.4, "pct_800": 0.0}, "faixas_redacao": {"0-200": 0, "200-400": 1, "400-600": 12, "600-800": 25, "800-1000": 4, "1000": 0}, "unidades_n": 1, "estados": ["RJ"], "aviso_amostra_pequena": false}}};
+const BRASIL = {CN:491.6,CH:502.9,LC:524.5,MT:513.8,RED:618.8};
+const AREAS = ['CN','CH','LC','MT'];
+const AREA_NOME = {CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica'};
+const COMP_NOME = {1:'Domínio da Língua',2:'Compreensão da Proposta',3:'Seleção de Argumentos',4:'Mecanismos de Coesão',5:'Proposta de Intervenção'};
+const UNIDADES = Object.keys(DADOS.unidades);
+const CORES = ["#2563eb", "#f97316", "#16a34a", "#9333ea", "#dc2626", "#0891b2", "#0d9488", "#475569"];
+let selecionadas = new Set(UNIDADES);
+let charts = {};
+
+function chipAtivo(el,cor) {
+  el.style.borderColor=cor; el.style.color=cor;
+  el.style.backgroundColor=cor+'22'; el.classList.add('ativo');
+}
+function chipInativo(el,cor) {
+  el.style.borderColor=cor+'66'; el.style.color=cor+'99';
+  el.style.backgroundColor='transparent'; el.classList.remove('ativo');
+}
+function criarChips() {
+  const wrap = document.getElementById('filtroChips');
+  UNIDADES.forEach((u,i) => {
+    const div = document.createElement('div');
+    div.className = 'chip-unidade';
+    div.dataset.unidade = u; div.dataset.cor = CORES[i];
+    div.innerHTML = `<span>${u}</span>`;
+    div.onclick = () => toggleUnidade(u, div, CORES[i]);
+    chipAtivo(div, CORES[i]);
+    wrap.insertBefore(div, wrap.querySelector('.btn-todas'));
+  });
+}
+function toggleUnidade(u,el,cor) {
+  if(selecionadas.has(u)){ if(selecionadas.size<=1) return; selecionadas.delete(u); chipInativo(el,cor); }
+  else{ selecionadas.add(u); chipAtivo(el,cor); }
+  atualizar();
+}
+function toggleTodas() {
+  const todas = selecionadas.size===UNIDADES.length;
+  const chips = document.querySelectorAll('.chip-unidade');
+  chips.forEach((el,i) => {
+    const u=UNIDADES[i]; const cor=CORES[i];
+    if(todas){ if(i>0){ selecionadas.delete(u); chipInativo(el,cor); } }
+    else{ selecionadas.add(u); chipAtivo(el,cor); }
+  });
+  if(todas) selecionadas=new Set([UNIDADES[0]]);
+  atualizar();
+}
+function sel() { return UNIDADES.filter(u=>selecionadas.has(u)); }
+function corIdx(u) { return CORES[UNIDADES.indexOf(u)]; }
+
+function buildAreas() {
+  const labels=AREAS.map(a=>AREA_NOME[a]);
+  const datasets=sel().map(u=>({label:u,data:AREAS.map(a=>DADOS.unidades[u].areas[a].media),backgroundColor:corIdx(u)+'33',borderColor:corIdx(u),borderWidth:2}));
+  if(charts.areas) charts.areas.destroy();
+  charts.areas=new Chart(document.getElementById('chartAreas'),{type:'bar',data:{labels,datasets},
+    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{x,y}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const refs=[491.6,502.9,524.5,513.8];const bw=x.width/AREAS.length;refs.forEach((v,i)=>{const px=x.left+bw*(i+0.5)-bw/2;const py=y.getPixelForValue(v);ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+bw,py);ctx.stroke()});ctx.restore();}}],
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{min:350,max:900,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}}}
+  });
+}
+function buildRadar() {
+  const labels=[...AREAS.map(a=>AREA_NOME[a]),'Reda\u00e7\u00e3o'];
+  const datasets=[{label:'Brasil',data:[BRASIL.CN,BRASIL.CH,BRASIL.LC,BRASIL.MT,BRASIL.RED],borderColor:'#94a3b8',borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
+    ...sel().map(u=>{return{label:u,data:[...AREAS.map(a=>DADOS.unidades[u].areas[a].media),DADOS.unidades[u].redacao.media],borderColor:corIdx(u),backgroundColor:corIdx(u)+'22',borderWidth:2,pointRadius:3}})];
+  if(charts.radar) charts.radar.destroy();
+  charts.radar=new Chart(document.getElementById('chartRadar'),{type:'radar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{r:{min:350,max:950,ticks:{font:{size:9},stepSize:100,backdropColor:'transparent'}}}}});
+}
+function buildPct700WithLabels() {
+  // B2: buildPct com datalabels para chartPct700
+  buildPct('chartPct700','pct_700');
+  var ch = charts['chartpct700'] || charts['pct700'];
+  // afterDraw via substituição de instância
+}
+function buildPct(id,campo) {
+  const labels=AREAS.map(a=>AREA_NOME[a]);
+  const datasets=sel().map(u=>{return{label:u,data:AREAS.map(a=>DADOS.unidades[u].areas[a][campo]),backgroundColor:corIdx(u)+'bb',borderColor:corIdx(u),borderWidth:1}});
+  if(charts[id]) charts[id].destroy();
+  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10}}},x:{ticks:{font:{size:10}}}}}});
+}
+function buildRedacao() {
+  const labels=sel();
+  const dados=labels.map(u=>DADOS.unidades[u].redacao.media);
+  if(charts.redacao) charts.redacao.destroy();
+  charts.redacao=new Chart(document.getElementById('chartRedacao'),{type:'bar',data:{labels,datasets:[{label:'Média Redação',data:dados,backgroundColor:labels.map(u=>corIdx(u)+'bb'),borderColor:labels.map(u=>corIdx(u)),borderWidth:2}]},
+    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{y,x}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const py=y.getPixelForValue(618.8);ctx.beginPath();ctx.moveTo(x.left,py);ctx.lineTo(x.right,py);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font='10px sans-serif';ctx.fillText('Brasil 618,8',x.right-70,py-4);ctx.restore();}}],
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x: { min: 0, max: 1000,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}}}});
+}
+function buildCompBars() {
+  const wrap=document.getElementById('compBars'); wrap.innerHTML='';
+  const geral=DADOS.geral.competencias;
+  [1,2,3,4,5].forEach(n=>{
+    const m=geral[n].media; const pct=(m/200*100).toFixed(0);
+    const div=document.createElement('div'); div.className='comp-bar-wrap';
+    div.innerHTML=`<div class="comp-row"><div class="comp-nome">C${n}. ${COMP_NOME[n]}</div><div class="comp-bar-bg"><div class="comp-bar" style="width:${pct}%;background:${CORES[n-1]}"><span>${m.toFixed(1)}</span></div></div><div style="font-size:0.75rem;font-weight:700;width:50px;text-align:right;color:${CORES[n-1]}">${pct}%</div></div>`;
+    wrap.appendChild(div);
+  });
+}
+function buildPresenca() {
+  const wrap=document.getElementById('presencaBars'); wrap.innerHTML='<div class="card-titulo" style="margin-bottom:16px">Taxa de Presença por Unidade</div>';
+  const todos=[...UNIDADES].sort((a,b)=>DADOS.unidades[b].taxa_presenca-DADOS.unidades[a].taxa_presenca);
+  todos.forEach((u)=>{
+    const d=DADOS.unidades[u]; const pres=d.taxa_presenca; const aus=(100-pres).toFixed(1);
+    const cor=pres>=95?'#16a34a':pres>=85?'#2563eb':'#dc2626';
+    const row=document.createElement('div'); row.style.marginBottom='10px';
+    row.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.8rem"><span style="font-weight:600">${u}</span><span style="color:${cor};font-weight:700">${pres}% presentes (${d.n_presentes}/${d.n_inscritos})</span></div><div class="presenca-bar"><div class="presenca-seg" style="width:${pres}%;background:${cor}">${pres}%</div><div class="presenca-seg" style="width:${aus}%;background:#e2e8f0;color:#64748b">${aus>3?aus+'%':''}</div></div>`;
+    wrap.appendChild(row);
+  });
+}
+function buildTabela() {
+  const mediaGeral=a=>DADOS.geral.areas[a].media;
+  const table=document.getElementById('tabelaComparativa');
+  const cols=['Unidade','N','Pres%','CN','CH','LC','MT','Reda\u00e7\u00e3o','Nota Geral','%≥600 MT','%≥700 MT'];
+  table.innerHTML=`<thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>`;
+  const tbody=document.createElement('tbody');
+  const g=DADOS.geral;
+  const trg=document.createElement('tr'); trg.className='linha-geral';
+  trg.innerHTML=`<td>${'Matriz Educação'} Geral</td><td>${g.n_inscritos}</td><td>${g.taxa_presenca}%</td><td>${g.areas.CN.media}</td><td>${g.areas.CH.media}</td><td>${g.areas.LC.media}</td><td>${g.areas.MT.media}</td><td>${g.redacao.media}</td><td>${g.nota_geral.media}</td><td>${g.areas.MT.pct_600}%</td><td>${g.areas.MT.pct_700}%</td>`;
+  tbody.appendChild(trg);
+  UNIDADES.forEach(u=>{
+    const d=DADOS.unidades[u]; const tr=document.createElement('tr');
+    const cls=(v,ref)=>v>ref+5?'acima':v<ref-5?'abaixo':'igual';
+    tr.innerHTML=`<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td><td>${d.n_inscritos}</td><td class="${d.taxa_presenca>=90?'acima':d.taxa_presenca>=80?'igual':'abaixo'}">${d.taxa_presenca}%</td><td class="${cls(d.areas.CN.media,mediaGeral('CN'))}">${d.areas.CN.media}</td><td class="${cls(d.areas.CH.media,mediaGeral('CH'))}">${d.areas.CH.media}</td><td class="${cls(d.areas.LC.media,mediaGeral('LC'))}">${d.areas.LC.media}</td><td class="${cls(d.areas.MT.media,mediaGeral('MT'))}">${d.areas.MT.media}</td><td class="${cls(d.redacao.media,DADOS.geral.redacao.media)}">${d.redacao.media}</td><td class="${cls(d.nota_geral.media,DADOS.geral.nota_geral.media)}">${d.nota_geral.media}</td><td>${d.areas.MT.pct_600}%</td><td>${d.areas.MT.pct_700}%</td>`;
+    tbody.appendChild(tr);
+  });
+  const _t = typeof TOPTIERS !== 'undefined' && TOPTIERS;
+  const _tCN  = _t&&_t.CN      ? _t.CN      : {};
+  const _tCH  = _t&&_t.CH      ? _t.CH      : {};
+  const _tLC  = _t&&_t.LC      ? _t.LC      : {};
+  const _tMT  = _t&&_t.MT      ? _t.MT      : {};
+  const _tRed = _t&&_t.REDACAO ? _t.REDACAO : {};
+  const trb=document.createElement('tr'); trb.className='linha-brasil';
+  trb.innerHTML=`<td>Top 100 BR (entrada)</td><td>—</td><td>—</td><td>${_tCN.entrada_top100||'—'}</td><td>${_tCH.entrada_top100||'—'}</td><td>${_tLC.entrada_top100||'—'}</td><td>${_tMT.entrada_top100||'—'}</td><td>${_tRed.entrada_top100||'—'}</td><td>—</td><td>—</td><td>—</td>`;
+  tbody.appendChild(trb);
+  const trb2=document.createElement('tr'); trb2.className='linha-brasil';
+  trb2.innerHTML=`<td>Top 100 BR (média)</td><td>—</td><td>—</td><td>${_tCN.media_top100||'—'}</td><td>${_tCH.media_top100||'—'}</td><td>${_tLC.media_top100||'—'}</td><td>${_tMT.media_top100||'—'}</td><td>${_tRed.media_top100||'—'}</td><td>—</td><td>—</td><td>—</td>`;
+  tbody.appendChild(trb2); table.appendChild(tbody);
+}
+const RANK_AREAS=[
+  {key:'CN',label:'C. Natureza',get:u=>DADOS.unidades[u].areas.CN.media},
+  {key:'CH',label:'C. Humanas',get:u=>DADOS.unidades[u].areas.CH.media},
+  {key:'LC',label:'Linguagens',get:u=>DADOS.unidades[u].areas.LC.media},
+  {key:'MT',label:'Matem\u00e1tica',get:u=>DADOS.unidades[u].areas.MT.media},
+  {key:'RED',label:'Reda\u00e7\u00e3o',get:u=>DADOS.unidades[u].redacao.media},
+  {key:'GERAL',label:'Nota Geral',get:u=>DADOS.unidades[u].nota_geral.media},
+  {key:'PRES',label:'Presença %',get:u=>DADOS.unidades[u].taxa_presenca},
+];
+let rankAreaAtiva='CN';
+function buildRankAreaTabs(){
+  const wrap=document.getElementById('rankAreaTabs'); wrap.innerHTML='';
+  RANK_AREAS.forEach(a=>{const btn=document.createElement('button');btn.className='rank-tab'+(a.key===rankAreaAtiva?' ativo':'');btn.textContent=a.label;btn.onclick=()=>{rankAreaAtiva=a.key;buildRankAreaTabs();buildRankAreaConteudo();};wrap.appendChild(btn);});
+}
+function buildRankAreaConteudo(){
+  const area=RANK_AREAS.find(a=>a.key===rankAreaAtiva);
+  const wrap=document.getElementById('rankAreaConteudo'); wrap.innerHTML='';
+  const sorted=[...(sel().length?sel():UNIDADES)].sort((a,b)=>area.get(b)-area.get(a));
+  const maxVal=area.get(sorted[0]);
+  const minVal=area.key==='PRES'?0:350;
+  const mediaGeral=area.key==='CN'?DADOS.geral.areas.CN.media:area.key==='CH'?DADOS.geral.areas.CH.media:area.key==='LC'?DADOS.geral.areas.LC.media:area.key==='MT'?DADOS.geral.areas.MT.media:area.key==='RED'?DADOS.geral.redacao.media:area.key==='GERAL'?DADOS.geral.nota_geral.media:DADOS.geral.taxa_presenca;
+  sorted.forEach((u,i)=>{
+    const val=area.get(u);const pct=((val-minVal)/(maxVal-minVal+1)*100).toFixed(1);
+    const posClass=i===0?'p1':i===1?'p2':i===2?'p3':'pn';
+    const delta=(val-mediaGeral).toFixed(1);const deltaStr=delta>0?`+${delta}`:`${delta}`;
+    const deltaCor=delta>0?'var(--verde)':delta<0?'var(--vermelho)':'var(--amarelo)';
+    const unidade=area.key==='PRES'?'%':'';
+    const div=document.createElement('div');div.className='rank-item';
+    div.innerHTML=`<div class="rank-pos ${posClass}">${i+1}º</div><div style="display:flex;align-items:center;gap:8px;width:200px;flex-shrink:0"><span style="width:10px;height:10px;border-radius:50%;background:${corIdx(u)};flex-shrink:0"></span><span class="rank-nome">${u}</span></div><div class="rank-bar-bg"><div class="rank-bar" style="width:${pct}%;background:${corIdx(u)}"></div></div><div class="rank-valor" style="color:${corIdx(u)}">${val}${unidade}</div><div class="rank-delta" style="color:${deltaCor}">${deltaStr}${unidade}</div>`;
+    wrap.appendChild(div);
+  });
+  const ref=document.createElement('div');ref.style.cssText='margin-top:12px;font-size:0.75rem;color:var(--texto-sec);border-top:1px dashed var(--cinza-borda);padding-top:10px';
+  ref.innerHTML=`<span style="font-weight:600">Média Geral Matriz Educação:</span> ${mediaGeral.toFixed(1)}${area.key==='PRES'?'%':''} &nbsp;|&nbsp; Delta = diferença em relação à média da marca`;
+  wrap.appendChild(ref);
+}
+function buildHeatmap(){
+  const areas=[{label:'CN',get:u=>DADOS.unidades[u].areas.CN.media},{label:'CH',get:u=>DADOS.unidades[u].areas.CH.media},{label:'LC',get:u=>DADOS.unidades[u].areas.LC.media},{label:'MT',get:u=>DADOS.unidades[u].areas.MT.media},{label:'Reda\u00e7\u00e3o',get:u=>DADOS.unidades[u].redacao.media},{label:'Nota Geral',get:u=>DADOS.unidades[u].nota_geral.media},{label:'Pres.%',get:u=>DADOS.unidades[u].taxa_presenca}];
+  const rankings={};UNIDADES.forEach(u=>rankings[u]={});
+  areas.forEach(a=>{const sorted=[...(sel().length?sel():UNIDADES)].sort((x,y)=>a.get(y)-a.get(x));sorted.forEach((u,i)=>rankings[u][a.label]=i+1);});
+  const somaPos=UNIDADES.map(u=>{return{u,soma:areas.slice(0,6).reduce((s,a)=>s+rankings[u][a.label],0)}}).sort((a,b)=>a.soma-b.soma);
+  const table=document.getElementById('heatmapTabela');
+  const ths=['Unidade',...areas.map(a=>a.label),'Pontuação*'].map(h=>`<th>${h}</th>`).join('');
+  table.innerHTML=`<thead><tr>${ths}</tr></thead>`;
+  const tbody=document.createElement('tbody');
+  somaPos.forEach(({u,soma})=>{
+    const tr=document.createElement('tr');
+    const cells=areas.map(a=>{const pos=rankings[u][a.label];const cls=`rc${pos}`;const val=a.get(u).toFixed(1);return`<td><span class="rank-cell ${cls}">${pos}º</span><br><span style="font-size:0.68rem;color:var(--texto-sec)">${val}</span></td>`;});
+    tr.innerHTML=`<td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td>${cells.join('')}<td style="font-weight:700;color:var(--azul)">${soma}</td>`;
+    tbody.appendChild(tr);
+  });
+  const tr=document.createElement('tr');tr.innerHTML=`<td colspan="${areas.length+2}" style="font-size:0.72rem;color:var(--texto-sec);padding-top:10px;border-top:1px dashed var(--cinza-borda)">* Pontuação = soma das posições em CN+CH+LC+MT+Redação+Nota Geral. Menor = melhor.</td>`;
+  tbody.appendChild(tr);table.appendChild(tbody);
+}
+function atualizar(){buildKPIs();buildManchete();buildPriorityPanel();buildTabelaFiltrada();buildRankAreaConteudo();buildHeatmap();buildAreas();buildRadar();buildPct('chartPct600','pct_600');buildPct('chartPct700','pct_700');buildRedacao();}
+
+// ── Benchmark Municipal ───────────────────────────────────────────────────────
+const BENCH_UNIDADE = {"Campo Grande": {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}}, "Taquara": {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}}, "Bangu": {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}}, "Rocha Miranda": {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}}, "Madureira": {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}}, "Duque de Caxias": {"municipio": "Duque de Caxias", "uf": "RJ", "n_escolas": 24, "n_alunos": 946, "areas": {"CN": {"n": 874, "media": 519.4, "pct_600": 12.4, "pct_700": 0.1}, "CH": {"n": 898, "media": 537.2, "pct_600": 22.0, "pct_700": 0.1}, "LC": {"n": 898, "media": 559.8, "pct_600": 24.6, "pct_700": 0.0}, "MT": {"n": 874, "media": 562.4, "pct_600": 39.6, "pct_700": 13.2}}, "redacao": {"n": 882, "media": 691.8, "pct_600": 76.5, "pct_700": 51.5, "pct_800": 28.2}}, "Nova Iguaçu": {"municipio": "Nova Iguaçu", "uf": "RJ", "n_escolas": 42, "n_alunos": 1146, "areas": {"CN": {"n": 1053, "media": 517.9, "pct_600": 14.0, "pct_700": 0.7}, "CH": {"n": 1095, "media": 535.3, "pct_600": 22.0, "pct_700": 0.5}, "LC": {"n": 1095, "media": 555.7, "pct_600": 23.3, "pct_700": 0.0}, "MT": {"n": 1053, "media": 564.5, "pct_600": 37.6, "pct_700": 15.2}}, "redacao": {"n": 1071, "media": 673.6, "pct_600": 71.0, "pct_700": 43.8, "pct_800": 23.7}}, "São João de Meriti": {"municipio": "São João de Meriti", "uf": "RJ", "n_escolas": 11, "n_alunos": 454, "areas": {"CN": {"n": 418, "media": 510.7, "pct_600": 11.2, "pct_700": 0.2}, "CH": {"n": 433, "media": 529.5, "pct_600": 18.9, "pct_700": 0.0}, "LC": {"n": 433, "media": 552.4, "pct_600": 19.9, "pct_700": 0.0}, "MT": {"n": 418, "media": 548.8, "pct_600": 32.3, "pct_700": 10.8}}, "redacao": {"n": 421, "media": 675.2, "pct_600": 71.5, "pct_700": 45.6, "pct_800": 24.9}}};
+const BENCH_GERAL = {"municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 417, "n_alunos": 14466, "areas": {"CN": {"n": 13789, "media": 548.6, "pct_600": 28.1, "pct_700": 2.6}, "CH": {"n": 13982, "media": 568.8, "pct_600": 38.9, "pct_700": 3.0}, "LC": {"n": 13982, "media": 580.6, "pct_600": 39.7, "pct_700": 1.1}, "MT": {"n": 13789, "media": 623.5, "pct_600": 58.2, "pct_700": 30.8}}, "redacao": {"n": 13811, "media": 735.5, "pct_600": 82.2, "pct_700": 62.7, "pct_800": 42.4}};
+const BENCH_LABEL = "Rede Privada Municipal";
+
+function deltaClass(v) { return v > 5 ? 'delta-pos' : v < -5 ? 'delta-neg' : 'delta-neu'; }
+function deltaStr(v) { return (v >= 0 ? '+' : '') + v.toFixed(1); }
+
+function buildBenchmarkSection() {
+  const wrap = document.getElementById('benchmarkSection');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  const areas = ['CN','CH','LC','MT'];
+  const areaNome = {CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica'};
+
+  // Tabela principal: cada unidade vs seu benchmark
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'table-wrap';
+
+  const cols = ['Unidade','Benchmark Municipal','CN','Δ CN','CH','Δ CH','LC','Δ LC','MT','Δ MT','Reda\u00e7\u00e3o','Δ Red'];
+  let html = `<table class="bench-table"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+
+  UNIDADES.forEach(u => {
+    const b = BENCH_UNIDADE[u];
+    if (!b) return;
+    const d = DADOS.unidades[u];
+    const bLabel = b.municipio + ' — ' + b.n_escolas + ' esc.';
+
+    const cn = d.areas.CN.media; const cnB = b.areas.CN.media; const dcn = cn - cnB;
+    const ch = d.areas.CH.media; const chB = b.areas.CH.media; const dch = ch - chB;
+    const lc = d.areas.LC.media; const lcB = b.areas.LC.media; const dlc = lc - lcB;
+    const mt = d.areas.MT.media; const mtB = b.areas.MT.media; const dmt = mt - mtB;
+    const rd = d.redacao.media;  const rdB = b.redacao.media;  const drd = rd - rdB;
+
+    html += `<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td>
+      <td style="font-size:0.72rem;color:#64748b">${bLabel}</td>
+      <td>${cn}</td><td class="${deltaClass(dcn)}">${deltaStr(dcn)}</td>
+      <td>${ch}</td><td class="${deltaClass(dch)}">${deltaStr(dch)}</td>
+      <td>${lc}</td><td class="${deltaClass(dlc)}">${deltaStr(dlc)}</td>
+      <td>${mt}</td><td class="${deltaClass(dmt)}">${deltaStr(dmt)}</td>
+      <td>${rd}</td><td class="${deltaClass(drd)}">${deltaStr(drd)}</td>
+    </tr>`;
+  });
+
+  // Linha benchmark geral (referência)
+  if (BENCH_GERAL && BENCH_GERAL.areas) {
+    html += `<tr class="tr-bench">
+      <td colspan="2">${BENCH_LABEL} (ref.)</td>
+      <td colspan="2">${BENCH_GERAL.areas.CN.media}</td>
+      <td colspan="2">${BENCH_GERAL.areas.CH.media}</td>
+      <td colspan="2">${BENCH_GERAL.areas.LC.media}</td>
+      <td colspan="2">${BENCH_GERAL.areas.MT.media}</td>
+      <td colspan="2">${BENCH_GERAL.redacao.media}</td>
+    </tr>`;
+  }
+
+  html += '</tbody></table>';
+  tableWrap.innerHTML = html;
+  wrap.appendChild(tableWrap);
+
+  // Gráfico de delta — barras horizontais por área
+  const chartDiv = document.createElement('div');
+  chartDiv.style.cssText = 'margin-top:20px';
+  const canvas = document.createElement('canvas');
+  canvas.id = 'chartBenchDelta';
+  const wrapChart = document.createElement('div');
+  wrapChart.style.cssText = 'position:relative;height:260px';
+  wrapChart.appendChild(canvas);
+  chartDiv.appendChild(wrapChart);
+  wrap.appendChild(chartDiv);
+
+  const benchAreas = [...areas, 'Reda\u00e7\u00e3o'];
+  const datasets = UNIDADES.map(u => {
+    const b = BENCH_UNIDADE[u];
+    if (!b) return null;
+    const d = DADOS.unidades[u];
+    return {
+      label: u,
+      data: [
+        +(d.areas.CN.media - b.areas.CN.media).toFixed(1),
+        +(d.areas.CH.media - b.areas.CH.media).toFixed(1),
+        +(d.areas.LC.media - b.areas.LC.media).toFixed(1),
+        +(d.areas.MT.media - b.areas.MT.media).toFixed(1),
+        +(d.redacao.media  - b.redacao.media ).toFixed(1),
+      ],
+      backgroundColor: corIdx(u) + 'aa',
+      borderColor: corIdx(u),
+      borderWidth: 1.5,
+    };
+  }).filter(Boolean);
+
+  if (charts.benchDelta) charts.benchDelta.destroy();
+  charts.benchDelta = new Chart(canvas, {
+    type: 'bar',
+    data: { labels: benchAreas.map(a => a === 'Reda\u00e7\u00e3o' ? 'Reda\u00e7\u00e3o' : ({CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica'})[a]), datasets },
+    plugins: [{ id: 'zeroLine', afterDraw(ch) {
+      const {ctx, scales:{y,x}} = ch;
+      const py = y.getPixelForValue(0);
+      ctx.save(); ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x.left, py); ctx.lineTo(x.right, py); ctx.stroke();
+      ctx.restore();
+    }}],
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y > 0 ? '+' : ''}${c.parsed.y}` } }
+      },
+      scales: {
+        y: { ticks: { callback: v => (v > 0 ? '+' : '') + v, font: { size: 10 } }, grid: { color: '#f1f5f9' } },
+        x: { ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+
+// ── Benchmark por Bairro ──────────────────────────────────────────────────────
+const BENCH_BAIRRO = {"Duque de Caxias": {"bairro": "JARDIM VINTE E CINCO DE AGOSTO", "municipio": "Duque de Caxias", "uf": "RJ", "n_escolas": 3, "nossa_pos": 2, "bench_areas": {"CN": 525.9, "CH": 539.6, "LC": 557.4, "MT": 579.2}, "bench_redacao": 699.1, "escolas": [{"co_escola": 33049424, "nome": "COLEGIO ADVENTISTA DE DUQUE DE CAXIAS", "n": 54, "CN": 528.3, "CH": 534.9, "LC": 547.2, "MT": 586.1, "redacao": 730.2, "nota_geral": 585.3, "pos": 1, "nossa": false}, {"co_escola": 33048185, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO", "n": 41, "CN": 524.1, "CH": 545.1, "LC": 566.7, "MT": 566.8, "redacao": 689.7, "nota_geral": 578.5, "pos": 2, "nossa": true}, {"co_escola": 33185433, "nome": "COLEGIO FORCA MAXIMA DE DUQUE DE CAXIAS LTDA", "n": 43, "CN": 524.6, "CH": 540.4, "LC": 561.5, "MT": 582.0, "redacao": 668.6, "nota_geral": 575.4, "pos": 3, "nossa": false}]}, "Campo Grande": {"bairro": "CAMPO GRANDE", "municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 25, "nossa_pos": 7, "bench_areas": {"CN": 526.9, "CH": 546.1, "LC": 562.5, "MT": 573.3}, "bench_redacao": 686.9, "escolas": [{"co_escola": 33115460, "nome": "COL BAHIENSE - CAMPO GRANDE", "n": 53, "CN": 592.5, "CH": 602.1, "LC": 610.1, "MT": 685.6, "redacao": 831.4, "nota_geral": 664.3, "pos": 1, "nossa": false}, {"co_escola": 33163120, "nome": "COLEGIO CURSO INTELECTO", "n": 19, "CN": 582.9, "CH": 594.8, "LC": 606.1, "MT": 637.5, "redacao": 811.6, "nota_geral": 646.6, "pos": 2, "nossa": false}, {"co_escola": 33082103, "nome": "COLEGIO NOSSA SENHORA DO ROSARIO", "n": 65, "CN": 567.5, "CH": 591.6, "LC": 583.3, "MT": 633.5, "redacao": 810.2, "nota_geral": 637.2, "pos": 3, "nossa": false}, {"co_escola": 33160180, "nome": "ENSINO MEDIO MONTEIRO LOBATO LTDA", "n": 37, "CN": 546.5, "CH": 580.3, "LC": 574.0, "MT": 625.4, "redacao": 830.6, "nota_geral": 631.4, "pos": 4, "nossa": false}, {"co_escola": 33113114, "nome": "SANTA MONICA REDE DE ENSINO - CAMPO GRANDE", "n": 20, "CN": 556.5, "CH": 570.8, "LC": 586.1, "MT": 622.2, "redacao": 767.4, "nota_geral": 620.6, "pos": 5, "nossa": false}, {"co_escola": 33119031, "nome": "COL DIMITRI MARQUES LTDA", "n": 28, "CN": 544.0, "CH": 574.6, "LC": 586.4, "MT": 630.4, "redacao": 673.6, "nota_geral": 601.8, "pos": 6, "nossa": false}, {"co_escola": 33183368, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO", "n": 98, "CN": 537.2, "CH": 558.6, "LC": 572.5, "MT": 588.2, "redacao": 706.3, "nota_geral": 592.6, "pos": 7, "nossa": true}, {"co_escola": 33203598, "nome": "CENTRO DE ENSINO CAFA TEENS LTDA", "n": 23, "CN": 536.8, "CH": 536.5, "LC": 554.0, "MT": 565.6, "redacao": 714.3, "nota_geral": 581.4, "pos": 8, "nossa": false}, {"co_escola": 33083770, "nome": "COLEGIO VICTORIA CASTRO LTDA-ME", "n": 15, "CN": 513.6, "CH": 526.7, "LC": 571.2, "MT": 559.7, "redacao": 733.3, "nota_geral": 580.9, "pos": 9, "nossa": false}, {"co_escola": 33082472, "nome": "COLEGIO ADVENTISTA DE CAMPO GRANDE", "n": 54, "CN": 525.6, "CH": 536.8, "LC": 562.3, "MT": 569.8, "redacao": 702.5, "nota_geral": 579.4, "pos": 10, "nossa": false}, {"co_escola": 33456232, "nome": "SOCIEDADE EDUCACIONAL PAULO FREIRE", "n": 21, "CN": 502.0, "CH": 537.9, "LC": 548.4, "MT": 570.0, "redacao": 738.0, "nota_geral": 579.3, "pos": 11, "nossa": false}, {"co_escola": 33083533, "nome": "ESC STA BARBARA FILIAL 2", "n": 16, "CN": 537.8, "CH": 541.6, "LC": 548.7, "MT": 533.4, "redacao": 717.1, "nota_geral": 575.7, "pos": 12, "nossa": false}, {"co_escola": 33520321, "nome": "SISTEMA ELITE DE ENSINO - CAMPO GRANDE I", "n": 200, "CN": 521.2, "CH": 543.2, "LC": 557.9, "MT": 573.3, "redacao": 637.3, "nota_geral": 566.6, "pos": 13, "nossa": false}, {"co_escola": 33185425, "nome": "COLEGIO FREINET", "n": 29, "CN": 508.5, "CH": 531.7, "LC": 551.4, "MT": 547.6, "redacao": 658.5, "nota_geral": 559.5, "pos": 14, "nossa": false}, {"co_escola": 33190321, "nome": "COLEGIO METAVERSO DE CAMPO GRANDE", "n": 25, "CN": 526.0, "CH": 501.4, "LC": 561.1, "MT": 506.2, "redacao": 667.5, "nota_geral": 552.4, "pos": 15, "nossa": false}, {"co_escola": 33083541, "nome": "ESC STA BARBARA LTDA", "n": 37, "CN": 496.2, "CH": 553.5, "LC": 546.9, "MT": 542.5, "redacao": 618.8, "nota_geral": 551.6, "pos": 16, "nossa": false}, {"co_escola": 33116636, "nome": "JD ESC ANTONIO RIBEIRO FEITOSA LTDA", "n": 13, "CN": 495.8, "CH": 525.9, "LC": 547.9, "MT": 495.6, "redacao": 666.2, "nota_geral": 546.3, "pos": 17, "nossa": false}, {"co_escola": 33170630, "nome": "ESCOLA TECNICA SANDRA SILVA", "n": 17, "CN": 487.5, "CH": 522.4, "LC": 531.5, "MT": 519.7, "redacao": 663.1, "nota_geral": 544.8, "pos": 18, "nossa": false}, {"co_escola": 33189170, "nome": "COLEGIO E CURSO PROGRESSAO", "n": 47, "CN": 511.8, "CH": 518.2, "LC": 544.5, "MT": 521.8, "redacao": 624.4, "nota_geral": 544.1, "pos": 19, "nossa": false}, {"co_escola": 33186723, "nome": "CENTRO DE EDUCACAO MODERNA", "n": 14, "CN": 492.7, "CH": 531.2, "LC": 548.7, "MT": 552.4, "redacao": 595.7, "nota_geral": 544.1, "pos": 20, "nossa": false}, {"co_escola": 33082014, "nome": "COL DE APLICACAO EMMANUEL LEONTISINIS", "n": 15, "CN": 500.1, "CH": 523.9, "LC": 541.0, "MT": 544.5, "redacao": 575.4, "nota_geral": 537.0, "pos": 21, "nossa": false}, {"co_escola": 33116709, "nome": "CENTRO EDUCACIONAL CALIFORNIA", "n": 22, "CN": 482.9, "CH": 489.4, "LC": 523.3, "MT": 546.0, "redacao": 610.5, "nota_geral": 530.4, "pos": 22, "nossa": false}, {"co_escola": 33116490, "nome": "JD ESC BONS AMIGOS", "n": 18, "CN": 494.4, "CH": 509.7, "LC": 530.3, "MT": 508.9, "redacao": 605.6, "nota_geral": 529.8, "pos": 23, "nossa": false}, {"co_escola": 33134634, "nome": "CENTRO EDUCACIONAL CAMPINHO", "n": 16, "CN": 477.2, "CH": 510.0, "LC": 544.0, "MT": 514.2, "redacao": 598.8, "nota_geral": 528.8, "pos": 24, "nossa": false}, {"co_escola": 33113360, "nome": "CENTRO DE FORMACAO PROFISSIONAL BEZERRA DE ARAUJO", "n": 62, "CN": 491.7, "CH": 503.7, "LC": 545.6, "MT": 486.7, "redacao": 585.8, "nota_geral": 522.7, "pos": 25, "nossa": false}]}, "Nova Iguaçu": {"bairro": "CENTRO", "municipio": "Nova Iguaçu", "uf": "RJ", "n_escolas": 13, "nossa_pos": 7, "bench_areas": {"CN": 529.0, "CH": 546.2, "LC": 562.3, "MT": 585.4}, "bench_redacao": 703.0, "escolas": [{"co_escola": 33058164, "nome": "CENTRO EDUCACIONAL LOGOS", "n": 20, "CN": 587.6, "CH": 605.6, "LC": 594.4, "MT": 678.4, "redacao": 814.0, "nota_geral": 656.0, "pos": 1, "nossa": false}, {"co_escola": 33101809, "nome": "COLEGIO EME", "n": 55, "CN": 588.9, "CH": 608.5, "LC": 601.4, "MT": 669.9, "redacao": 809.4, "nota_geral": 655.6, "pos": 2, "nossa": false}, {"co_escola": 33187681, "nome": "COLEGIO E CURSO ZEROHUM NOVA IGUACU", "n": 49, "CN": 533.9, "CH": 573.5, "LC": 575.7, "MT": 625.2, "redacao": 737.2, "nota_geral": 609.1, "pos": 3, "nossa": false}, {"co_escola": 33156069, "nome": "COLEGIO SER E CRESCER DE NOVA IGUACU LTDA", "n": 37, "CN": 531.8, "CH": 543.8, "LC": 545.5, "MT": 608.1, "redacao": 751.4, "nota_geral": 596.1, "pos": 4, "nossa": false}, {"co_escola": 33060312, "nome": "INSTITUTO DE EDUCACAO SANTO ANTONIO", "n": 67, "CN": 536.7, "CH": 554.1, "LC": 564.1, "MT": 568.6, "redacao": 738.1, "nota_geral": 592.3, "pos": 5, "nossa": false}, {"co_escola": 33166560, "nome": "COLEGIO FORCA MAXIMA DE NOVA IGUACU LTDA - ME", "n": 25, "CN": 538.8, "CH": 538.1, "LC": 573.1, "MT": 562.5, "redacao": 684.5, "nota_geral": 579.4, "pos": 6, "nossa": false}, {"co_escola": 33187762, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO", "n": 75, "CN": 524.9, "CH": 544.0, "LC": 562.9, "MT": 564.4, "redacao": 678.4, "nota_geral": 574.9, "pos": 7, "nossa": true}, {"co_escola": 33195820, "nome": "LEGACY SCHOOL DE NOVA IGUACU", "n": 16, "CN": 528.2, "CH": 537.6, "LC": 587.4, "MT": 591.9, "redacao": 613.8, "nota_geral": 571.8, "pos": 8, "nossa": false}, {"co_escola": 33060355, "nome": "ELITE IGUACUANO", "n": 153, "CN": 514.4, "CH": 535.6, "LC": 555.7, "MT": 565.9, "redacao": 656.7, "nota_geral": 565.7, "pos": 9, "nossa": false}, {"co_escola": 33174725, "nome": "COLEGIO E CURSO PROGRESSAO NOVA IGUACU LTDA ME", "n": 46, "CN": 495.6, "CH": 514.8, "LC": 545.8, "MT": 564.1, "redacao": 655.3, "nota_geral": 555.1, "pos": 10, "nossa": false}, {"co_escola": 33060568, "nome": "JD ESC RECANTO DO SABER", "n": 24, "CN": 501.7, "CH": 481.7, "LC": 533.5, "MT": 543.9, "redacao": 709.6, "nota_geral": 554.1, "pos": 11, "nossa": false}, {"co_escola": 33160996, "nome": "COLEGIO SR MILLENNIUM", "n": 17, "CN": 476.8, "CH": 490.9, "LC": 508.0, "MT": 514.3, "redacao": 673.3, "nota_geral": 532.7, "pos": 12, "nossa": false}, {"co_escola": 33169560, "nome": "COLEGIO E CURSO MOVA FILIAL", "n": 10, "CN": 453.8, "CH": 471.4, "LC": 503.9, "MT": 465.4, "redacao": 484.0, "nota_geral": 475.7, "pos": 13, "nossa": false}]}, "Taquara": {"bairro": "TAQUARA", "municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 13, "nossa_pos": 10, "bench_areas": {"CN": 522.2, "CH": 547.2, "LC": 562.0, "MT": 574.1}, "bench_redacao": 689.8, "escolas": [{"co_escola": 33111642, "nome": "COLEGIO SANTA MONICA - TAQUARA", "n": 28, "CN": 601.2, "CH": 608.6, "LC": 599.8, "MT": 677.0, "redacao": 803.6, "nota_geral": 658.0, "pos": 1, "nossa": false}, {"co_escola": 33149437, "nome": "COLEGIO ACAO 1", "n": 10, "CN": 592.3, "CH": 605.6, "LC": 597.9, "MT": 630.7, "redacao": 768.0, "nota_geral": 638.9, "pos": 2, "nossa": false}, {"co_escola": 33173907, "nome": "SANTA MONICA REDE DE ENSINO - TAQUARA", "n": 14, "CN": 535.0, "CH": 558.1, "LC": 587.7, "MT": 603.4, "redacao": 755.7, "nota_geral": 608.0, "pos": 3, "nossa": false}, {"co_escola": 33173923, "nome": "COLEGIO E CURSO ICONE", "n": 91, "CN": 547.5, "CH": 575.3, "LC": 569.9, "MT": 609.4, "redacao": 719.8, "nota_geral": 604.4, "pos": 4, "nossa": false}, {"co_escola": 33078521, "nome": "INSTITUTO TAMANDARE", "n": 20, "CN": 549.6, "CH": 567.2, "LC": 566.2, "MT": 595.2, "redacao": 708.4, "nota_geral": 597.3, "pos": 5, "nossa": false}, {"co_escola": 33191816, "nome": "COLEGIO CURSO FALCON", "n": 90, "CN": 522.0, "CH": 548.5, "LC": 566.8, "MT": 576.9, "redacao": 669.3, "nota_geral": 576.7, "pos": 6, "nossa": false}, {"co_escola": 33169713, "nome": "SISTEMA ELITE DE ENSINO - TAQUARA", "n": 158, "CN": 517.5, "CH": 539.5, "LC": 557.4, "MT": 571.9, "redacao": 692.9, "nota_geral": 575.8, "pos": 7, "nossa": false}, {"co_escola": 33177279, "nome": "COLEGIO E CURSO APLICACAO", "n": 37, "CN": 505.0, "CH": 551.3, "LC": 563.6, "MT": 549.4, "redacao": 698.9, "nota_geral": 573.6, "pos": 8, "nossa": false}, {"co_escola": 33148627, "nome": "COLEGIO NACIONAL", "n": 42, "CN": 495.9, "CH": 536.0, "LC": 560.5, "MT": 536.8, "redacao": 709.0, "nota_geral": 567.6, "pos": 9, "nossa": false}, {"co_escola": 33187770, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO", "n": 59, "CN": 504.2, "CH": 529.1, "LC": 557.4, "MT": 570.2, "redacao": 658.3, "nota_geral": 563.8, "pos": 10, "nossa": true}, {"co_escola": 33153477, "nome": "COLEGIO CURSO DALTRO NETTO", "n": 33, "CN": 522.4, "CH": 533.8, "LC": 554.0, "MT": 527.8, "redacao": 656.2, "nota_geral": 558.8, "pos": 11, "nossa": false}, {"co_escola": 33200530, "nome": "COLEGIO FORCA MAXIMA DA TAQUARA", "n": 18, "CN": 465.0, "CH": 485.1, "LC": 529.6, "MT": 489.8, "redacao": 603.5, "nota_geral": 514.6, "pos": 12, "nossa": false}, {"co_escola": 33159629, "nome": "INSTITUTO PAULO APOSTOLO", "n": 33, "CN": 463.7, "CH": 490.1, "LC": 513.5, "MT": 500.2, "redacao": 553.0, "nota_geral": 504.1, "pos": 13, "nossa": false}]}, "Bangu": {"bairro": "BANGU", "municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 6, "nossa_pos": 2, "bench_areas": {"CN": 512.7, "CH": 527.4, "LC": 555.9, "MT": 566.0}, "bench_redacao": 661.9, "escolas": [{"co_escola": 33186910, "nome": "COLEGIO E CURSO SAMARITANO", "n": 33, "CN": 513.5, "CH": 523.1, "LC": 555.7, "MT": 582.0, "redacao": 736.4, "nota_geral": 582.1, "pos": 1, "nossa": false}, {"co_escola": 33187789, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO", "n": 86, "CN": 513.1, "CH": 528.6, "LC": 561.6, "MT": 594.3, "redacao": 656.9, "nota_geral": 570.9, "pos": 2, "nossa": true}, {"co_escola": 33159130, "nome": "SISTEMA ELITE DE ENSINO- UNIDADE BANGU", "n": 68, "CN": 516.9, "CH": 537.5, "LC": 561.4, "MT": 575.3, "redacao": 645.5, "nota_geral": 567.3, "pos": 3, "nossa": false}, {"co_escola": 33081328, "nome": "CENTRO EDUCACIONAL ORION", "n": 13, "CN": 533.0, "CH": 524.9, "LC": 528.6, "MT": 562.7, "redacao": 647.3, "nota_geral": 559.3, "pos": 4, "nossa": false}, {"co_escola": 33195366, "nome": "COLEGIO E CURSO INTELECTUS UNIDADE BANGU", "n": 42, "CN": 508.0, "CH": 508.0, "LC": 537.1, "MT": 517.0, "redacao": 705.1, "nota_geral": 555.0, "pos": 5, "nossa": false}, {"co_escola": 33081727, "nome": "COLEGIO JOAO PAULO I LTDA-EPP", "n": 67, "CN": 506.8, "CH": 530.5, "LC": 559.7, "MT": 545.1, "redacao": 622.5, "nota_geral": 552.9, "pos": 6, "nossa": false}]}, "São João de Meriti": {"bairro": "CENTRO", "municipio": "São João de Meriti", "uf": "RJ", "n_escolas": 6, "nossa_pos": 3, "bench_areas": {"CN": 515.4, "CH": 535.6, "LC": 556.0, "MT": 551.9}, "bench_redacao": 691.6, "escolas": [{"co_escola": 33092346, "nome": "COLEGIO SANTA MARIA", "n": 37, "CN": 579.0, "CH": 594.5, "LC": 603.3, "MT": 655.3, "redacao": 814.6, "nota_geral": 649.3, "pos": 1, "nossa": false}, {"co_escola": 33171670, "nome": "COLEGIO E CURSO FATOR", "n": 47, "CN": 532.6, "CH": 549.6, "LC": 567.5, "MT": 579.4, "redacao": 772.8, "nota_geral": 600.4, "pos": 2, "nossa": false}, {"co_escola": 33190674, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO LTDA", "n": 42, "CN": 525.0, "CH": 516.6, "LC": 542.4, "MT": 580.8, "redacao": 694.6, "nota_geral": 571.9, "pos": 3, "nossa": true}, {"co_escola": 33143145, "nome": "CENTRO EDUCACIONAL COLUMBIA 2000 LTDA", "n": 26, "CN": 506.0, "CH": 544.6, "LC": 549.4, "MT": 510.4, "redacao": 734.2, "nota_geral": 568.9, "pos": 4, "nossa": false}, {"co_escola": 33448256, "nome": "COLEGIO FORCA MAXIMA DE SAO JOAO DE MERITI", "n": 60, "CN": 500.3, "CH": 526.0, "LC": 546.3, "MT": 518.6, "redacao": 602.1, "nota_geral": 538.7, "pos": 5, "nossa": false}, {"co_escola": 33148287, "nome": "CURSO FLAMA VESTIBULARES LTDA", "n": 65, "CN": 473.4, "CH": 505.0, "LC": 537.8, "MT": 496.1, "redacao": 614.6, "nota_geral": 525.4, "pos": 6, "nossa": false}]}, "Rocha Miranda": {"bairro": "ROCHA MIRANDA", "municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 1, "nossa_pos": 1, "bench_areas": {"CN": 491.0, "CH": 526.9, "LC": 552.9, "MT": 549.0}, "bench_redacao": 664.9, "escolas": [{"co_escola": 33192685, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO ROCHA MIRANDA", "n": 47, "CN": 491.0, "CH": 526.9, "LC": 552.9, "MT": 549.0, "redacao": 664.9, "nota_geral": 556.9, "pos": 1, "nossa": true}]}, "Madureira": {"bairro": "MADUREIRA", "municipio": "Rio de Janeiro", "uf": "RJ", "n_escolas": 9, "nossa_pos": 7, "bench_areas": {"CN": 533.9, "CH": 555.9, "LC": 568.6, "MT": 598.2}, "bench_redacao": 678.8, "escolas": [{"co_escola": 33149780, "nome": "SISTEMA ELITE DE ENSINO", "n": 12, "CN": 633.5, "CH": 628.3, "LC": 641.4, "MT": 708.5, "redacao": 838.3, "nota_geral": 690.0, "pos": 1, "nossa": false}, {"co_escola": 33111901, "nome": "COL BAHIENSE VAZ LOBO", "n": 14, "CN": 560.8, "CH": 606.6, "LC": 596.2, "MT": 697.4, "redacao": 815.7, "nota_geral": 655.3, "pos": 2, "nossa": false}, {"co_escola": 33197350, "nome": "COLEGIO E CURSO ZEROHUM MADUREIRA", "n": 13, "CN": 505.4, "CH": 565.8, "LC": 567.0, "MT": 600.1, "redacao": 775.0, "nota_geral": 602.7, "pos": 3, "nossa": false}, {"co_escola": 33166943, "nome": "COLEGIO E CURSO PENSI", "n": 79, "CN": 538.6, "CH": 567.6, "LC": 569.1, "MT": 607.0, "redacao": 681.3, "nota_geral": 592.7, "pos": 4, "nossa": false}, {"co_escola": 33140626, "nome": "SISTEMA ELITE DE ENSINO - MADUREIRA 1", "n": 189, "CN": 536.7, "CH": 552.9, "LC": 565.8, "MT": 597.9, "redacao": 660.0, "nota_geral": 582.7, "pos": 5, "nossa": false}, {"co_escola": 33094861, "nome": "SANTA MONICA REDE DE ENSINO MADUREIRA", "n": 11, "CN": 532.7, "CH": 576.8, "LC": 566.4, "MT": 568.9, "redacao": 667.3, "nota_geral": 582.4, "pos": 6, "nossa": false}, {"co_escola": 33197466, "nome": "COLEGIO E CURSO MATRIZ EDUCACAO UNIDADE MADUREIRA", "n": 46, "CN": 527.8, "CH": 552.8, "LC": 569.0, "MT": 596.8, "redacao": 638.6, "nota_geral": 577.0, "pos": 7, "nossa": true}, {"co_escola": 33138087, "nome": "COLEGIO CURSO PREPARATORIO PRIORIDADE HUM MADUREIRA LTDA", "n": 43, "CN": 499.0, "CH": 508.0, "LC": 551.7, "MT": 547.7, "redacao": 685.9, "nota_geral": 558.5, "pos": 8, "nossa": false}, {"co_escola": 33121605, "nome": "CENTRO EDUCACIONAL LUIZ CARLOS BARBOSA", "n": 12, "CN": 497.8, "CH": 536.0, "LC": 560.0, "MT": 507.2, "redacao": 650.0, "nota_geral": 550.2, "pos": 9, "nossa": false}]}};
+let bairroAtivo = null;
+
+function buildBairroTabs() {
+  const wrap = document.getElementById('bairroTabs');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const unidades = Object.keys(BENCH_BAIRRO);
+  if (!unidades.length) { wrap.innerHTML = '<span style="color:#94a3b8;font-size:0.8rem">Dados de bairro não disponíveis.</span>'; return; }
+  if (!bairroAtivo) bairroAtivo = unidades[0];
+  unidades.forEach(u => {
+    const b = BENCH_BAIRRO[u];
+    const btn = document.createElement('button');
+    btn.className = 'bairro-tab' + (u === bairroAtivo ? ' ativo' : '');
+    btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:5px"></span>${u}`;
+    btn.onclick = () => { bairroAtivo = u; buildBairroTabs(); buildBairroConteudo(); };
+    wrap.appendChild(btn);
+  });
+}
+
+function buildBairroConteudo() {
+  const wrap = document.getElementById('bairroConteudo');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  if (!bairroAtivo || !BENCH_BAIRRO[bairroAtivo]) return;
+
+  const b = BENCH_BAIRRO[bairroAtivo];
+  const posClass = b.nossa_pos === 1 ? 'pos-1' : b.nossa_pos === 2 ? 'pos-2' : b.nossa_pos === 3 ? 'pos-3' : 'pos-n';
+
+  // Badge de posição
+  const badge = document.createElement('div');
+  badge.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap';
+  badge.innerHTML = `
+    <div class="bairro-badge">📍 ${b.bairro} — ${b.municipio} (${b.uf})</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="pos-badge ${posClass}">${b.nossa_pos || '?'}º</span>
+      <span style="font-size:0.82rem;font-weight:600;color:#1e293b">
+        ${b.nossa_pos === 1 ? '🏆 Líder do bairro!' : `${b.nossa_pos}º de ${b.n_escolas} escolas com dados ENEM`}
+      </span>
+    </div>`;
+  wrap.appendChild(badge);
+
+  // Tabela de concorrentes
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'table-wrap';
+  const cols = ['Pos','Escola','N','CN','CH','LC','MT','Reda\u00e7\u00e3o','Nota Geral'];
+  let html = `<table class="conc-table"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+
+  b.escolas.forEach(e => {
+    const cls = e.nossa ? 'nossa-linha' : '';
+    const nota = e.nota_geral ? e.nota_geral.toFixed(1) : '—';
+    const posC2 = e.pos === 1 ? 'pos-1' : e.pos === 2 ? 'pos-2' : e.pos === 3 ? 'pos-3' : 'pos-n';
+    html += `<tr class="${cls}">
+      <td><span class="pos-badge ${posC2}" style="width:24px;height:24px;font-size:0.72rem">${e.pos}º</span></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.nome}">${e.nome}${e.n && e.n < 30 ? ' <span style="color:#94a3b8;font-size:0.7rem;font-style:italic">— amostra pequena</span>' : ''}</td>
+      <td>${e.n || '—'}</td>
+      <td>${e.CN ? e.CN.toFixed(1) : '—'}</td>
+      <td>${e.CH ? e.CH.toFixed(1) : '—'}</td>
+      <td>${e.LC ? e.LC.toFixed(1) : '—'}</td>
+      <td>${e.MT ? e.MT.toFixed(1) : '—'}</td>
+      <td>${e.redacao ? e.redacao.toFixed(1) : '—'}</td>
+      <td style="font-weight:700">${nota}</td>
+    </tr>`;
+  });
+
+  // Linha benchmark do bairro
+  const ag = (v) => v ? v.toFixed(1) : '—';
+  html += `<tr class="bench-linha">
+    <td colspan="2">Média do bairro (${b.n_escolas} escolas)</td>
+    <td>—</td>
+    <td>${ag(b.bench_areas.CN)}</td><td>${ag(b.bench_areas.CH)}</td>
+    <td>${ag(b.bench_areas.LC)}</td><td>${ag(b.bench_areas.MT)}</td>
+    <td>${ag(b.bench_redacao)}</td><td>—</td>
+  </tr>`;
+  html += '</tbody></table>';
+  tableWrap.innerHTML = html;
+  wrap.appendChild(tableWrap);
+}
+
+
+// ── Wave 2 ───────────────────────────────────────────────────────────────────
+const COMP_NOMES_W2 = {
+  '1':'C1 Domínio da Língua','2':'C2 Compreensão da Proposta',
+  '3':'C3 Seleção de Argumentos','4':'C4 Mecanismos de Coesão',
+  '5':'C5 Proposta de Intervenção'
+};
+const BRASIL_W2 = {CN:491.6,CH:502.9,LC:524.5,MT:513.8,RED:618.8};
+const COMP_COR = ['#3b82f6','#06b6d4','#8b5cf6','#f59e0b','#64748b'];
+let compUnitAtivo = null;
+
+// A2 — KPIs reativos
+function buildKPIs() {
+  const units = sel();
+  if (!units.length) return;
+  var ni=0, np=0, ng_s=0, ng_n=0, rd_s=0, rd_n=0, mt_s=0, mt_n=0;
+  units.forEach(function(u) {
+    var d = DADOS.unidades[u]; if(!d) return;
+    ni += d.n_inscritos||0;
+    np += d.n_presentes||0;
+    var ngg=d.nota_geral?.n||0, ngm=d.nota_geral?.media||0;
+    ng_s+=ngm*ngg; ng_n+=ngg;
+    var rn=d.redacao?.n||0, rm=d.redacao?.media||0;
+    rd_s+=rm*rn; rd_n+=rn;
+    var mn=d.areas?.MT?.n||0, mm=d.areas?.MT?.media||0;
+    mt_s+=mm*mn; mt_n+=mn;
+  });
+  var taxa = ni>0?(np/ni*100).toFixed(1):0;
+  var ng   = ng_n>0?(ng_s/ng_n).toFixed(1):0;
+  var rd   = rd_n>0?(rd_s/rd_n).toFixed(1):0;
+  var mt   = mt_n>0?(mt_s/mt_n).toFixed(1):0;
+  var el;
+  if((el=document.getElementById('kInscritos'))) el.textContent = ni;
+  if((el=document.getElementById('kPresentes'))) el.textContent = np;
+  if((el=document.getElementById('kTaxaP')))    el.textContent = taxa + '% de presença';
+  if((el=document.getElementById('kGeral')))    el.textContent = ng;
+  if((el=document.getElementById('kRedacao')))  el.textContent = rd;
+  if((el=document.getElementById('kMT')))       el.textContent = mt;
+}
+
+// A4 — Síntese automática (4 cards)
+function buildSintese() {
+  var wrap = document.getElementById('sinteseGrid');
+  if(!wrap) return;
+  var g = DADOS.geral;
+  var areas = ['CN','CH','LC','MT'];
+  var areaNome = {CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica'};
+
+  // 1. Melhor área vs Brasil
+  var melhorA = areas.reduce(function(b,a) {
+    return ((g.areas[a]?.media||0)-(BRASIL_W2[a]||0)) > ((g.areas[b]?.media||0)-(BRASIL_W2[b]||0)) ? a : b;
+  }, 'CN');
+  var deltaM = ((g.areas[melhorA]?.media||0)-BRASIL_W2[melhorA]).toFixed(1);
+
+  // 2. Unidade destaque (maior nota geral)
+  var destUnit = UNIDADES.reduce(function(b,u) {
+    return (DADOS.unidades[u]?.nota_geral?.media||0)>(DADOS.unidades[b]?.nota_geral?.media||0)?u:b;
+  }, UNIDADES[0]);
+
+  // 3. Unidade com maior gap negativo vs média da marca (CN)
+  var mediaCN = g.areas.CN?.media||0;
+  var piorUnit = null, piorGap = 0;
+  UNIDADES.forEach(function(u) {
+    var gap = (DADOS.unidades[u]?.areas?.CN?.media||mediaCN) - mediaCN;
+    if(gap < piorGap) { piorGap=gap; piorUnit=u; }
+  });
+
+  // 4. Competência mais fraca na redação
+  var comps = g.competencias||{};
+  var piorComp = Object.keys(comps).reduce(function(b,n) {
+    return (comps[n]?.media||200)<(comps[b]?.media||200)?n:b;
+  },'1');
+
+  var cards = [
+    {
+      tipo: '🏅 Ponto forte', cor: '#16a34a',
+      titulo: areaNome[melhorA],
+      sub: 'Média da marca: ' + (g.areas[melhorA]?.media||0),
+      valor: (deltaM>0?'+':'')+deltaM+' pts vs Brasil',
+      corValor: '#16a34a'
+    },
+    {
+      tipo: '⭐ Destaque', cor: '#2563eb',
+      titulo: destUnit,
+      sub: 'Melhor nota geral da marca',
+      valor: (DADOS.unidades[destUnit]?.nota_geral?.media||0) + ' pts',
+      corValor: '#2563eb'
+    },
+    {
+      tipo: piorUnit ? '⚠ Atenção' : '✓ Equilíbrio', cor: piorUnit ? '#dc2626' : '#16a34a',
+      titulo: piorUnit || 'Todas as unidades',
+      sub: piorUnit ? 'C. Natureza: '+(DADOS.unidades[piorUnit]?.areas?.CN?.media||0) : 'CN sem gaps significativos',
+      valor: piorUnit ? piorGap.toFixed(1)+' pts vs média da marca' : '—',
+      corValor: piorUnit ? '#dc2626' : '#16a34a'
+    },
+    {
+      tipo: '✏ Redação', cor: '#7c3aed',
+      titulo: COMP_NOMES_W2[piorComp],
+      sub: 'Competência mais fraca',
+      valor: (comps[piorComp]?.media||0)+'/200 ('+Math.round((comps[piorComp]?.media||0)/200*100)+'%)',
+      corValor: '#7c3aed'
+    }
+  ];
+
+  wrap.innerHTML = cards.map(function(c) {
+    return '<div class="sintese-mini">'
+      +'<div class="sintese-mini-tipo" style="color:'+c.cor+'">'+c.tipo+'</div>'
+      +'<div class="sintese-mini-titulo">'+c.titulo+'</div>'
+      +'<div class="sintese-mini-sub">'+c.sub+'</div>'
+      +'<div class="sintese-mini-valor" style="color:'+c.corValor+'">'+c.valor+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// A3 — C1-C5 por unidade
+function buildCompUnitTabs() {
+  var wrap = document.getElementById('compUnitTabs');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  if(!compUnitAtivo) compUnitAtivo = UNIDADES[0];
+  UNIDADES.forEach(function(u) {
+    var btn = document.createElement('button');
+    btn.className = 'comp-unit-tab' + (u===compUnitAtivo?' ativo':'');
+    btn.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+corIdx(u)+';margin-right:5px"></span>'+u;
+    btn.onclick = function(){compUnitAtivo=u;buildCompUnitTabs();buildCompUnitConteudo();};
+    wrap.appendChild(btn);
+  });
+}
+function buildCompUnitConteudo() {
+  var wrap = document.getElementById('compUnitConteudo');
+  if(!wrap||!compUnitAtivo) return;
+  wrap.innerHTML = '';
+  var d = DADOS.unidades[compUnitAtivo];
+  if(!d||!d.competencias) {wrap.innerHTML='<p style="color:#94a3b8;font-size:0.8rem">Dados de competência não disponíveis.</p>';return;}
+  var avg = DADOS.geral.competencias||{};
+  var cor = corIdx(compUnitAtivo);
+  for(var n=1;n<=5;n++) {
+    var ns=String(n);
+    var val = d.competencias[ns]?.media||0;
+    var avgVal = avg[ns]?.media||0;
+    var pct = (val/200*100).toFixed(1);
+    var avgPct = (avgVal/200*100).toFixed(1);
+    var delta = (val-avgVal).toFixed(1);
+    var dcls = delta>2?'cu-pos':delta<-2?'cu-neg':'cu-neu';
+    var row = document.createElement('div');
+    row.className = 'comp-unit-bar-wrap';
+    row.innerHTML = '<div class="comp-unit-label">'+COMP_NOMES_W2[ns]+'</div>'
+      +'<div class="comp-unit-bg">'
+      +'<div class="comp-unit-fill" style="width:'+pct+'%;background:'+COMP_COR[n-1]+'" title="'+val+'"></div>'
+      +'<div class="comp-unit-fill-avg" style="width:'+avgPct+'%"></div>'
+      +'</div>'
+      +'<div class="comp-unit-val" style="color:'+COMP_COR[n-1]+'">'+val+'</div>'
+      +'<div class="comp-unit-delta '+dcls+'">'+(delta>0?'+':'')+delta+'</div>';
+    wrap.appendChild(row);
+  }
+  var legend = document.createElement('div');
+  legend.style.cssText='font-size:0.7rem;color:#94a3b8;margin-top:8px;border-top:1px dashed #e2e8f0;padding-top:8px';
+  legend.innerHTML='Barra cinza interna = média da marca &nbsp;·&nbsp; Delta (±) vs média da marca';
+  wrap.appendChild(legend);
+}
+
+// A1 — Manchete de posição
+
+// A2 — Manchete: bairro + município + estado + Brasil + Top100
+function buildManchete() {
+  var grid = document.getElementById('mancheteGrid');
+  if(!grid) return;
+  // Colunas dinâmicas: ≤4 unidades=all, 5-6=3 cols, ≥7=4 cols
+  var nc = UNIDADES.length <= 4 ? UNIDADES.length : (UNIDADES.length <= 6 ? 3 : 4);
+  grid.style.gridTemplateColumns = 'repeat('+nc+', minmax(0, 320px))';
+
+  var items = [];
+  UNIDADES.forEach(function(u) {
+    var pos    = RANKING_POSICOES && RANKING_POSICOES[u];
+    var bairro = typeof BENCH_BAIRRO !== 'undefined' && BENCH_BAIRRO[u];
+    var cor    = corIdx(u);
+    var hasData = (bairro && bairro.nossa_pos) || (pos && pos.areas);
+    if(!hasData) return;
+
+    // Bloco 1 — Posição no bairro
+    var bairroHtml = '';
+    if(bairro && bairro.nossa_pos) {
+      var bp = bairro.nossa_pos;
+      var efilt = (bairro.escolas||[]).filter(function(e){ return e.nossa || (e.n && e.n >= 30); });
+      efilt.sort(function(a,b){ return (b.nota_geral||0)-(a.nota_geral||0); });
+      var idxFilt = -1; for(var fi=0;fi<efilt.length;fi++){if(efilt[fi].nossa){idxFilt=fi;break;}}
+      var posFilt = idxFilt >= 0 ? idxFilt + 1 : null;
+      var nFilt = efilt.length;
+      var temPequenas = nFilt < (bairro.n_escolas || 0);
+      var posMain = (temPequenas && posFilt) ? posFilt : bp;
+      var nMain   = (temPequenas && posFilt) ? nFilt : (bairro.n_escolas || '?');
+      var labelMain = temPequenas ? ' escolas no bairro (N\u226530)' : ' escolas no bairro';
+      var medal = posMain===1?'🥇':posMain===2?'🥈':posMain===3?'🥉':'';
+      var posTexto = medal ? medal+' '+posMain+'º' : posMain+'º';
+      var secundarioHtml = (temPequenas && posFilt)
+        ? '<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px">'+bp+'º de '+(bairro.n_escolas||'?')+' incluindo todas as escolas</div>'
+        : '';
+      bairroHtml = '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">'
+        +'<span class="manchete-pos-grande">'+posTexto+'</span>'
+        +'<span class="manchete-pos-ctx">de '+nMain+labelMain+'</span>'
+        +'</div>'
+        +secundarioHtml;
+    }
+
+    // Bloco 2 — Ranking município / estado / Brasil / Top100 (sem label de área)
+    var rankHtml = '';
+    if(pos && pos.areas) {
+      var areasBR = Object.keys(pos.areas).filter(function(a){return pos.areas[a].rank_br;});
+      if(!areasBR.length) areasBR = Object.keys(pos.areas).filter(function(a){return pos.areas[a].rank_uf;});
+      if(areasBR.length) {
+        var bestBR = areasBR.reduce(function(b,a){
+          return (pos.areas[a].rank_br||pos.areas[a].rank_uf||9999)<(pos.areas[b].rank_br||pos.areas[b].rank_uf||9999)?a:b;
+        }, areasBR[0]);
+        var p    = pos.areas[bestBR];
+        var tier = TOPTIERS && TOPTIERS[bestBR];
+        var gap  = tier ? parseFloat((p.media - tier.entrada_top100).toFixed(1)) : null;
+        var gapCor = gap !== null ? (gap >= 0 ? '#16a34a' : '#dc2626') : '#64748b';
+        rankHtml = '<div class="manchete-linha">'
+          +(p.rank_mun ? '<span class="manchete-rank">'+p.rank_mun+'º em '+pos.municipio+'</span>' : '')
+          +(p.rank_uf && p.total_uf > 0 ? '<span class="manchete-rank">'+p.rank_uf+'º/'+p.total_uf+' '+pos.uf+'</span>' : '')
+          +(p.rank_br && p.total_br > 0 ? '<span class="manchete-rank">'+p.rank_br+'º/'+p.total_br+' Brasil</span>' : '')
+          +(gap !== null ? '<span class="manchete-gap" style="color:'+gapCor+'">'+(gap>=0?'+':'')+gap+' pts Top 100 BR</span>' : '')
+          +'</div>';
+      }
+    }
+
+    items.push('<div class="manchete-item">'
+      +'<div class="manchete-unidade">'
+      +'<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+cor+';flex-shrink:0"></span>'
+      +u+'</div>'
+      +bairroHtml
+      +rankHtml
+      +'</div>');
+  });
+
+  grid.innerHTML = items.length ? items.join('')
+    : '<div class="manchete-item" style="grid-column:1/-1"><span class="manchete-ctx">Carregando dados de posicionamento...</span></div>';
+}
+
+
+
+// C3 — Tipo de ação nos cards de prioridade (integrado no buildPriorityPanel)
+var ACAO_TIPO = {
+  marketing:    {label:'📢 Comunicar',  cor:'#2563eb', desc:'Resultado acima da média — divulgar'},
+  valorizacao:  {label:'🏆 Valorizar',  cor:'#d97706', desc:'Destaque pedagógico a reconhecer'},
+  remediacao:   {label:'📚 Remediar',   cor:'#dc2626', desc:'Gap a atacar com ação pedagógica'},
+};
+function classificarAcao(item) {
+  if(item.positivo && item.gap > 20) return 'marketing';
+  if(item.positivo) return 'valorizacao';
+  return 'remediacao';
+}
+
+
+// A2 — Referência Top 100 nos gráficos (linha adicional)
+function addTopTierLine(ch, areaKey) {
+  if(!TOPTIERS || !TOPTIERS[areaKey]) return;
+  var tier = TOPTIERS[areaKey];
+  try {
+    var ctx = ch.ctx, scales = ch.scales;
+    if(!scales || !scales.y || !scales.x) return;
+    var py100 = scales.y.getPixelForValue(tier.entrada_top100);
+    ctx.save();
+    ctx.setLineDash([3,3]);
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(scales.x.left, py100); ctx.lineTo(scales.x.right, py100); ctx.stroke();
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText('Top 100 BR: '+tier.entrada_top100, scales.x.right - 80, py100 - 3);
+    ctx.restore();
+  } catch(e) {}
+}
+
+// ── Wave 3 ───────────────────────────────────────────────────────────────────
+var _prioArea = 'CN';
+var PRIO_AREAS  = ['CN','CH','LC','MT','REDACAO'];
+var PRIO_NOMES  = {CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica',REDACAO:'Reda\u00e7\u00e3o'};
+var PRIO_BRASIL = {CN:491.6,CH:502.9,LC:524.5,MT:513.8,REDACAO:618.8};
+var PRIO_TIER_KEY = {CN:'CN',CH:'CH',LC:'LC',MT:'MT',REDACAO:'RED'};
+
+// B1 — Painel de Prioridades tabulado por área
+function buildPriorityPanel() {
+  var container = document.getElementById('priorityCards');
+  if(!container) return;
+
+  var units = sel().length ? sel() : UNIDADES;
+  var g = DADOS.geral;
+
+  // ── Tabs ──
+  var tabsHtml = '<div class="prio-tabs">';
+  PRIO_AREAS.forEach(function(a) {
+    tabsHtml += '<button class="prio-tab'+(a===_prioArea?' ativo':'')+'" '
+      +'onclick="_prioArea=\''+a+'\';buildPriorityPanel()">'+PRIO_NOMES[a]+'</button>';
+  });
+  tabsHtml += '</div>';
+
+  var a = _prioArea;
+  var isRed = a === 'REDACAO';
+  var marcaMedia = isRed ? (g.redacao&&g.redacao.media||0) : (g.areas&&g.areas[a]&&g.areas[a].media||0);
+  var marcaN     = isRed ? (g.n_redacao_valida||0) : (g.areas&&g.areas[a]&&g.areas[a].n||0);
+  var brasilRef  = PRIO_BRASIL[a];
+  var tierKey    = PRIO_TIER_KEY[a];
+  var tier       = typeof TOPTIERS !== 'undefined' && TOPTIERS && TOPTIERS[tierKey];
+  var top100     = tier ? tier.entrada_top100 : null;
+
+  // ── Resumo da marca ──
+  var dBrasil = parseFloat((marcaMedia - brasilRef).toFixed(1));
+  var dTop    = top100 ? parseFloat((marcaMedia - top100).toFixed(1)) : null;
+  var dBrCls  = dBrasil >= 0 ? 'prio-pos' : 'prio-neg';
+  var dTpCls  = dTop !== null ? (dTop >= 0 ? 'prio-pos' : 'prio-neg') : '';
+
+  var summaryHtml = '<div class="prio-summary">'
+    +'<span class="prio-summary-label">'+PRIO_NOMES[a]+' — Marca</span>'
+    +'<span class="prio-summary-val">Média: <b>'+marcaMedia.toFixed(1)+'</b></span>'
+    +'<span class="prio-summary-val">N: <b>'+marcaN+'</b> alunos</span>'
+    +'<span class="prio-summary-val"><span class="'+dBrCls+'">'+(dBrasil>=0?'+':'')+dBrasil+'</span> vs Brasil ('+brasilRef+')</span>'
+    +(dTop !== null ? '<span class="prio-summary-val"><span class="'+dTpCls+'">'+(dTop>=0?'+':'')+dTop+'</span> vs Top 100 BR ('+top100+')</span>' : '')
+    +'</div>';
+
+  // ── Tabela de unidades ──
+  var rows = [];
+  units.forEach(function(u) {
+    var d = DADOS.unidades[u]; if(!d) return;
+    var media = isRed ? (d.redacao&&d.redacao.media||0) : (d.areas&&d.areas[a]&&d.areas[a].media||0);
+    var n     = isRed ? (d.redacao&&d.redacao.n||0)     : (d.areas&&d.areas[a]&&d.areas[a].n||0);
+    if(!media) return;
+    rows.push({
+      u: u, media: media, n: n,
+      dMarca:  parseFloat((media - marcaMedia).toFixed(1)),
+      dBrasil: parseFloat((media - brasilRef).toFixed(1)),
+      dTop:    top100 ? parseFloat((media - top100).toFixed(1)) : null
+    });
+  });
+  rows.sort(function(x,y){ return y.media - x.media; });
+
+  var hasTop = top100 !== null;
+  var thead = '<thead><tr><th>Unidade</th><th>N</th><th>Média</th>'
+    +'<th>Δ Marca</th><th>Δ Brasil</th>'+(hasTop?'<th>Δ Top 100 BR</th>':'')+'<th>Ação</th></tr></thead>';
+
+  var tbody = '<tbody>';
+  rows.forEach(function(r, i) {
+    var dMCls = r.dMarca > 0 ? 'prio-pos' : r.dMarca < 0 ? 'prio-neg' : 'prio-neu';
+    var dBCls = r.dBrasil > 0 ? 'prio-pos' : r.dBrasil < 0 ? 'prio-neg' : 'prio-neu';
+    var dTCls = r.dTop !== null ? (r.dTop >= 0 ? 'prio-pos' : 'prio-neg') : '';
+    var acao, acaoCor;
+    if(r.dMarca > 20)       { acao='Comunicar'; acaoCor='#2563eb'; }
+    else if(r.dMarca >= 0)  { acao='Valorizar'; acaoCor='#d97706'; }
+    else                    { acao='Remediar';  acaoCor='#dc2626'; }
+    tbody += '<tr>'
+      +'<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+corIdx(r.u)+';margin-right:6px"></span>'+r.u+'</td>'
+      +'<td>'+r.n+'</td>'
+      +'<td><b>'+r.media.toFixed(1)+'</b></td>'
+      +'<td class="'+dMCls+'">'+(r.dMarca>0?'+':'')+r.dMarca+'</td>'
+      +'<td class="'+dBCls+'">'+(r.dBrasil>0?'+':'')+r.dBrasil+'</td>'
+      +(hasTop ? '<td class="'+dTCls+'">'+(r.dTop>=0?'+':'')+r.dTop+'</td>' : '')
+      +'<td><span class="prio-badge" style="background:'+acaoCor+';color:white;border:none">'+acao+'</span></td>'
+      +'</tr>';
+  });
+  tbody += '</tbody>';
+
+  container.innerHTML = tabsHtml + summaryHtml
+    +'<div class="prio-table-wrap"><div style="overflow-x:auto"><table class="prio-table">'+thead+tbody+'</table></div></div>';
+}
+
+// C1 — Tabela reativa: re-renderiza ao mudar seleção
+function buildTabelaFiltrada() {
+  var tbody = document.querySelector('#tabelaComparativa tbody');
+  if(!tbody) return;
+  var selectedUnits = new Set(sel());
+  var rows = tbody.querySelectorAll('tr');
+  rows.forEach(function(row) {
+    var unitCell = row.querySelector('td:first-child');
+    if(!unitCell) return;
+    var text = unitCell.textContent.trim();
+    if(row.classList.contains('linha-geral') || row.classList.contains('linha-brasil')) return;
+    var visible = false;
+    selectedUnits.forEach(function(u) {
+      if(text.indexOf(u) >= 0) visible = true;
+    });
+    row.style.display = visible ? '' : 'none';
+  });
+}
+
+// C2 — Aviso de amostra pequena na tabela comparativa
+function markSmallSamples() {
+  UNIDADES.forEach(function(u, i) {
+    var d = DADOS.unidades[u];
+    if(!d || !d.aviso_amostra_pequena) return;
+    var rows = document.querySelectorAll('#tabelaComparativa tbody tr');
+    rows.forEach(function(row) {
+      if(row.textContent.indexOf(u) >= 0 && !row.querySelector('.aviso-amostra')) {
+        var cell = row.querySelector('td:first-child');
+        if(cell) {
+          var b = document.createElement('span');
+          b.className = 'aviso-amostra';
+          b.innerHTML = '⚠ n='+d.n_inscritos;
+          cell.appendChild(b);
+        }
+      }
+    });
+  });
+}
+
+const RANKING_POSICOES = {"Duque de Caxias": {"uf": "RJ", "municipio": "Duque de Caxias", "areas": {"CN": {"media": 524.09, "n": 38, "rank_br": 2085, "total_br": 2771, "rank_uf": 492, "total_uf": 909, "rank_mun": 8, "total_mun": 24}, "CH": {"media": 545.06, "n": 40, "rank_br": 2042, "total_br": 2829, "rank_uf": 505, "total_uf": 913, "rank_mun": 8, "total_mun": 24}, "LC": {"media": 566.69, "n": 40, "rank_br": 1872, "total_br": 2829, "rank_uf": 457, "total_uf": 913, "rank_mun": 7, "total_mun": 24}, "MT": {"media": 566.76, "n": 38, "rank_br": 2215, "total_br": 2771, "rank_uf": 527, "total_uf": 909, "rank_mun": 10, "total_mun": 24}, "REDACAO": {"media": 689.74, "n": 39, "rank_br": 2156, "total_br": 2794, "rank_uf": 541, "total_uf": 911, "rank_mun": 10, "total_mun": 24}}}, "Campo Grande": {"uf": "RJ", "municipio": "Rio de Janeiro", "areas": {"CN": {"media": 537.22, "n": 90, "rank_br": 1692, "total_br": 2771, "rank_uf": 330, "total_uf": 909, "rank_mun": 148, "total_mun": 405}, "CH": {"media": 558.64, "n": 90, "rank_br": 1634, "total_br": 2829, "rank_uf": 383, "total_uf": 913, "rank_mun": 178, "total_mun": 404}, "LC": {"media": 572.45, "n": 90, "rank_br": 1635, "total_br": 2829, "rank_uf": 391, "total_uf": 913, "rank_mun": 181, "total_mun": 404}, "MT": {"media": 588.25, "n": 90, "rank_br": 1876, "total_br": 2771, "rank_uf": 398, "total_uf": 909, "rank_mun": 183, "total_mun": 405}, "REDACAO": {"media": 706.29, "n": 89, "rank_br": 1962, "total_br": 2794, "rank_uf": 481, "total_uf": 911, "rank_mun": 202, "total_mun": 404}}}, "Nova Iguaçu": {"uf": "RJ", "municipio": "Nova Iguaçu", "areas": {"CN": {"media": 524.9, "n": 67, "rank_br": 2061, "total_br": 2771, "rank_uf": 478, "total_uf": 909, "rank_mun": 15, "total_mun": 40}, "CH": {"media": 544.03, "n": 70, "rank_br": 2071, "total_br": 2829, "rank_uf": 517, "total_uf": 913, "rank_mun": 10, "total_mun": 41}, "LC": {"media": 562.9, "n": 70, "rank_br": 2017, "total_br": 2829, "rank_uf": 505, "total_uf": 913, "rank_mun": 13, "total_mun": 41}, "MT": {"media": 564.44, "n": 67, "rank_br": 2243, "total_br": 2771, "rank_uf": 539, "total_uf": 909, "rank_mun": 14, "total_mun": 40}, "REDACAO": {"media": 678.44, "n": 64, "rank_br": 2290, "total_br": 2794, "rank_uf": 573, "total_uf": 911, "rank_mun": 15, "total_mun": 41}}}, "Taquara": {"uf": "RJ", "municipio": "Rio de Janeiro", "areas": {"CN": {"media": 504.23, "n": 58, "rank_br": 2539, "total_br": 2771, "rank_uf": 673, "total_uf": 909, "rank_mun": 290, "total_mun": 405}, "CH": {"media": 529.11, "n": 59, "rank_br": 2441, "total_br": 2829, "rank_uf": 653, "total_uf": 913, "rank_mun": 279, "total_mun": 404}, "LC": {"media": 557.43, "n": 59, "rank_br": 2235, "total_br": 2829, "rank_uf": 569, "total_uf": 913, "rank_mun": 258, "total_mun": 404}, "MT": {"media": 570.18, "n": 58, "rank_br": 2157, "total_br": 2771, "rank_uf": 508, "total_uf": 909, "rank_mun": 221, "total_mun": 405}, "REDACAO": {"media": 658.28, "n": 58, "rank_br": 2471, "total_br": 2794, "rank_uf": 645, "total_uf": 911, "rank_mun": 272, "total_mun": 404}}}, "Bangu": {"uf": "RJ", "municipio": "Rio de Janeiro", "areas": {"CN": {"media": 513.05, "n": 77, "rank_br": 2364, "total_br": 2771, "rank_uf": 578, "total_uf": 909, "rank_mun": 255, "total_mun": 405}, "CH": {"media": 528.56, "n": 81, "rank_br": 2454, "total_br": 2829, "rank_uf": 538, "total_uf": 913, "rank_mun": 232, "total_mun": 404}, "LC": {"media": 561.57, "n": 81, "rank_br": 2070, "total_br": 2829, "rank_uf": 519, "total_uf": 913, "rank_mun": 235, "total_mun": 404}, "MT": {"media": 594.26, "n": 77, "rank_br": 1778, "total_br": 2771, "rank_uf": 400, "total_uf": 909, "rank_mun": 185, "total_mun": 405}, "REDACAO": {"media": 656.92, "n": 78, "rank_br": 2481, "total_br": 2794, "rank_uf": 649, "total_uf": 911, "rank_mun": 273, "total_mun": 404}}}, "São João de Meriti": {"uf": "RJ", "municipio": "São João de Meriti", "areas": {"CN": {"media": 524.96, "n": 33, "rank_br": 2058, "total_br": 2771, "rank_uf": 477, "total_uf": 909, "rank_mun": 3, "total_mun": 11}, "CH": {"media": 516.57, "n": 38, "rank_br": 2638, "total_br": 2829, "rank_uf": 642, "total_uf": 913, "rank_mun": 4, "total_mun": 11}, "LC": {"media": 542.44, "n": 38, "rank_br": 2613, "total_br": 2829, "rank_uf": 759, "total_uf": 913, "rank_mun": 9, "total_mun": 11}, "MT": {"media": 580.77, "n": 33, "rank_br": 1988, "total_br": 2771, "rank_uf": 467, "total_uf": 909, "rank_mun": 2, "total_mun": 11}, "REDACAO": {"media": 694.59, "n": 37, "rank_br": 2107, "total_br": 2794, "rank_uf": 525, "total_uf": 911, "rank_mun": 4, "total_mun": 11}}}, "Rocha Miranda": {"uf": "RJ", "municipio": "Rio de Janeiro", "areas": {"CN": {"media": 491.02, "n": 44, "rank_br": 2684, "total_br": 2771, "rank_uf": 775, "total_uf": 909, "rank_mun": 340, "total_mun": 405}, "CH": {"media": 526.86, "n": 45, "rank_br": 2492, "total_br": 2829, "rank_uf": 673, "total_uf": 913, "rank_mun": 289, "total_mun": 404}, "LC": {"media": 552.87, "n": 45, "rank_br": 2370, "total_br": 2829, "rank_uf": 630, "total_uf": 913, "rank_mun": 286, "total_mun": 404}, "MT": {"media": 548.96, "n": 44, "rank_br": 2434, "total_br": 2771, "rank_uf": 622, "total_uf": 909, "rank_mun": 271, "total_mun": 405}, "REDACAO": {"media": 664.89, "n": 45, "rank_br": 2415, "total_br": 2794, "rank_uf": 622, "total_uf": 911, "rank_mun": 259, "total_mun": 404}}}, "Madureira": {"uf": "RJ", "municipio": "Rio de Janeiro", "areas": {"CN": {"media": 527.8, "n": 43, "rank_br": 1975, "total_br": 2771, "rank_uf": 451, "total_uf": 909, "rank_mun": 194, "total_mun": 405}, "CH": {"media": 552.76, "n": 42, "rank_br": 1824, "total_br": 2829, "rank_uf": 427, "total_uf": 913, "rank_mun": 192, "total_mun": 404}, "LC": {"media": 568.98, "n": 42, "rank_br": 1792, "total_br": 2829, "rank_uf": 432, "total_uf": 913, "rank_mun": 196, "total_mun": 404}, "MT": {"media": 596.75, "n": 43, "rank_br": 1743, "total_br": 2771, "rank_uf": 387, "total_uf": 909, "rank_mun": 178, "total_mun": 405}, "REDACAO": {"media": 638.57, "n": 42, "rank_br": 2595, "total_br": 2794, "rank_uf": 718, "total_uf": 911, "rank_mun": 298, "total_mun": 404}}}};
+const TOPTIERS = {"CN": {"n_escolas": 100, "media_top100": 660.5, "media_top50": 680.0, "entrada_top100": 632.9}, "CH": {"n_escolas": 100, "media_top100": 657.0, "media_top50": 671.9, "entrada_top100": 636.7}, "LC": {"n_escolas": 100, "media_top100": 643.6, "media_top50": 653.3, "entrada_top100": 629.5}, "MT": {"n_escolas": 100, "media_top100": 786.9, "media_top50": 811.6, "entrada_top100": 750.4}, "REDACAO": {"n_escolas": 100, "media_top100": 873.0, "media_top50": 881.7, "entrada_top100": 860.5}};
+
+criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();buildRankAreaConteudo();buildHeatmap();buildKPIs();buildSintese();buildCompUnitTabs();buildCompUnitConteudo();buildManchete();buildPriorityPanel();buildTabelaFiltrada();markSmallSamples();
+// ── Wave 1 helpers ────────────────────────────────────────────────────────────
+function showEmptyState(canvasId) {
+  var el = document.getElementById(canvasId);
+  if (!el) return;
+  var wrap = el.closest('.chart-wrap') || el.parentElement;
+  if (!wrap) return;
+  if (window['charts'] && window['charts'][canvasId.replace('chart','').toLowerCase()]) {
+    try { window['charts'][canvasId.replace('chart','').toLowerCase()].destroy(); } catch(e){}
+  }
+  wrap.innerHTML = '<div class="chart-empty">'
+    + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">'
+    + '<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>'
+    + '</svg><span>Selecione ao menos uma unidade acima</span></div>';
+}
+
+buildBairroTabs();
+
+buildBairroConteudo();
+
+atualizar();buildBenchmarkSection();
+</script>
+
+</body>
+</html>
