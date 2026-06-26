@@ -254,6 +254,14 @@
   .prio-badge { padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:700;
     white-space:nowrap; }
 
+
+  .concmun-btn {
+    padding: 7px 18px; border-radius: 20px; border: 1.5px solid #cbd5e1;
+    background: #fff; color: #475569; font-size: 0.83rem; cursor: pointer;
+    transition: all 0.15s ease; font-family: inherit;
+  }
+  .concmun-btn:hover { border-color: #1e326e; color: #1e326e; background: #f0f4ff; }
+  .concmun-btn.active { background: #1e326e; color: #fff; border-color: #1e326e; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -299,7 +307,7 @@
 <p class="section-titulo" id="sec-notas">Notas por Área Objetiva</p>
 <div class="grid-3">
   <div class="card"><div class="card-titulo">Médias por Área — Comparativo entre Unidades</div><div class="card-sub">Linha tracejada = média nacional</div><div class="chart-wrap tall"><canvas id="chartAreas"></canvas></div></div>
-  <div class="card"><div class="card-titulo">Radar de Performance</div><div class="card-sub">Unidades selecionadas vs. Brasil</div><div class="chart-wrap tall"><canvas id="chartRadar"></canvas></div></div>
+  <div class="card"><div class="card-titulo">Radar de Performance</div><div class="card-sub">Unidades selecionadas vs. Top 100 nacional</div><div class="chart-wrap tall"><canvas id="chartRadar"></canvas></div></div>
 </div>
 
 <div class="grid-2">
@@ -315,9 +323,9 @@
 <div class="card-titulo" style="margin-bottom:4px">Competências de Redação por Unidade</div>
 <div class="card-sub" style="margin-bottom:12px">Barras coloridas = unidade &nbsp;·&nbsp; Cinza = média da marca &nbsp;·&nbsp; Delta (±) vs marca</div>
 <div id="compUnitTabs" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-  <button onclick="compUnitAtivo='Zona Norte';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.8)"></span>Zona Norte</button>
-  <button onclick="compUnitAtivo='Santo Antônio I';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316"></span>Santo Antônio I</button>
-  <button onclick="compUnitAtivo='Santo Antônio II';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a"></span>Santo Antônio II</button>
+  <button onclick="compUnitAtivo='Zona Norte';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">Zona Norte</button>
+  <button onclick="compUnitAtivo='Santo Antônio I';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600">Santo Antônio I</button>
+  <button onclick="compUnitAtivo='Santo Antônio II';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600">Santo Antônio II</button>
 </div>
 <div id="compUnitConteudo" style="display:flex;flex-direction:column;justify-content:space-between;flex:1;">
   <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:0.72rem;color:#64748b;width:160px;flex-shrink:0;line-height:1.3">C1 Domínio da Língua</div><div style="flex:1;height:18px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative"><div style="height:100%;width:70.3%;background:#3b82f6;border-radius:4px"></div><div style="position:absolute;top:0;height:100%;width:73.2%;background:rgba(0,0,0,0.12);border-radius:4px"></div></div><div style="font-size:0.76rem;font-weight:700;width:46px;text-align:right;color:#3b82f6">140.6</div><div style="font-size:0.7rem;width:40px;text-align:right;color:#dc2626">-5.7</div></div>
@@ -341,17 +349,15 @@
 
 
 
-<p class="section-titulo" id="sec-ranking">Ranking por Área do Conhecimento</p>
+<p class="section-titulo" id="sec-ranking">Ranking</p>
 <div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Por Área do Conhecimento</div>
   <div class="card-sub" style="margin-bottom:14px">Unidades ordenadas pela média em cada área.</div>
   <div class="rank-tabs" id="rankAreaTabs"></div>
   <div id="rankAreaConteudo"></div>
 </div>
-
-
-
-<p class="section-titulo" id="sec-ranking">Ranking por Unidade — Posição em Cada Área</p>
 <div class="card">
+  <div class="card-titulo">Por Unidade — Posição em Cada Área</div>
   <div class="card-sub" style="margin-bottom:16px">Posição em cada área. <span style="background:#fef08a;color:#854d0e;padding:1px 6px;border-radius:4px;font-weight:700">1º</span> = melhor da marca. Linhas ordenadas por pontuação acumulada.</div>
   <div class="table-wrap"><table class="heatmap-table" id="heatmapTabela"></table></div>
 </div>
@@ -383,6 +389,21 @@
   <div id="bairroConteudo"></div>
 </div>
 
+
+<p class="section-titulo" id="sec-concorrentes-mun">Concorrentes por Município</p>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-sub" style="margin-bottom:16px">
+    Escolas privadas com participantes no ENEM 2025 em <strong>Juiz de Fora — MG</strong>,
+    com redação válida e presença em todas as áreas objetivas.
+    <strong>★</strong> = unidade Apogeu. Ordenado por Nota Geral (média LC+CH+CN+MT+RD).
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap" id="concmunTabs">
+    <button class="concmun-btn" data-grupo="lt30">Menos de 30 alunos</button>
+    <button class="concmun-btn active" data-grupo="de30a59">De 30 a 59 alunos</button>
+    <button class="concmun-btn" data-grupo="ge60">60 ou mais alunos</button>
+  </div>
+  <div id="concmunTabela" style="overflow-x:auto"></div>
+</div>
 </main>
 <footer>Dados: INEP — Microdados ENEM 2025 &nbsp;|&nbsp; Elaboração: Gestão Pedagógica Multimarcas &nbsp;|&nbsp; Junho 2026</footer>
 
@@ -447,7 +468,11 @@ function buildAreas() {
 }
 function buildRadar() {
   const labels=[...AREAS.map(a=>AREA_NOME[a]),'Reda\u00e7\u00e3o'];
-  const datasets=[{label:'Brasil',data:[BRASIL.CN,BRASIL.CH,BRASIL.LC,BRASIL.MT,BRASIL.RED],borderColor:'#94a3b8',borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
+  const top100entrada=[TOPTIERS.CN.entrada_top100,TOPTIERS.CH.entrada_top100,TOPTIERS.LC.entrada_top100,TOPTIERS.MT.entrada_top100,TOPTIERS.REDACAO.entrada_top100];
+  const top100media=[TOPTIERS.CN.media_top100,TOPTIERS.CH.media_top100,TOPTIERS.LC.media_top100,TOPTIERS.MT.media_top100,TOPTIERS.REDACAO.media_top100];
+  const datasets=[
+    {label:'Top 100 (entrada)',data:top100entrada,borderColor:'#10b981',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false},
+    {label:'Top 100 (m\u00e9dia)',data:top100media,borderColor:'#f59e0b',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false},
     ...sel().map(u=>{return{label:u,data:[...AREAS.map(a=>DADOS.unidades[u].areas[a].media),DADOS.unidades[u].redacao.media],borderColor:corIdx(u),backgroundColor:corIdx(u)+'22',borderWidth:2,pointRadius:3}})];
   if(charts.radar) charts.radar.destroy();
   charts.radar=new Chart(document.getElementById('chartRadar'),{type:'radar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{r:{min:350,max:950,ticks:{font:{size:9},stepSize:100,backdropColor:'transparent'}}}}});
@@ -506,7 +531,7 @@ function buildTabela() {
   UNIDADES.forEach(u=>{
     const d=DADOS.unidades[u]; const tr=document.createElement('tr');
     const cls=(v,ref)=>v>ref+5?'acima':v<ref-5?'abaixo':'igual';
-    tr.innerHTML=`<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td><td>${d.n_inscritos}</td><td class="${d.taxa_presenca>=90?'acima':d.taxa_presenca>=80?'igual':'abaixo'}">${d.taxa_presenca}%</td><td class="${cls(d.areas.CN.media,mediaGeral('CN'))}">${d.areas.CN.media}</td><td class="${cls(d.areas.CH.media,mediaGeral('CH'))}">${d.areas.CH.media}</td><td class="${cls(d.areas.LC.media,mediaGeral('LC'))}">${d.areas.LC.media}</td><td class="${cls(d.areas.MT.media,mediaGeral('MT'))}">${d.areas.MT.media}</td><td class="${cls(d.redacao.media,DADOS.geral.redacao.media)}">${d.redacao.media}</td><td class="${cls(d.nota_geral.media,DADOS.geral.nota_geral.media)}">${d.nota_geral.media}</td><td>${d.areas.MT.pct_600}%</td><td>${d.areas.MT.pct_700}%</td>`;
+    tr.innerHTML=`<td>${u}</td><td>${d.n_inscritos}</td><td class="${d.taxa_presenca>=90?'acima':d.taxa_presenca>=80?'igual':'abaixo'}">${d.taxa_presenca}%</td><td class="${cls(d.areas.CN.media,mediaGeral('CN'))}">${d.areas.CN.media}</td><td class="${cls(d.areas.CH.media,mediaGeral('CH'))}">${d.areas.CH.media}</td><td class="${cls(d.areas.LC.media,mediaGeral('LC'))}">${d.areas.LC.media}</td><td class="${cls(d.areas.MT.media,mediaGeral('MT'))}">${d.areas.MT.media}</td><td class="${cls(d.redacao.media,DADOS.geral.redacao.media)}">${d.redacao.media}</td><td class="${cls(d.nota_geral.media,DADOS.geral.nota_geral.media)}">${d.nota_geral.media}</td><td>${d.areas.MT.pct_600}%</td><td>${d.areas.MT.pct_700}%</td>`;
     tbody.appendChild(tr);
   });
   const _t = typeof TOPTIERS !== 'undefined' && TOPTIERS;
@@ -529,7 +554,6 @@ const RANK_AREAS=[
   {key:'MT',label:'Matem\u00e1tica',get:u=>DADOS.unidades[u].areas.MT.media},
   {key:'RED',label:'Reda\u00e7\u00e3o',get:u=>DADOS.unidades[u].redacao.media},
   {key:'GERAL',label:'Nota Geral',get:u=>DADOS.unidades[u].nota_geral.media},
-  {key:'PRES',label:'Presença %',get:u=>DADOS.unidades[u].taxa_presenca},
 ];
 let rankAreaAtiva='CN';
 function buildRankAreaTabs(){
@@ -545,12 +569,11 @@ function buildRankAreaConteudo(){
   const mediaGeral=area.key==='CN'?DADOS.geral.areas.CN.media:area.key==='CH'?DADOS.geral.areas.CH.media:area.key==='LC'?DADOS.geral.areas.LC.media:area.key==='MT'?DADOS.geral.areas.MT.media:area.key==='RED'?DADOS.geral.redacao.media:area.key==='GERAL'?DADOS.geral.nota_geral.media:DADOS.geral.taxa_presenca;
   sorted.forEach((u,i)=>{
     const val=area.get(u);const pct=((val-minVal)/(maxVal-minVal+1)*100).toFixed(1);
-    const posClass=i===0?'p1':i===1?'p2':i===2?'p3':'pn';
     const delta=(val-mediaGeral).toFixed(1);const deltaStr=delta>0?`+${delta}`:`${delta}`;
     const deltaCor=delta>0?'var(--verde)':delta<0?'var(--vermelho)':'var(--amarelo)';
     const unidade=area.key==='PRES'?'%':'';
     const div=document.createElement('div');div.className='rank-item';
-    div.innerHTML=`<div class="rank-pos ${posClass}">${i+1}º</div><div style="display:flex;align-items:center;gap:8px;width:200px;flex-shrink:0"><span style="width:10px;height:10px;border-radius:50%;background:${corIdx(u)};flex-shrink:0"></span><span class="rank-nome">${u}</span></div><div class="rank-bar-bg"><div class="rank-bar" style="width:${pct}%;background:${corIdx(u)}"></div></div><div class="rank-valor" style="color:${corIdx(u)}">${val}${unidade}</div><div class="rank-delta" style="color:${deltaCor}">${deltaStr}${unidade}</div>`;
+    div.innerHTML=`<strong style="width:28px;flex-shrink:0;font-size:0.88rem;color:#1e293b;text-align:right">${i+1}</strong><div style="width:200px;flex-shrink:0"><span class="rank-nome">${u}</span></div><div class="rank-bar-bg"><div class="rank-bar" style="width:${pct}%;background:${corIdx(u)}"></div></div><div class="rank-valor" style="color:${corIdx(u)}">${val}${unidade}</div><div class="rank-delta" style="color:${deltaCor}">${deltaStr}${unidade}</div>`;
     wrap.appendChild(div);
   });
   const ref=document.createElement('div');ref.style.cssText='margin-top:12px;font-size:0.75rem;color:var(--texto-sec);border-top:1px dashed var(--cinza-borda);padding-top:10px';
@@ -558,21 +581,21 @@ function buildRankAreaConteudo(){
   wrap.appendChild(ref);
 }
 function buildHeatmap(){
-  const areas=[{label:'CN',get:u=>DADOS.unidades[u].areas.CN.media},{label:'CH',get:u=>DADOS.unidades[u].areas.CH.media},{label:'LC',get:u=>DADOS.unidades[u].areas.LC.media},{label:'MT',get:u=>DADOS.unidades[u].areas.MT.media},{label:'Reda\u00e7\u00e3o',get:u=>DADOS.unidades[u].redacao.media},{label:'Nota Geral',get:u=>DADOS.unidades[u].nota_geral.media},{label:'Pres.%',get:u=>DADOS.unidades[u].taxa_presenca}];
+  const areas=[{label:'CN',get:u=>DADOS.unidades[u].areas.CN.media},{label:'CH',get:u=>DADOS.unidades[u].areas.CH.media},{label:'LC',get:u=>DADOS.unidades[u].areas.LC.media},{label:'MT',get:u=>DADOS.unidades[u].areas.MT.media},{label:'Reda\u00e7\u00e3o',get:u=>DADOS.unidades[u].redacao.media},{label:'Nota Geral',get:u=>DADOS.unidades[u].nota_geral.media}];
   const rankings={};UNIDADES.forEach(u=>rankings[u]={});
   areas.forEach(a=>{const sorted=[...(sel().length?sel():UNIDADES)].sort((x,y)=>a.get(y)-a.get(x));sorted.forEach((u,i)=>rankings[u][a.label]=i+1);});
   const somaPos=UNIDADES.map(u=>{return{u,soma:areas.slice(0,6).reduce((s,a)=>s+rankings[u][a.label],0)}}).sort((a,b)=>a.soma-b.soma);
   const table=document.getElementById('heatmapTabela');
-  const ths=['Unidade',...areas.map(a=>a.label),'Pontuação*'].map(h=>`<th>${h}</th>`).join('');
+  const ths=['<th style="text-align:left">Posição</th>','<th style="text-align:left">Unidade</th>',...areas.map(a=>`<th>${a.label}</th>`),'<th>Pontuação*</th>'].join('');
   table.innerHTML=`<thead><tr>${ths}</tr></thead>`;
   const tbody=document.createElement('tbody');
-  somaPos.forEach(({u,soma})=>{
+  somaPos.forEach(({u,soma}, idx)=>{
     const tr=document.createElement('tr');
     const cells=areas.map(a=>{const pos=rankings[u][a.label];const cls=`rc${pos}`;const val=a.get(u).toFixed(1);return`<td><span class="rank-cell ${cls}">${pos}º</span><br><span style="font-size:0.68rem;color:var(--texto-sec)">${val}</span></td>`;});
-    tr.innerHTML=`<td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td>${cells.join('')}<td style="font-weight:700;color:var(--azul)">${soma}</td>`;
+    tr.innerHTML=`<td style="font-weight:700;text-align:left;color:#1e293b">${idx+1}</td><td style="text-align:left">${u}</td>${cells.join('')}<td style="font-weight:700;color:var(--azul)">${soma}</td>`;
     tbody.appendChild(tr);
   });
-  const tr=document.createElement('tr');tr.innerHTML=`<td colspan="${areas.length+2}" style="font-size:0.72rem;color:var(--texto-sec);padding-top:10px;border-top:1px dashed var(--cinza-borda)">* Pontuação = soma das posições em CN+CH+LC+MT+Redação+Nota Geral. Menor = melhor.</td>`;
+  const tr=document.createElement('tr');tr.innerHTML=`<td colspan="${areas.length+3}" style="font-size:0.72rem;color:var(--texto-sec);padding-top:10px;border-top:1px dashed var(--cinza-borda)">* Pontuação = soma das posições em CN+CH+LC+MT+Redação+Nota Geral. Menor = melhor.</td>`;
   tbody.appendChild(tr);table.appendChild(tbody);
 }
 function atualizar(){
@@ -602,6 +625,7 @@ function showEmptyState(canvasId) {
 const BENCH_UNIDADE = {"Zona Norte": {"municipio": "Juiz de Fora", "uf": "MG", "n_escolas": 22, "n_alunos": 1237, "areas": {"CN": {"n": 1202, "media": 572.4, "pct_600": 38.9, "pct_700": 4.7}, "CH": {"n": 1214, "media": 589.6, "pct_600": 49.6, "pct_700": 3.5}, "LC": {"n": 1214, "media": 593.3, "pct_600": 48.9, "pct_700": 2.0}, "MT": {"n": 1202, "media": 655.7, "pct_600": 69.6, "pct_700": 39.4}}, "redacao": {"n": 1209, "media": 798.9, "pct_600": 91.8, "pct_700": 80.0, "pct_800": 61.4}}, "Santo Antônio I": {"municipio": "Juiz de Fora", "uf": "MG", "n_escolas": 22, "n_alunos": 1237, "areas": {"CN": {"n": 1202, "media": 572.4, "pct_600": 38.9, "pct_700": 4.7}, "CH": {"n": 1214, "media": 589.6, "pct_600": 49.6, "pct_700": 3.5}, "LC": {"n": 1214, "media": 593.3, "pct_600": 48.9, "pct_700": 2.0}, "MT": {"n": 1202, "media": 655.7, "pct_600": 69.6, "pct_700": 39.4}}, "redacao": {"n": 1209, "media": 798.9, "pct_600": 91.8, "pct_700": 80.0, "pct_800": 61.4}}, "Santo Antônio II": {"municipio": "Juiz de Fora", "uf": "MG", "n_escolas": 22, "n_alunos": 1237, "areas": {"CN": {"n": 1202, "media": 572.4, "pct_600": 38.9, "pct_700": 4.7}, "CH": {"n": 1214, "media": 589.6, "pct_600": 49.6, "pct_700": 3.5}, "LC": {"n": 1214, "media": 593.3, "pct_600": 48.9, "pct_700": 2.0}, "MT": {"n": 1202, "media": 655.7, "pct_600": 69.6, "pct_700": 39.4}}, "redacao": {"n": 1209, "media": 798.9, "pct_600": 91.8, "pct_700": 80.0, "pct_800": 61.4}}};
 const BENCH_GERAL = {"municipio": "Juiz de Fora", "uf": "MG", "n_escolas": 22, "n_alunos": 1237, "areas": {"CN": {"n": 1202, "media": 572.4, "pct_600": 38.9, "pct_700": 4.7}, "CH": {"n": 1214, "media": 589.6, "pct_600": 49.6, "pct_700": 3.5}, "LC": {"n": 1214, "media": 593.3, "pct_600": 48.9, "pct_700": 2.0}, "MT": {"n": 1202, "media": 655.7, "pct_600": 69.6, "pct_700": 39.4}}, "redacao": {"n": 1209, "media": 798.9, "pct_600": 91.8, "pct_700": 80.0, "pct_800": 61.4}};
 const BENCH_LABEL = "Juiz de Fora — Rede Privada";
+const CONCORRENTES_MUN = {"lt30": [{"pos_geral": 1010, "pos_local": 6, "co_escola": 31074454, "nome": "COLEGIO STELLA MATUTINA", "alunos": 11, "lc": 622.0, "ch": 599.45, "cn": 578.83, "mt": 672.25, "rd": 780.0, "media": 650.5, "is_marca": false}, {"pos_geral": 1019, "pos_local": 7, "co_escola": 31074411, "nome": "COLEGIO DOS SANTOS ANJOS", "alunos": 29, "lc": 601.05, "ch": 597.65, "cn": 571.95, "mt": 655.54, "rd": 825.52, "media": 650.34, "is_marca": false}, {"pos_geral": 1293, "pos_local": 9, "co_escola": 31353990, "nome": "SISTEMA EDUCACIONAL BATISTA CASTRO", "alunos": 17, "lc": 603.28, "ch": 585.06, "cn": 597.35, "mt": 663.34, "rd": 765.88, "media": 642.98, "is_marca": false}, {"pos_geral": 2762, "pos_local": 15, "co_escola": 31378291, "nome": "COLEGIO SARAH DAWSEY", "alunos": 15, "lc": 569.29, "ch": 573.99, "cn": 541.54, "mt": 594.99, "rd": 789.33, "media": 613.83, "is_marca": false}, {"pos_geral": 2916, "pos_local": 16, "co_escola": 31074331, "nome": "COLEGIO VIANNA JUNIOR", "alunos": 16, "lc": 574.11, "ch": 591.41, "cn": 560.26, "mt": 595.52, "rd": 735.0, "media": 611.26, "is_marca": false}, {"pos_geral": 4167, "pos_local": 18, "co_escola": 31074390, "nome": "FUNDACAO EDUCACIONAL MACHADO SOBRINHO", "alunos": 13, "lc": 554.44, "ch": 574.38, "cn": 541.71, "mt": 573.05, "rd": 715.38, "media": 591.79, "is_marca": false}, {"pos_geral": 6347, "pos_local": 20, "co_escola": 31230308, "nome": "PAINEIRA ESCOLA WALDORF", "alunos": 10, "lc": 523.45, "ch": 525.6, "cn": 516.77, "mt": 545.15, "rd": 676.0, "media": 557.39, "is_marca": false}, {"pos_geral": 6961, "pos_local": 21, "co_escola": 60012666, "nome": "Escola 60012666", "alunos": 8, "lc": 568.54, "ch": 551.99, "cn": 497.52, "mt": 526.05, "rd": 575.0, "media": 543.82, "is_marca": false}, {"pos_geral": 7111, "pos_local": 22, "co_escola": 31074292, "nome": "COL PIO XII", "alunos": 27, "lc": 554.74, "ch": 531.26, "cn": 508.68, "mt": 553.21, "rd": 554.07, "media": 540.39, "is_marca": false}], "de30a59": [{"pos_geral": 88, "pos_local": 1, "co_escola": 31317101, "nome": "COLEGIO APOGEU DE ENSINO FUNDAMENTAL E ENSINO MEDIO", "alunos": 38, "lc": 623.15, "ch": 646.45, "cn": 642.16, "mt": 753.88, "rd": 884.74, "media": 710.08, "is_marca": true}, {"pos_geral": 835, "pos_local": 5, "co_escola": 31074471, "nome": "ESCOLA SESI GRANBERY", "alunos": 38, "lc": 607.22, "ch": 579.8, "cn": 552.56, "mt": 677.26, "rd": 861.05, "media": 655.58, "is_marca": false}, {"pos_geral": 1495, "pos_local": 10, "co_escola": 31074250, "nome": "COLEGIO NOSSA SENHORA DO CARMO", "alunos": 35, "lc": 582.67, "ch": 573.5, "cn": 564.37, "mt": 652.83, "rd": 818.86, "media": 638.45, "is_marca": false}, {"pos_geral": 1677, "pos_local": 11, "co_escola": 31324515, "nome": "COLEGIO EQUIPE DE JUIZ DE FORA", "alunos": 54, "lc": 586.53, "ch": 582.29, "cn": 563.53, "mt": 644.84, "rd": 796.67, "media": 634.77, "is_marca": false}, {"pos_geral": 1939, "pos_local": 12, "co_escola": 31367036, "nome": "COLEGIO E CURSO NOTA 10", "alunos": 50, "lc": 581.21, "ch": 591.48, "cn": 562.21, "mt": 615.49, "rd": 794.4, "media": 628.96, "is_marca": false}, {"pos_geral": 2721, "pos_local": 14, "co_escola": 31256285, "nome": "COLEGIO APOGEU-UNIDADE III DE ENSINO FUNDAMENTAL E ENSINO MEDIO", "alunos": 35, "lc": 569.19, "ch": 570.16, "cn": 555.52, "mt": 626.09, "rd": 750.86, "media": 614.36, "is_marca": true}, {"pos_geral": 5337, "pos_local": 19, "co_escola": 31306266, "nome": "COLEGIO CONEXAO KIDS DE ENSINO FUNDAMENTAL E ENSINO MEDIO", "alunos": 33, "lc": 546.86, "ch": 553.05, "cn": 518.73, "mt": 570.34, "rd": 681.82, "media": 574.16, "is_marca": false}], "ge60": [{"pos_geral": 202, "pos_local": 2, "co_escola": 31354910, "nome": "CENTRO EDUCACIONAL CAVE", "alunos": 118, "lc": 625.2, "ch": 627.19, "cn": 623.73, "mt": 719.59, "rd": 855.76, "media": 690.29, "is_marca": false}, {"pos_geral": 239, "pos_local": 3, "co_escola": 31074373, "nome": "COLEGIO SANTA CATARINA", "alunos": 130, "lc": 628.13, "ch": 631.12, "cn": 610.58, "mt": 729.55, "rd": 834.46, "media": 686.77, "is_marca": false}, {"pos_geral": 440, "pos_local": 4, "co_escola": 31074098, "nome": "COLEGIO DOS JESUITAS", "alunos": 145, "lc": 614.4, "ch": 612.73, "cn": 590.88, "mt": 674.67, "rd": 862.07, "media": 670.95, "is_marca": false}, {"pos_geral": 1040, "pos_local": 8, "co_escola": 31074101, "nome": "COLEGIO ACADEMIA", "alunos": 64, "lc": 597.59, "ch": 577.92, "cn": 560.16, "mt": 673.68, "rd": 839.38, "media": 649.75, "is_marca": false}, {"pos_geral": 2112, "pos_local": 13, "co_escola": 31356816, "nome": "COLEGIO APOGEU - UNIDADE II DE ENSINO FUNDAMENTAL ANOS FINAIS E ENSINO MEDIO", "alunos": 209, "lc": 577.34, "ch": 571.43, "cn": 557.48, "mt": 638.6, "rd": 783.54, "media": 625.68, "is_marca": true}, {"pos_geral": 4152, "pos_local": 17, "co_escola": 31310735, "nome": "COL CONEXAO", "alunos": 103, "lc": 565.67, "ch": 555.44, "cn": 531.13, "mt": 585.84, "rd": 721.75, "media": 591.97, "is_marca": false}]};
 
 function deltaClass(v) { return v > 5 ? 'delta-pos' : v < -5 ? 'delta-neg' : 'delta-neu'; }
 function deltaStr(v) { return (v >= 0 ? '+' : '') + v.toFixed(1); }
@@ -634,7 +658,7 @@ function buildBenchmarkSection() {
     const rd = d.redacao.media;  const rdB = b.redacao.media;  const drd = rd - rdB;
 
     html += `<tr>
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:6px"></span>${u}</td>
+      <td>${u}</td>
       <td style="font-size:0.72rem;color:#64748b">${bLabel}</td>
       <td>${cn}</td><td class="${deltaClass(dcn)}">${deltaStr(dcn)}</td>
       <td>${ch}</td><td class="${deltaClass(dch)}">${deltaStr(dch)}</td>
@@ -731,7 +755,7 @@ function buildBairroTabs() {
     const b = BENCH_BAIRRO[u];
     const btn = document.createElement('button');
     btn.className = 'bairro-tab' + (u === bairroAtivo ? ' ativo' : '');
-    btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${corIdx(u)};margin-right:5px"></span>${u}`;
+    btn.innerHTML = `${u}`;
     btn.onclick = () => { bairroAtivo = u; buildBairroTabs(); buildBairroConteudo(); };
     wrap.appendChild(btn);
   });
@@ -744,52 +768,75 @@ function buildBairroConteudo() {
   if (!bairroAtivo || !BENCH_BAIRRO[bairroAtivo]) return;
 
   const b = BENCH_BAIRRO[bairroAtivo];
-  const posClass = b.nossa_pos === 1 ? 'pos-1' : b.nossa_pos === 2 ? 'pos-2' : b.nossa_pos === 3 ? 'pos-3' : 'pos-n';
 
-  // Badge de posição
-  const badge = document.createElement('div');
-  badge.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap';
-  badge.innerHTML = `
-    <div class="bairro-badge">📍 ${b.bairro} — ${b.municipio} (${b.uf})</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="pos-badge ${posClass}">${b.nossa_pos || '?'}º</span>
-      <span style="font-size:0.82rem;font-weight:600;color:#1e293b">
-        ${b.nossa_pos === 1 ? '🏆 Líder do bairro!' : `${b.nossa_pos}º de ${b.n_escolas} escolas com dados ENEM`}
-      </span>
-    </div>`;
-  wrap.appendChild(badge);
+  // Localização + posição — texto limpo, sem emojis
+  const info = document.createElement('div');
+  info.style.cssText = 'margin-bottom:14px;font-size:0.84rem;color:#64748b';
+  const posInfo = b.nossa_pos === 1
+    ? '<strong style="color:#1e326e">1ª posição</strong> no bairro'
+    : `<strong style="color:#1e326e">${b.nossa_pos}ª posição</strong> de ${b.n_escolas} escolas`;
+  info.innerHTML = `Bairro <strong style="color:#1e293b">${b.bairro}</strong> — ${b.municipio} (${b.uf}) &nbsp;·&nbsp; ${posInfo}`;
+  wrap.appendChild(info);
 
-  // Tabela de concorrentes
+  // Tabela
   const tableWrap = document.createElement('div');
-  tableWrap.className = 'table-wrap';
-  const cols = ['Pos','Escola','N','CN','CH','LC','MT','Reda\u00e7\u00e3o','Nota Geral'];
-  let html = `<table class="conc-table"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+  tableWrap.style.cssText = 'overflow-x:auto';
 
-  b.escolas.forEach(e => {
-    const cls = e.nossa ? 'nossa-linha' : '';
-    const nota = e.nota_geral ? e.nota_geral.toFixed(1) : '—';
-    const posC2 = e.pos === 1 ? 'pos-1' : e.pos === 2 ? 'pos-2' : e.pos === 3 ? 'pos-3' : 'pos-n';
-    html += `<tr class="${cls}">
-      <td><span class="pos-badge ${posC2}" style="width:24px;height:24px;font-size:0.72rem">${e.pos}º</span></td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.nome}">${e.nome}${e.n && e.n < 30 ? ' <span style="color:#94a3b8;font-size:0.7rem;font-style:italic">— amostra pequena</span>' : ''}</td>
-      <td>${e.n || '—'}</td>
-      <td>${e.CN ? e.CN.toFixed(1) : '—'}</td>
-      <td>${e.CH ? e.CH.toFixed(1) : '—'}</td>
-      <td>${e.LC ? e.LC.toFixed(1) : '—'}</td>
-      <td>${e.MT ? e.MT.toFixed(1) : '—'}</td>
-      <td>${e.redacao ? e.redacao.toFixed(1) : '—'}</td>
-      <td style="font-weight:700">${nota}</td>
-    </tr>`;
+  const thR = 'padding:8px 10px;text-align:right;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+  const thL = 'padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+  const thC = 'padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+
+  let html = `<table style="width:100%;border-collapse:collapse;font-size:0.84rem">
+    <thead><tr>
+      <th style="${thL}">Posição</th>
+      <th style="${thC}">Escola</th>
+      <th style="${thR}">Alunos</th>
+      <th style="${thR}">CN</th>
+      <th style="${thR}">CH</th>
+      <th style="${thR}">LC</th>
+      <th style="${thR}">MT</th>
+      <th style="${thR}">Redação</th>
+      <th style="${thR}">Média</th>
+    </tr></thead><tbody>`;
+
+  b.escolas.forEach((e, idx) => {
+    const isMarca = !!e.nossa;
+    const bg  = isMarca ? '#eef2ff' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc');
+    const fw  = isMarca ? '700' : '400';
+    const cor = isMarca ? '#1e326e' : '#1e293b';
+    const star = isMarca ? ' ★' : '';
+    const nota = e.nota_geral ? e.nota_geral.toFixed(2) : '—';
+    const tdR = (v) => `<td style="padding:7px 10px;text-align:right">${v}</td>`;
+
+    html += `<tr style="background:${bg};border-bottom:1px solid #f1f5f9">`;
+    html += `<td style="padding:7px 14px"><strong style="color:${cor}">${e.pos}</strong></td>`;
+    html += `<td style="padding:7px 14px;text-align:left">
+      <span style="font-weight:${fw};color:${cor}">${e.nome}${star}</span>
+      ${e.n && e.n < 30 ? '<br><span style="font-size:0.72rem;color:#94a3b8;font-style:italic">amostra pequena</span>' : ''}
+    </td>`;
+    html += tdR(e.n || '—');
+    html += tdR(e.CN    ? e.CN.toFixed(2)        : '—');
+    html += tdR(e.CH    ? e.CH.toFixed(2)        : '—');
+    html += tdR(e.LC    ? e.LC.toFixed(2)        : '—');
+    html += tdR(e.MT    ? e.MT.toFixed(2)        : '—');
+    html += tdR(e.redacao ? e.redacao.toFixed(2) : '—');
+    html += `<td style="padding:7px 10px;text-align:right"><strong style="color:${isMarca?'#1e326e':'#334155'}">${nota}</strong></td>`;
+    html += '</tr>';
   });
 
-  // Linha benchmark do bairro
-  const ag = (v) => v ? v.toFixed(1) : '—';
-  html += `<tr class="bench-linha">
-    <td colspan="2">Média do bairro (${b.n_escolas} escolas)</td>
-    <td>—</td>
-    <td>${ag(b.bench_areas.CN)}</td><td>${ag(b.bench_areas.CH)}</td>
-    <td>${ag(b.bench_areas.LC)}</td><td>${ag(b.bench_areas.MT)}</td>
-    <td>${ag(b.bench_redacao)}</td><td>—</td>
+  // Linha de média do bairro
+  const ag = (v) => v ? v.toFixed(2) : '—';
+  html += `<tr style="background:#f1f5f9;border-top:2px solid #e2e8f0">
+    <td colspan="2" style="padding:7px 14px;color:#64748b;font-style:italic;font-size:0.82rem">
+      Média do bairro (${b.n_escolas} escolas)
+    </td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">—</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">${ag(b.bench_areas.CN)}</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">${ag(b.bench_areas.CH)}</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">${ag(b.bench_areas.LC)}</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">${ag(b.bench_areas.MT)}</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">${ag(b.bench_redacao)}</td>
+    <td style="padding:7px 10px;text-align:right;color:#64748b">—</td>
   </tr>`;
   html += '</tbody></table>';
   tableWrap.innerHTML = html;
@@ -919,7 +966,7 @@ function buildCompUnitTabs() {
   UNIDADES.forEach(function(u) {
     var btn = document.createElement('button');
     btn.className = 'comp-unit-tab' + (u===compUnitAtivo?' ativo':'');
-    btn.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+corIdx(u)+';margin-right:5px"></span>'+u;
+    btn.innerHTML = u;
     btn.onclick = function(){compUnitAtivo=u;buildCompUnitTabs();buildCompUnitConteudo();};
     wrap.appendChild(btn);
   });
@@ -1146,7 +1193,7 @@ function buildPriorityPanel() {
     else if(r.dMarca >= 0)  { acao='Valorizar'; acaoCor='#d97706'; }
     else                    { acao='Remediar';  acaoCor='#dc2626'; }
     tbody += '<tr>'
-      +'<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+corIdx(r.u)+';margin-right:6px"></span>'+r.u+'</td>'
+      +'<td>'+r.u+'</td>'
       +'<td>'+r.n+'</td>'
       +'<td><b>'+r.media.toFixed(1)+'</b></td>'
       +'<td class="'+dMCls+'">'+(r.dMarca>0?'+':'')+r.dMarca+'</td>'
@@ -1204,6 +1251,77 @@ const RANKING_POSICOES = {"Zona Norte": {"uf": "MG", "municipio": "Juiz de Fora"
 const TOPTIERS = {"CN": {"n_escolas": 100, "media_top100": 660.5, "media_top50": 680.0, "entrada_top100": 632.9}, "CH": {"n_escolas": 100, "media_top100": 657.0, "media_top50": 671.9, "entrada_top100": 636.7}, "LC": {"n_escolas": 100, "media_top100": 643.6, "media_top50": 653.3, "entrada_top100": 629.5}, "MT": {"n_escolas": 100, "media_top100": 786.9, "media_top50": 811.6, "entrada_top100": 750.4}, "REDACAO": {"n_escolas": 100, "media_top100": 873.0, "media_top50": 881.7, "entrada_top100": 860.5}};
 
 criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();buildRankAreaConteudo();buildHeatmap();buildKPIs();buildSintese();buildCompUnitTabs();buildCompUnitConteudo();buildManchete();buildPriorityPanel();buildTabelaFiltrada();markSmallSamples();buildBairroTabs();buildBairroConteudo();atualizar();buildBenchmarkSection();
+
+// ── Concorrentes por Município ────────────────────────────────────────────────
+(function() {
+  function th(txt, right) {
+    var w = right ? ';width:72px' : '';
+    return '<th style="padding:8px ' + (right ? '10px' : '14px') + ';text-align:' + (right ? 'right' : 'left') +
+      ';white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none' + w + '">' + txt + '</th>';
+  }
+  function td(v, right, extra) {
+    return '<td style="padding:7px ' + (right ? '10px' : '14px') + ';text-align:' + (right ? 'right' : 'left') +
+      ';' + (extra || '') + '">' + v + '</td>';
+  }
+
+  function renderConcMun(grupo) {
+    var rows = CONCORRENTES_MUN[grupo] || [];
+    var cont = document.getElementById('concmunTabela');
+    if (!cont) return;
+    if (!rows.length) {
+      cont.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:28px">Nenhuma escola neste grupo.</p>';
+      return;
+    }
+    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem">';
+    html += '<thead><tr>';
+    html += '<th style="padding:8px 14px;text-align:left;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:100px">Posição Geral</th>' + '<th style="padding:8px 10px;text-align:right;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:72px">Posição</th>' +
+            '<th style="padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:35%">Escola</th>' +
+            th('Alunos', true) + th('LC', true) + th('CH', true) +
+            th('CN', true) + th('MT', true) + th('RD', true) + th('Média', true);
+    html += '</tr></thead><tbody>';
+
+    rows.forEach(function(r, idx) {
+      var isMarca = r.is_marca;
+      var posGrupo = idx + 1;
+      var bg  = isMarca ? '#eef2ff' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc');
+      var fw  = isMarca ? '700' : '400';
+      var cor = isMarca ? '#1e326e' : '#1e293b';
+      var star = isMarca ? ' ★' : '';
+      html += '<tr style="background:' + bg + ';border-bottom:1px solid #f1f5f9">';
+      html += td('<span style="color:#94a3b8;font-size:0.77rem">' + r.pos_geral + '</span>', false);
+      html += td('<strong style="color:' + cor + '">' + posGrupo + '</strong>', true);
+      html += '<td style="padding:7px 14px;text-align:left">' +
+                '<span style="font-weight:' + fw + ';color:' + cor + '">' + r.nome.toLowerCase().replace(/(?:^|\s|-)\S/g, c => c.toUpperCase()) + star + '</span>' +
+                '<br><span style="font-size:0.72rem;color:#94a3b8">' + r.co_escola + '</span>' +
+              '</td>';
+      html += td(r.alunos, true);
+      html += td(r.lc.toFixed(2), true);
+      html += td(r.ch.toFixed(2), true);
+      html += td(r.cn.toFixed(2), true);
+      html += td(r.mt.toFixed(2), true);
+      html += td(r.rd.toFixed(2), true);
+      html += td('<strong style="color:' + (isMarca ? '#1e326e' : '#334155') + '">' + r.media.toFixed(2) + '</strong>', true);
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    cont.innerHTML = html;
+  }
+
+  window.filtrarConcMun = function(grupo) {
+    document.querySelectorAll('#concmunTabs .concmun-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.grupo === grupo);
+    });
+    renderConcMun(grupo);
+  };
+
+  document.querySelectorAll('#concmunTabs .concmun-btn').forEach(function(b) {
+    b.addEventListener('click', function() { filtrarConcMun(b.dataset.grupo); });
+  });
+
+  renderConcMun('de30a59');
+})();
+
 </script>
 
 </body>
