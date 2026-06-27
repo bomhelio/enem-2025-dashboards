@@ -366,8 +366,8 @@ function buildMarcasRow() {
         <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.n_inscritos}</div><div class="kpi-mini-lab">Inscritos</div></div>
         <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.taxa_presenca}%</div><div class="kpi-mini-lab">Presença</div></div>
         <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.nota_geral.media}</div><div class="kpi-mini-lab">Nota Geral</div></div>
-        <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.areas.MT.media}</div><div class="kpi-mini-lab">Média MT</div><div class="kpi-mini-sub">Brasil 513,8</div></div>
-        <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.redacao.media}</div><div class="kpi-mini-lab">Redação</div><div class="kpi-mini-sub">Brasil 618,8</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.areas.MT.media}</div><div class="kpi-mini-lab">Média MT</div><div class="kpi-mini-sub">Top 100 ${TOPTIERS.MT.media_top100.toFixed(1).replace('.',',')}</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.redacao.media}</div><div class="kpi-mini-lab">Redação</div><div class="kpi-mini-sub">Top 100 ${TOPTIERS.REDACAO.media_top100.toFixed(1).replace('.',',')}</div></div>
         <div class="kpi-mini"><div class="kpi-mini-val" style="color:${CORES[n]}">${g.areas.MT.pct_700}%</div><div class="kpi-mini-lab">%≥700 MT</div></div>
       </div>`;
     wrap.appendChild(card);
