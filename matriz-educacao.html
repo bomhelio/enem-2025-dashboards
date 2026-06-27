@@ -303,7 +303,7 @@
 <p class="section-titulo" id="sec-historico" style="scroll-margin-top:84px">Evolução Histórica</p>
 <div class="card" style="margin-bottom:16px">
   <div class="card-titulo">Médias da rede privada por município — 2021 a 2025</div>
-  <div class="card-sub">Escolha o município e a área. Nota média da rede privada municipal ao longo dos anos, com referências de <span style="color:#94a3b8;font-weight:600">Rio de Janeiro</span>, <span style="color:#64748b;font-weight:600">Brasil</span> e <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>.</div>
+  <div class="card-sub">Escolha o município e a área. Nota média da rede privada municipal ao longo dos anos, com referências de <span style="color:#94a3b8;font-weight:600">RJ (estado)</span>, <span style="color:#64748b;font-weight:600">Brasil</span> e <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>.</div>
   <div id="histMunSel" class="hist-sel" style="margin-bottom:2px"></div>
   <div id="histMetricSel" class="hist-sel"></div>
   <div class="chart-wrap" style="height:320px"><canvas id="chartHistMercado"></canvas></div>
@@ -311,7 +311,8 @@
 </div>
 <div class="card" style="margin-bottom:16px">
   <div class="card-titulo">Médias das Unidades — 2024 e 2025</div>
-  <div class="card-sub">Nota média de cada unidade Matriz Educação, comparada à <span style="color:#334155;font-weight:600">rede privada de Rio de Janeiro</span>, ao <span style="color:#64748b;font-weight:600">Brasil</span> e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).</div>
+  <div class="card-sub">Escolha o município de referência e a área. Nota média de cada unidade Matriz Educação, comparada à <span style="color:#334155;font-weight:600">rede privada do município selecionado</span>, à <span style="color:#94a3b8;font-weight:600">RJ (estado)</span>, ao <span style="color:#64748b;font-weight:600">Brasil</span> e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).</div>
+  <div id="histMunSel2" class="hist-sel" style="margin-bottom:2px"></div>
   <div id="histMetricSel2" class="hist-sel"></div>
   <div class="chart-wrap" style="height:300px"><canvas id="chartHistUnidades"></canvas></div>
   <div class="hist-nota">A série por escola começa em 2024 — o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
@@ -1448,7 +1449,7 @@ const HIST_BENCH = {"municipios": {"3304557": {"nome": "Rio de Janeiro", "anos":
   const ACC = () => cssv('--azul-m') || '#2563eb';
   const MORD = HIST_BENCH.mun_ordem, MULTI = MORD.length > 1;
   const ufNome = HIST_BENCH.uf.nome, ufSig = HIST_BENCH.uf.sigla;
-  let metMer="GERAL", metUni="GERAL", munSel=MORD[0];
+  let metMer="GERAL", metUni="GERAL", munSel=MORD[0], munSel2=MORD[0];
 
   function val(o,met){ if(!o) return null;
     if(met==="GERAL"){ const v=["CN","CH","LC","MT","RD"].map(k=>o[k]).filter(x=>x!=null); return v.length?+(v.reduce((s,x)=>s+x,0)/v.length).toFixed(1):null; }
@@ -1468,7 +1469,7 @@ const HIST_BENCH = {"municipios": {"3304557": {"nome": "Rio de Janeiro", "anos":
     const mun=HIST_BENCH.municipios[munSel];
     const ds=[
       {label:'Rede privada de '+mun.nome, data:serie(mun.anos,years,m), borderColor:C_JF, backgroundColor:C_JF+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:C_JF, fill:false},
-      {label:'Rede privada de '+ufSig, data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
+      {label:'Rede privada de '+ufSig+' (estado)', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
@@ -1478,12 +1479,9 @@ const HIST_BENCH = {"municipios": {"3304557": {"nome": "Rio de Janeiro", "anos":
   function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
     const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];
       return {label:nome,data:serie(anos,years,m),borderColor:c,backgroundColor:c,borderWidth:2.4,tension:0,pointRadius:4,fill:false}; });
-    if(!MULTI){ const mun=HIST_BENCH.municipios[MORD[0]];
-      ds.push({label:'Rede privada de '+mun.nome,data:serie(mun.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
-      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_MG,borderWidth:1.6,borderDash:[4,4],pointRadius:3,fill:false});
-    } else {
-      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
-    }
+    const munU=HIST_BENCH.municipios[munSel2];
+    ds.push({label:'Rede privada de '+munU.nome,data:serie(munU.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
+    ds.push({label:'Rede privada de '+ufSig+' (estado)',data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_MG,borderWidth:1.6,borderDash:[4,4],pointRadius:3,fill:false});
     ds.push({label:'Brasil',data:serie(HIST_BENCH.brasil.anos,years,m),borderColor:C_BR,borderWidth:1.6,borderDash:[2,3],pointRadius:3,fill:false});
     ds.push({label:'Top 100 BR',data:topSerie(years,m),borderColor:TOP,borderWidth:1.8,borderDash:[4,3],pointRadius:3,fill:false});
     if(chUni) chUni.destroy();
@@ -1498,9 +1496,11 @@ const HIST_BENCH = {"municipios": {"3304557": {"nome": "Rio de Janeiro", "anos":
   function selMerArea(){ btns(document.getElementById('histMetricSel'), METRICAS, metMer, k=>{metMer=k;selMerArea();buildMercado();}); }
   function selMun(){ const box=document.getElementById('histMunSel'); if(!box||!MULTI) return;
     btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel, k=>{munSel=k;selMun();buildMercado();}); }
+  function selMun2(){ const box=document.getElementById('histMunSel2'); if(!box||!MULTI) return;
+    btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel2, k=>{munSel2=k;selMun2();buildUnidades();}); }
   function selUniArea(){ btns(document.getElementById('histMetricSel2'), METRICAS, metUni, k=>{metUni=k;selUniArea();buildUnidades();}); }
 
-  function init(){ if(!document.getElementById('chartHistMercado')) return; selMun(); selMerArea(); selUniArea(); buildMercado(); buildUnidades(); }
+  function init(){ if(!document.getElementById('chartHistMercado')) return; selMun(); selMun2(); selMerArea(); selUniArea(); buildMercado(); buildUnidades(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
