@@ -310,7 +310,7 @@
 </div>
 <div class="card" style="margin-bottom:16px">
   <div class="card-titulo">Médias das Unidades — 2024 e 2025</div>
-  <div class="card-sub">Nota média de cada unidade Apogeu, comparada à <span style="color:#475569;font-weight:600">rede privada de Juiz de Fora</span>, à <span style="color:#94a3b8;font-weight:600">rede privada de MG</span>, ao <span style="color:#64748b;font-weight:600">Brasil</span> e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).</div>
+  <div class="card-sub">Nota média de cada unidade Apogeu, comparada à <span style="color:#334155;font-weight:600">rede privada de Juiz de Fora</span>, à <span style="color:#94a3b8;font-weight:600">rede privada de MG</span>, ao <span style="color:#64748b;font-weight:600">Brasil</span> e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).</div>
   <div id="histMetricSel2" class="hist-sel"></div>
   <div class="chart-wrap" style="height:300px"><canvas id="chartHistUnidades"></canvas></div>
   <div class="hist-nota">A série por escola começa em 2024 — o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
@@ -1424,8 +1424,7 @@ const HIST_UNIDADES = {"Santo Antônio I": {"2024": {"CN": 625.5, "CH": 653.3, "
 const HIST_BENCH = {"municipio": {"nome": "Juiz de Fora", "anos": {"2021": {"CN": 553.7, "CH": 588.1, "LC": 563.9, "MT": 635.4, "RD": 768.3}, "2022": {"CN": 555.6, "CH": 591.1, "LC": 573.3, "MT": 642.8, "RD": 804.6}, "2023": {"CN": 573.3, "CH": 595.0, "LC": 573.5, "MT": 671.8, "RD": 814.5}, "2024": {"CN": 575.9, "CH": 595.3, "LC": 580.8, "MT": 661.0, "RD": 836.0}, "2025": {"CN": 572.4, "CH": 589.6, "LC": 593.3, "MT": 655.7, "RD": 798.9}}}, "uf": {"sigla": "MG", "anos": {"2021": {"CN": 559.2, "CH": 588.4, "LC": 561.7, "MT": 641.4, "RD": 787.5}, "2022": {"CN": 553.6, "CH": 588.9, "LC": 569.5, "MT": 648.5, "RD": 807.1}, "2023": {"CN": 569.0, "CH": 591.9, "LC": 572.5, "MT": 669.5, "RD": 819.3}, "2024": {"CN": 568.4, "CH": 590.6, "LC": 575.9, "MT": 653.0, "RD": 819.8}, "2025": {"CN": 571.5, "CH": 584.9, "LC": 589.5, "MT": 659.6, "RD": 788.9}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
   const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
   const PAL = ["#2563eb","#f97316","#16a34a","#9333ea"];
-  const TOP = "#f59e0b", REF_MG = "#94a3b8", REF_JF = "#94a3b8", REF_BR = "#64748b";
-  const U_JF = "#475569", U_MG = "#94a3b8", U_BR = "#b6c2cf";  // refs do grafico 2 (3 tons distintos)
+  const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";  // familia de contexto (mesmas cores nos 2 graficos)
   const css = k => (getComputedStyle(document.documentElement).getPropertyValue(k)||"").trim();
   const ACC = () => css('--azul-m') || '#2563eb';
   let metMer = "GERAL", metUni = "GERAL", chMer = null, chUni = null;
@@ -1448,11 +1447,11 @@ const HIST_BENCH = {"municipio": {"nome": "Juiz de Fora", "anos": {"2021": {"CN"
   }
 
   function buildMercado(){
-    const years=["2021","2022","2023","2024","2025"], a=ACC(), m=metMer;
+    const years=["2021","2022","2023","2024","2025"], m=metMer;
     const ds=[
-      {label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:a, backgroundColor:a+'22', borderWidth:2.6, tension:0.25, pointRadius:4, pointBackgroundColor:a, fill:false},
-      {label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:REF_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
-      {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:REF_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
+      {label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:C_JF, backgroundColor:C_JF+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:C_JF, fill:false},
+      {label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
+      {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
     if(chMer) chMer.destroy();
@@ -1465,9 +1464,9 @@ const HIST_BENCH = {"municipio": {"nome": "Juiz de Fora", "anos": {"2021": {"CN"
       const c=PAL[i++%PAL.length];
       return {label:nome, data:serie(anos,years,m), borderColor:c, backgroundColor:c, borderWidth:2.6, tension:0, pointRadius:5, fill:false};
     });
-    ds.push({label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:U_JF, borderWidth:1.6, borderDash:[6,4], pointRadius:3, fill:false});
-    ds.push({label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:U_MG, borderWidth:1.6, borderDash:[4,4], pointRadius:3, fill:false});
-    ds.push({label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:U_BR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
+    ds.push({label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:C_JF, borderWidth:1.8, borderDash:[6,4], pointRadius:3, fill:false});
+    ds.push({label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[4,4], pointRadius:3, fill:false});
+    ds.push({label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
     ds.push({label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], pointRadius:3, fill:false});
     if(chUni) chUni.destroy();
     chUni = new Chart(document.getElementById('chartHistUnidades'), {type:'line', data:{labels:years,datasets:ds}, options:opts(m)});
