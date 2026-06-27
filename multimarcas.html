@@ -224,7 +224,7 @@
 <div class="grid-2">
   <div class="card">
     <div class="card-titulo">Média de Redação e % ≥ 800</div>
-    <div class="card-sub">Linha tracejada = média nacional 618,8</div>
+    <div class="card-sub">Linha tracejada = média top 100 em Redação (873,0)</div>
     <div class="chart-wrap"><canvas id="chartRedacao"></canvas></div>
   </div>
   <div class="card">
@@ -425,7 +425,7 @@ function buildRedacao() {
       {label:'Média Redação',data:vals,backgroundColor:labels.map(n=>CORES[n]+'bb'),borderColor:labels.map(n=>CORES[n]),borderWidth:2,yAxisID:'y'},
       {label:'% ≥ 800',data:pct800,type:'line',borderColor:'#f59e0b',backgroundColor:'#f59e0b33',borderWidth:2,pointRadius:5,yAxisID:'y2'}
     ]},
-    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{y,x}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const py=y.getPixelForValue(618.8);ctx.beginPath();ctx.moveTo(x.left,py);ctx.lineTo(x.right,py);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font='10px sans-serif';ctx.fillText('Brasil 618,8',x.right-70,py-4);ctx.restore();}}],
+    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{y,x}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const py=y.getPixelForValue(TOPTIERS.REDACAO.media_top100);ctx.beginPath();ctx.moveTo(x.left,py);ctx.lineTo(x.right,py);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font='10px sans-serif';ctx.fillText('Top 100 873,0',x.right-75,py-4);ctx.restore();}}],
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{min:550,max:950,ticks:{font:{size:10}}},y2:{position:'right',min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{drawOnChartArea:false}},x:{ticks:{font:{size:10}}}}}
   });
 }
