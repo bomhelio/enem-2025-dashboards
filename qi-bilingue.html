@@ -7,9 +7,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --azul: #1a3a6e;
-    --azul-m: #2563eb;
-    --laranja: #93c5fd;
+    --azul: #4c1d95;
+    --azul-m: #7c3aed;
+    --laranja: color-mix(in srgb, var(--azul) 30%, #fff);
     --cinza-bg: #f1f5f9;
     --cinza-card: #ffffff;
     --cinza-borda: #e2e8f0;
@@ -21,13 +21,13 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cinza-bg); color: var(--texto); }
-  header { background: linear-gradient(135deg, #1e326e 0%, #0a1940 100%); color: white; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  header { background: linear-gradient(135deg, #4c1d95 0%, #0a1940 100%); color: white; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
   header p { font-size: 0.85rem; color: #cbd5e1; margin-top: 4px; }
-  .badge { background: #93c5fd; color: #1a3a6e; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+  .badge { background: color-mix(in srgb, var(--azul) 30%, #fff); color: #4c1d95; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
   main { max-width: 1400px; margin: 0 auto; padding: 24px 16px; }
   .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
-  .kpi { background: var(--cinza-card); border-radius: 12px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .kpi { background: var(--cinza-card); border-radius: 14px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 6px 16px rgba(15,23,42,0.05); }
   .kpi-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-sec); font-weight: 600; }
   .kpi-value { font-size: 2rem; font-weight: 800; color: var(--azul); line-height: 1.1; margin: 6px 0 2px; }
   .kpi-sub { font-size: 0.78rem; color: var(--texto-sec); }
@@ -47,7 +47,7 @@
   .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
   .grid-red3 { display: grid; grid-template-columns: 0.7fr 1.2fr 1.6fr; gap: 16px; margin-bottom: 16px; }
   .grid-red3 .card { display: flex; flex-direction: column; }
-  .card { background: var(--cinza-card); border-radius: 12px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card { background: var(--cinza-card); border-radius: 14px; padding: 20px; border: 1px solid var(--cinza-borda); box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 6px 16px rgba(15,23,42,0.05); }
   .card-titulo { font-size: 0.85rem; font-weight: 700; color: var(--texto); margin-bottom: 4px; }
   .card-sub { font-size: 0.75rem; color: var(--texto-sec); margin-bottom: 16px; }
   .chart-wrap { position: relative; height: 280px; }
@@ -59,7 +59,7 @@
   td { padding: 9px 12px; text-align: center; border-bottom: 1px solid var(--cinza-borda); font-size: 0.8rem; }
   td:first-child { text-align: left; font-weight: 600; }
   tr:hover td { background: #f8fafc; }
-  tr.linha-geral td { background: #eff6ff; font-weight: 700; border-top: 2px solid var(--azul-m); }
+  tr.linha-geral td { background: color-mix(in srgb, var(--azul) 8%, #fff); font-weight: 700; border-top: 2px solid var(--azul-m); }
   tr.linha-brasil td { background: #fef9ef; color: var(--amarelo); font-style: italic; border-top: 1px dashed var(--amarelo); }
   .acima { color: var(--verde); font-weight: 700; }
   .abaixo { color: var(--vermelho); }
@@ -75,7 +75,7 @@
   .presenca-seg { display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; color: white; transition: width 0.4s; }
   .section-titulo { display:flex; align-items:center; gap:14px; margin:52px 0 28px;
     font-size:1.05rem; font-weight:700; text-transform:uppercase; letter-spacing:0.10em;
-    color:#2563eb; white-space:nowrap; }
+    color:#7c3aed; white-space:nowrap; }
   .section-titulo::before, .section-titulo::after { content:''; flex:1; height:1px; background:var(--cinza-borda); }
   .rank-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .rank-tab { padding: 7px 18px; border-radius: 20px; border: 2px solid var(--cinza-borda); background: white; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--texto-sec); transition: all 0.15s; }
@@ -143,8 +143,8 @@
   .pos-2 { background: #e2e8f0; color: #374151; border: 2px solid #94a3b8; }
   .pos-3 { background: #fed7aa; color: #9a3412; border: 2px solid #f97316; }
   .pos-n { background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; }
-  .nossa-linha td { background: #eff6ff !important; font-weight: 700; }
-  .nossa-linha td:first-child::before { content: "★ "; color: #2563eb; }
+  .nossa-linha td { background: color-mix(in srgb, var(--azul) 8%, #fff) !important; font-weight: 700; }
+  .nossa-linha td:first-child::before { content: "★ "; color: #7c3aed; }
   .bench-linha td { background: #f8fafc; font-style: italic; color: #64748b;
                     border-top: 1px dashed #94a3b8; font-size: 0.75rem; }
   .conc-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
@@ -168,7 +168,7 @@
   .manchete-card { background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 0; }
   .manchete-titulo { display:flex; align-items:center; gap:14px; margin:32px 0 24px;
     font-size:1.05rem; font-weight:700; text-transform:uppercase; letter-spacing:0.10em;
-    color:#2563eb; white-space:nowrap; }
+    color:#7c3aed; white-space:nowrap; }
   .manchete-titulo::before, .manchete-titulo::after { content:''; flex:1; height:1px; background:var(--cinza-borda,#e2e8f0); }
   .manchete-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,280px));
     gap: 12px; margin-bottom: 20px; justify-content: center; }
@@ -260,8 +260,12 @@
     background: #fff; color: #475569; font-size: 0.83rem; cursor: pointer;
     transition: all 0.15s ease; font-family: inherit;
   }
-  .concmun-btn:hover { border-color: #1e326e; color: #1e326e; background: #f0f4ff; }
-  .concmun-btn.active { background: #1e326e; color: #fff; border-color: #1e326e; font-weight: 600; }
+  .concmun-btn:hover { border-color: #4c1d95; color: #4c1d95; background: color-mix(in srgb, var(--azul) 8%, #fff); }
+  .concmun-btn.active { background: #4c1d95; color: #fff; border-color: #4c1d95; font-weight: 600; }
+
+  /* Refinamentos visuais */
+  .kpi, .card { transition: transform .16s ease, box-shadow .16s ease; }
+  .kpi:hover, .card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15,23,42,0.07), 0 16px 32px rgba(15,23,42,0.09); }
 </style>
 </head>
 <body>
@@ -323,7 +327,7 @@
 <div class="card-titulo" style="margin-bottom:4px">Competências de Redação por Unidade</div>
 <div class="card-sub" style="margin-bottom:12px">Barras coloridas = unidade &nbsp;·&nbsp; Cinza = média da marca &nbsp;·&nbsp; Delta (±) vs marca</div>
 <div id="compUnitTabs" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-  <button onclick="compUnitAtivo='Zona Norte';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">Zona Norte</button>
+  <button onclick="compUnitAtivo='Zona Norte';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #7c3aed;background:#7c3aed;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">Zona Norte</button>
   <button onclick="compUnitAtivo='Santo Antônio I';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600">Santo Antônio I</button>
   <button onclick="compUnitAtivo='Santo Antônio II';buildCompUnitTabs();buildCompUnitConteudo();" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:2px solid #cbd5e1;background:#f8fafc;color:#475569;cursor:pointer;font-size:0.82rem;font-weight:600">Santo Antônio II</button>
 </div>
@@ -370,7 +374,7 @@
     Delta = diferença entre a nota da unidade e a média da rede privada do mesmo município.
     <span class="delta-pos">Verde</span> = acima &nbsp;·&nbsp; <span class="delta-neg">Vermelho</span> = abaixo &nbsp;·&nbsp; <span class="delta-neu">Amarelo</span> = dentro de ±5 pontos.
   </div>
-  <div id="benchmarkSection"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Unidade</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Benchmark</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">Reda&ccedil;&atilde;o</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; Red.</th></tr></thead><tbody><tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2563eb;margin-right:6px"></span>Zona Norte</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Juiz de Fora &mdash; 22 esc.</td><td style="text-align:center">555.5</td><td style="text-align:center;color:#dc2626;font-weight:700">-16.9</td><td style="text-align:center">570.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-19.0</td><td style="text-align:center">568.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-25.1</td><td style="text-align:center">626.1</td><td style="text-align:center;color:#dc2626;font-weight:700">-29.6</td><td style="text-align:center">754.4</td><td style="text-align:center;color:#dc2626;font-weight:700">-44.5</td></tr>
+  <div id="benchmarkSection"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.8rem"><thead><tr><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Unidade</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:left">Benchmark</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CN</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; CH</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; LC</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; MT</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">Reda&ccedil;&atilde;o</th><th style="background:var(--azul,#334155);color:white;padding:10px 12px;font-size:0.74rem;font-weight:600;letter-spacing:0.04em;text-align:center">&Delta; Red.</th></tr></thead><tbody><tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#7c3aed;margin-right:6px"></span>Zona Norte</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Juiz de Fora &mdash; 22 esc.</td><td style="text-align:center">555.5</td><td style="text-align:center;color:#dc2626;font-weight:700">-16.9</td><td style="text-align:center">570.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-19.0</td><td style="text-align:center">568.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-25.1</td><td style="text-align:center">626.1</td><td style="text-align:center;color:#dc2626;font-weight:700">-29.6</td><td style="text-align:center">754.4</td><td style="text-align:center;color:#dc2626;font-weight:700">-44.5</td></tr>
 <tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:6px"></span>Santo Antônio I</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Juiz de Fora &mdash; 22 esc.</td><td style="text-align:center">642.2</td><td style="text-align:center;color:#16a34a;font-weight:700">+69.8</td><td style="text-align:center">646.5</td><td style="text-align:center;color:#16a34a;font-weight:700">+56.9</td><td style="text-align:center">623.1</td><td style="text-align:center;color:#16a34a;font-weight:700">+29.8</td><td style="text-align:center">753.9</td><td style="text-align:center;color:#16a34a;font-weight:700">+98.2</td><td style="text-align:center">884.7</td><td style="text-align:center;color:#16a34a;font-weight:700">+85.8</td></tr>
 <tr style="border-bottom:1px solid #e2e8f0"><td style="padding:9px 10px;text-align:left;font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:6px"></span>Santo Antônio II</td><td style="padding:9px 10px;font-size:0.72rem;color:#64748b;text-align:left">Juiz de Fora &mdash; 22 esc.</td><td style="text-align:center">557.5</td><td style="text-align:center;color:#dc2626;font-weight:700">-14.9</td><td style="text-align:center">571.1</td><td style="text-align:center;color:#dc2626;font-weight:700">-18.5</td><td style="text-align:center">577.2</td><td style="text-align:center;color:#dc2626;font-weight:700">-16.1</td><td style="text-align:center">638.6</td><td style="text-align:center;color:#dc2626;font-weight:700">-17.1</td><td style="text-align:center">783.9</td><td style="text-align:center;color:#dc2626;font-weight:700">-15.0</td></tr>
 <tr style="background:#f8fafc;font-style:italic;color:#64748b;border-top:1px dashed #94a3b8"><td colspan="2" style="padding:8px 10px">Benchmark Municipal (ref.)</td><td colspan="2" style="text-align:center">572.4</td><td colspan="2" style="text-align:center">589.6</td><td colspan="2" style="text-align:center">593.3</td><td colspan="2" style="text-align:center">655.7</td><td colspan="2" style="text-align:center">798.9</td></tr></tbody></table></div></div>
@@ -512,7 +516,7 @@ function buildPresenca() {
   const todos=[...UNIDADES].sort((a,b)=>DADOS.unidades[b].taxa_presenca-DADOS.unidades[a].taxa_presenca);
   todos.forEach((u)=>{
     const d=DADOS.unidades[u]; const pres=d.taxa_presenca; const aus=(100-pres).toFixed(1);
-    const cor=pres>=95?'#16a34a':pres>=85?'#2563eb':'#dc2626';
+    const cor=pres>=95?'#16a34a':pres>=85?'#7c3aed':'#dc2626';
     const row=document.createElement('div'); row.style.marginBottom='10px';
     row.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.8rem"><span style="font-weight:600">${u}</span><span style="color:${cor};font-weight:700">${pres}% presentes (${d.n_presentes}/${d.n_inscritos})</span></div><div class="presenca-bar"><div class="presenca-seg" style="width:${pres}%;background:${cor}">${pres}%</div><div class="presenca-seg" style="width:${aus}%;background:#e2e8f0;color:#64748b">${aus>3?aus+'%':''}</div></div>`;
     wrap.appendChild(row);
@@ -773,8 +777,8 @@ function buildBairroConteudo() {
   const info = document.createElement('div');
   info.style.cssText = 'margin-bottom:14px;font-size:0.84rem;color:#64748b';
   const posInfo = b.nossa_pos === 1
-    ? '<strong style="color:#1e326e">1ª posição</strong> no bairro'
-    : `<strong style="color:#1e326e">${b.nossa_pos}ª posição</strong> de ${b.n_escolas} escolas`;
+    ? '<strong style="color:#4c1d95">1ª posição</strong> no bairro'
+    : `<strong style="color:#4c1d95">${b.nossa_pos}ª posição</strong> de ${b.n_escolas} escolas`;
   info.innerHTML = `Bairro <strong style="color:#1e293b">${b.bairro}</strong> — ${b.municipio} (${b.uf}) &nbsp;·&nbsp; ${posInfo}`;
   wrap.appendChild(info);
 
@@ -782,9 +786,9 @@ function buildBairroConteudo() {
   const tableWrap = document.createElement('div');
   tableWrap.style.cssText = 'overflow-x:auto';
 
-  const thR = 'padding:8px 10px;text-align:right;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
-  const thL = 'padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
-  const thC = 'padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+  const thR = 'padding:8px 10px;text-align:right;white-space:nowrap;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+  const thL = 'padding:8px 14px;text-align:left;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
+  const thC = 'padding:8px 14px;text-align:left;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none';
 
   let html = `<table style="width:100%;border-collapse:collapse;font-size:0.84rem">
     <thead><tr>
@@ -803,7 +807,7 @@ function buildBairroConteudo() {
     const isMarca = !!e.nossa;
     const bg  = isMarca ? '#eef2ff' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc');
     const fw  = isMarca ? '700' : '400';
-    const cor = isMarca ? '#1e326e' : '#1e293b';
+    const cor = isMarca ? '#4c1d95' : '#1e293b';
     const star = isMarca ? ' ★' : '';
     const nota = e.nota_geral ? e.nota_geral.toFixed(2) : '—';
     const tdR = (v) => `<td style="padding:7px 10px;text-align:right">${v}</td>`;
@@ -820,7 +824,7 @@ function buildBairroConteudo() {
     html += tdR(e.LC    ? e.LC.toFixed(2)        : '—');
     html += tdR(e.MT    ? e.MT.toFixed(2)        : '—');
     html += tdR(e.redacao ? e.redacao.toFixed(2) : '—');
-    html += `<td style="padding:7px 10px;text-align:right"><strong style="color:${isMarca?'#1e326e':'#334155'}">${nota}</strong></td>`;
+    html += `<td style="padding:7px 10px;text-align:right"><strong style="color:${isMarca?'#4c1d95':'#334155'}">${nota}</strong></td>`;
     html += '</tr>';
   });
 
@@ -925,11 +929,11 @@ function buildSintese() {
       corValor: '#16a34a'
     },
     {
-      tipo: '⭐ Destaque', cor: '#2563eb',
+      tipo: '⭐ Destaque', cor: '#7c3aed',
       titulo: destUnit,
       sub: 'Melhor nota geral da marca',
       valor: (DADOS.unidades[destUnit]?.nota_geral?.media||0) + ' pts',
-      corValor: '#2563eb'
+      corValor: '#7c3aed'
     },
     {
       tipo: piorUnit ? '⚠ Atenção' : '✓ Equilíbrio', cor: piorUnit ? '#dc2626' : '#16a34a',
@@ -1086,7 +1090,7 @@ function buildManchete() {
 
 // C3 — Tipo de ação nos cards de prioridade (integrado no buildPriorityPanel)
 var ACAO_TIPO = {
-  marketing:    {label:'📢 Comunicar',  cor:'#2563eb', desc:'Resultado acima da média — divulgar'},
+  marketing:    {label:'📢 Comunicar',  cor:'#7c3aed', desc:'Resultado acima da média — divulgar'},
   valorizacao:  {label:'🏆 Valorizar',  cor:'#d97706', desc:'Destaque pedagógico a reconhecer'},
   remediacao:   {label:'📚 Remediar',   cor:'#dc2626', desc:'Gap a atacar com ação pedagógica'},
 };
@@ -1189,7 +1193,7 @@ function buildPriorityPanel() {
     var dBCls = r.dBrasil > 0 ? 'prio-pos' : r.dBrasil < 0 ? 'prio-neg' : 'prio-neu';
     var dTCls = r.dTop !== null ? (r.dTop >= 0 ? 'prio-pos' : 'prio-neg') : '';
     var acao, acaoCor;
-    if(r.dMarca > 20)       { acao='Comunicar'; acaoCor='#2563eb'; }
+    if(r.dMarca > 20)       { acao='Comunicar'; acaoCor='#7c3aed'; }
     else if(r.dMarca >= 0)  { acao='Valorizar'; acaoCor='#d97706'; }
     else                    { acao='Remediar';  acaoCor='#dc2626'; }
     tbody += '<tr>'
@@ -1260,7 +1264,7 @@ criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();b
   function th(txt, right) {
     var w = right ? ';width:72px' : '';
     return '<th style="padding:8px ' + (right ? '10px' : '14px') + ';text-align:' + (right ? 'right' : 'left') +
-      ';white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none' + w + '">' + txt + '</th>';
+      ';white-space:nowrap;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none' + w + '">' + txt + '</th>';
   }
   function td(v, right, extra) {
     return '<td style="padding:7px ' + (right ? '10px' : '14px') + ';text-align:' + (right ? 'right' : 'left') +
@@ -1272,7 +1276,7 @@ criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();b
     function pgBtn(label, page, isActive, isDisabled) {
       var s = 'border-radius:8px;width:36px;height:36px;font-size:0.9rem;font-family:inherit;cursor:' +
         (isDisabled || isActive ? 'default' : 'pointer') + ';';
-      if (isActive)    s += 'border:none;background:#1a3a6e;color:white;';
+      if (isActive)    s += 'border:none;background:#4c1d95;color:white;';
       else if (isDisabled) s += 'border:none;background:#e2e8f0;color:#94a3b8;';
       else             s += 'border:1.5px solid #cbd5e1;background:white;color:#475569;';
       var extra = (!isDisabled && !isActive)
@@ -1326,9 +1330,9 @@ criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();b
 
     var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem">';
     html += '<thead><tr>';
-    html += '<th style="padding:8px 14px;text-align:left;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:100px">Posição Geral</th>' +
-            '<th style="padding:8px 10px;text-align:right;white-space:nowrap;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:72px">Posição</th>' +
-            '<th style="padding:8px 14px;text-align:left;background:#1a3a6e;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:35%">Escola</th>' +
+    html += '<th style="padding:8px 14px;text-align:left;white-space:nowrap;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:100px">Posição Geral</th>' +
+            '<th style="padding:8px 10px;text-align:right;white-space:nowrap;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:72px">Posição</th>' +
+            '<th style="padding:8px 14px;text-align:left;background:#4c1d95;color:white;font-size:0.77rem;font-weight:600;letter-spacing:0.04em;border-bottom:none;width:35%">Escola</th>' +
             th('Alunos', true) + th('LC', true) + th('CH', true) +
             th('CN', true) + th('MT', true) + th('RD', true) + th('Média', true);
     html += '</tr></thead><tbody>';
