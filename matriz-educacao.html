@@ -644,6 +644,10 @@ function buildBenchmarkSection() {
   const areas = ['CN','CH','LC','MT'];
   const areaNome = {CN:'C. Natureza',CH:'C. Humanas',LC:'Linguagens',MT:'Matem\u00e1tica'};
 
+  // Unidades em mais de um municipio? (afeta leitura do Delta e da referencia)
+  const _munsUnid = new Set(UNIDADES.map(u => BENCH_UNIDADE[u] && BENCH_UNIDADE[u].municipio).filter(Boolean));
+  const multiMun = _munsUnid.size > 1;
+
   // Tabela principal: cada unidade vs seu benchmark
   const tableWrap = document.createElement('div');
   tableWrap.className = 'table-wrap';
@@ -677,7 +681,7 @@ function buildBenchmarkSection() {
   // Linha benchmark geral (referência)
   if (BENCH_GERAL && BENCH_GERAL.areas) {
     html += `<tr class="tr-bench">
-      <td colspan="2">${BENCH_LABEL} (ref.)</td>
+      <td colspan="2">${BENCH_LABEL} (ref.)${multiMun ? ` <span style="font-weight:400;font-size:0.72rem">\u2014 base das unidades deste munic\u00edpio; \u00e2ncora de compara\u00e7\u00e3o para as demais</span>` : ``}</td>
       <td colspan="2">${BENCH_GERAL.areas.CN.media}</td>
       <td colspan="2">${BENCH_GERAL.areas.CH.media}</td>
       <td colspan="2">${BENCH_GERAL.areas.LC.media}</td>
@@ -700,6 +704,13 @@ function buildBenchmarkSection() {
   wrapChart.appendChild(canvas);
   chartDiv.appendChild(wrapChart);
   wrap.appendChild(chartDiv);
+
+  if (multiMun) {
+    const _capMun = document.createElement('div');
+    _capMun.style.cssText = 'margin-top:10px;font-size:0.74rem;color:#94a3b8;font-style:italic;line-height:1.5';
+    _capMun.innerHTML = 'Cada barra \u00e9 o \u0394 da unidade contra a m\u00e9dia da rede privada do <strong>seu pr\u00f3prio munic\u00edpio</strong> \u2014 como h\u00e1 unidades em munic\u00edpios diferentes, as bases variam. N\u00e3o leia as barras como ranking de desempenho entre unidades.';
+    wrap.appendChild(_capMun);
+  }
 
   const benchAreas = [...areas, 'Reda\u00e7\u00e3o'];
   const datasets = UNIDADES.map(u => {
