@@ -179,6 +179,8 @@
   .card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15,23,42,0.07), 0 16px 32px rgba(15,23,42,0.09); }
   .marca-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,23,42,0.08); }
   .section-titulo { font-weight:700; }
+  .mm-hist-sel { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 6px; }
+  .mm-hist-nota { margin-top:10px; font-size:0.74rem; color:#94a3b8; font-style:italic; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -243,6 +245,21 @@
 </div>
 
 <!-- Competências -->
+<p class="section-titulo" id="sec-mm-historico" style="scroll-margin-top:84px">Evolução Comparativa das Marcas</p>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Marcas — 2024 e 2025</div>
+  <div class="card-sub">Nota média de cada marca ao longo do tempo, comparada ao <span style="color:#64748b;font-weight:600">Brasil</span> (rede privada) e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>. Use os botões para alternar a área.</div>
+  <div id="mmHistSel1" class="mm-hist-sel"></div>
+  <div class="chart-wrap" style="height:340px"><canvas id="chartMMHist"></canvas></div>
+  <div class="mm-hist-nota">A série por marca cobre 2024–2025: o INEP suprimiu o código da escola nos microdados de 2021 a 2023, então não é possível recompor a nota de uma escola — e, portanto, de uma marca — nesses anos.</div>
+</div>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Mercado nacional — 2021 a 2025</div>
+  <div class="card-sub">Pano de fundo macro: <span style="color:#334155;font-weight:600">Brasil</span> (rede privada) e <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> ao longo de cinco anos.</div>
+  <div id="mmHistSel2" class="mm-hist-sel"></div>
+  <div class="chart-wrap" style="height:300px"><canvas id="chartMMMercado"></canvas></div>
+  <div class="mm-hist-nota">O <strong>Top 100 BR</strong> (média das 100 melhores escolas do país) só aparece a partir de 2024 — ranquear escolas exige o código da escola, suprimido de 2021 a 2023.</div>
+</div>
 <p class="section-titulo">Competências da Redação por Marca</p>
 <div class="card" style="margin-bottom:16px">
   <div class="card-sub" style="margin-bottom:18px">Nota máxima por competência: 200 pontos. Comparativo direto entre as 5 marcas.</div>
@@ -796,6 +813,57 @@ buildBenchMun();
 buildResumoBairro();
 atualizar();
 buildMMPriority();
+</script>
+<script>
+(function(){
+const HIST_MARCAS = {"Apogeu": {"2024": {"CN": 565.9, "CH": 583.8, "LC": 570.7, "MT": 660.9, "RD": 849.2}, "2025": {"CN": 568.7, "CH": 581.1, "LC": 582.2, "MT": 652.6, "RD": 793.6}}, "QI Bilíngue": {"2024": {"CN": 565.1, "CH": 601.6, "LC": 575.5, "MT": 654.8, "RD": 828.4}, "2025": {"CN": 567.7, "CH": 588.3, "LC": 593.3, "MT": 644.2, "RD": 807.0}}, "Matriz Educação": {"2024": {"CN": 512.6, "CH": 541.9, "LC": 546.8, "MT": 572.1, "RD": 715.3}, "2025": {"CN": 519.6, "CH": 539.2, "LC": 562.1, "MT": 578.0, "RD": 674.9}}, "Colégio Leonardo da Vinci": {"2024": {"CN": 594.2, "CH": 624.6, "LC": 601.5, "MT": 705.2, "RD": 840.5}, "2025": {"CN": 611.6, "CH": 615.8, "LC": 626.2, "MT": 725.3, "RD": 812.3}}, "Cubo Global": {"2024": {"CN": 580.5, "CH": 589.2, "LC": 583.6, "MT": 668.2, "RD": 813.4}, "2025": {"CN": 543.1, "CH": 579.5, "LC": 585.7, "MT": 630.4, "RD": 745.6}}};
+const HIST_BR = {"2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}};
+const HIST_TOP = {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}};
+const MARCA_COR = {"Apogeu": "#2563eb", "QI Bilíngue": "#7c3aed", "Matriz Educação": "#15803d", "Colégio Leonardo da Vinci": "#c2560a", "Cubo Global": "#0f9d96"};
+const MARCA_LBL = {"Apogeu": "Apogeu", "QI Bilíngue": "QI Bilíngue", "Matriz Educação": "Matriz", "Colégio Leonardo da Vinci": "Leonardo da Vinci", "Cubo Global": "Cubo Global"};
+  const AREAS=[["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
+  const NEUT="#334155", BR_COR="#64748b", TOP="#f59e0b";
+  let met1="GERAL", met2="GERAL", ch1=null, ch2=null;
+
+  function val(o,met){ if(!o) return null;
+    if(met==="GERAL"){const v=["CN","CH","LC","MT","RD"].map(k=>o[k]).filter(x=>x!=null); return v.length?+(v.reduce((s,x)=>s+x,0)/v.length).toFixed(1):null;}
+    return o[met]==null?null:o[met]; }
+  function syncChart(inst,id,labels,datasets,opt){
+    if(inst&&inst.data.datasets.length===datasets.length){ inst.data.labels=labels;
+      datasets.forEach((d,i)=>{for(const k in d)inst.data.datasets[i][k]=d[k];}); inst.options=opt; inst.update(); return inst; }
+    if(inst)inst.destroy();
+    return new Chart(document.getElementById(id),{type:'line',data:{labels,datasets},options:opt}); }
+  function opts(met){ const ti=met==="GERAL"?"Nota média (5 áreas)":(met==="RD"?"Nota média de Redação":"Nota média");
+    return {responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10},usePointStyle:true}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y!=null?c.parsed.y:'—'}`}}},
+      scales:{y:{ticks:{font:{size:10}},grid:{color:'#f1f5f9'},title:{display:true,text:ti,font:{size:10}}},
+              x:{ticks:{font:{size:11}},grid:{display:false}}}}; }
+
+  function buildMarcas(){ const years=["2024","2025"], m=met1;
+    const ds=Object.keys(HIST_MARCAS).map(marca=>{ const c=MARCA_COR[marca];
+      return {label:MARCA_LBL[marca], data:years.map(y=>val(HIST_MARCAS[marca][y],m)), borderColor:c, backgroundColor:c, borderWidth:2.8, tension:0, pointRadius:5, fill:false}; });
+    ds.push({label:'Brasil', data:years.map(y=>val(HIST_BR[y],m)), borderColor:BR_COR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
+    ds.push({label:'Top 100 BR', data:years.map(y=>{const o=HIST_TOP[y];return o?val(o,m):null;}), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], pointRadius:3, fill:false});
+    ch1=syncChart(ch1,'chartMMHist',years,ds,opts(m)); }
+
+  function buildMercado(){ const years=["2021","2022","2023","2024","2025"], m=met2;
+    const ds=[
+      {label:'Brasil — rede privada', data:years.map(y=>val(HIST_BR[y],m)), borderColor:NEUT, backgroundColor:NEUT+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:NEUT, fill:false},
+      {label:'Top 100 BR', data:years.map(y=>{const o=HIST_TOP[y];return o?val(o,m):null;}), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
+    ];
+    ch2=syncChart(ch2,'chartMMMercado',years,ds,opts(m)); }
+
+  function btns(box,met,onPick){ box.innerHTML=''; AREAS.forEach(([k,lb])=>{ const on=k===met;
+    const b=document.createElement('button'); b.textContent=lb;
+    b.style.cssText=`padding:5px 12px;border-radius:7px;border:1px solid ${on?NEUT:'#e2e8f0'};background:${on?NEUT:'#fff'};color:${on?'#fff':'#475569'};font-size:0.74rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;transition:all .15s`;
+    b.onclick=()=>onPick(k); box.appendChild(b); }); }
+  function sel1(){ btns(document.getElementById('mmHistSel1'),met1,k=>{met1=k;sel1();buildMarcas();}); }
+  function sel2(){ btns(document.getElementById('mmHistSel2'),met2,k=>{met2=k;sel2();buildMercado();}); }
+
+  function init(){ if(!document.getElementById('chartMMHist'))return; sel1();sel2();buildMarcas();buildMercado(); }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
+})();
 </script>
 </body>
 </html>
