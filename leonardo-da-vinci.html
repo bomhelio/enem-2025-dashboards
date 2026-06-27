@@ -266,6 +266,8 @@
   /* Refinamentos visuais */
   .kpi, .card { transition: transform .16s ease, box-shadow .16s ease; }
   .kpi:hover, .card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15,23,42,0.07), 0 16px 32px rgba(15,23,42,0.09); }
+  .hist-sel { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 6px; }
+  .hist-nota { margin-top:10px; font-size:0.74rem; color:#94a3b8; font-style:italic; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -298,6 +300,22 @@
   <div class="kpi"><div class="kpi-label">Média MT</div><div class="kpi-value" id="kMT">652.6</div><div class="kpi-sub">Brasil MT: 513,8</div></div>
 </div>
 
+<p class="section-titulo" id="sec-historico" style="scroll-margin-top:84px">Evolução Histórica</p>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Médias da rede privada de Porto Alegre — 2021 a 2025</div>
+  <div class="card-sub">Nota média da rede privada do município ao longo dos anos, com referências de <span style="color:#94a3b8;font-weight:600">Rio Grande do Sul</span>, <span style="color:#64748b;font-weight:600">Brasil</span> e <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>. Use os botões para alternar a área.</div>
+  
+  <div id="histMetricSel" class="hist-sel"></div>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartHistMercado"></canvas></div>
+  <div class="hist-nota">O <strong>Top 100 BR</strong> (média das 100 melhores escolas do país) só aparece a partir de 2024: ranquear escolas exige o código da escola, que o INEP suprimiu nos microdados de 2021 a 2023.</div>
+</div>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Médias das Unidades — 2024 e 2025</div>
+  <div class="card-sub">Nota média de cada unidade Colégio Leonardo da Vinci, comparada à <span style="color:#334155;font-weight:600">rede privada de Porto Alegre</span>, à <span style="color:#94a3b8;font-weight:600">rede privada de RS</span>, ao <span style="color:#64748b;font-weight:600">Brasil</span> e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).</div>
+  <div id="histMetricSel2" class="hist-sel"></div>
+  <div class="chart-wrap" style="height:300px"><canvas id="chartHistUnidades"></canvas></div>
+  <div class="hist-nota">A série por escola começa em 2024 — o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
+</div>
 <p class="section-titulo">Filtrar por Unidade</p>
 <div class="filtro-card">
   <div class="filtro-chips" id="filtroChips"><button class="btn-todas" onclick="toggleTodas()">Selecionar Todas</button></div>
@@ -1382,5 +1400,73 @@ criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();b
 
 </script>
 
+<script>
+(function(){
+const HIST_UNIDADES = {"Alfa": {"2024": {"CN": 609.2, "CH": 628.6, "LC": 602.9, "MT": 719.1, "RD": 839.3}, "2025": {"CN": 624.1, "CH": 627.2, "LC": 628.7, "MT": 749.7, "RD": 821.2}}, "Beta": {"2024": {"CN": 580.4, "CH": 613.3, "LC": 597.2, "MT": 693.0, "RD": 839.1}, "2025": {"CN": 596.8, "CH": 602.7, "LC": 623.4, "MT": 696.4, "RD": 802.1}}};
+const HIST_BENCH = {"municipios": {"4314902": {"nome": "Porto Alegre", "anos": {"2021": {"CN": 548.8, "CH": 590.5, "LC": 568.7, "MT": 632.1, "RD": 743.3}, "2022": {"CN": 553.9, "CH": 588.3, "LC": 579.2, "MT": 645.6, "RD": 773.0}, "2023": {"CN": 558.7, "CH": 588.7, "LC": 579.9, "MT": 658.6, "RD": 776.4}, "2024": {"CN": 556.9, "CH": 581.2, "LC": 578.3, "MT": 632.8, "RD": 772.1}, "2025": {"CN": 561.1, "CH": 583.5, "LC": 598.2, "MT": 651.7, "RD": 747.0}}}}, "mun_ordem": ["4314902"], "uf": {"sigla": "RS", "nome": "Rio Grande do Sul", "anos": {"2021": {"CN": 543.0, "CH": 577.8, "LC": 558.1, "MT": 617.4, "RD": 737.7}, "2022": {"CN": 541.0, "CH": 577.9, "LC": 567.4, "MT": 626.2, "RD": 761.9}, "2023": {"CN": 550.9, "CH": 580.6, "LC": 570.8, "MT": 642.3, "RD": 771.3}, "2024": {"CN": 550.6, "CH": 573.5, "LC": 572.2, "MT": 620.8, "RD": 769.2}, "2025": {"CN": 550.1, "CH": 572.5, "LC": 587.7, "MT": 632.7, "RD": 744.4}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
+
+  const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
+  const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
+  const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
+  const cssv = k => (getComputedStyle(document.documentElement).getPropertyValue(k)||"").trim();
+  const ACC = () => cssv('--azul-m') || '#2563eb';
+  const MORD = HIST_BENCH.mun_ordem, MULTI = MORD.length > 1;
+  const ufNome = HIST_BENCH.uf.nome, ufSig = HIST_BENCH.uf.sigla;
+  let metMer="GERAL", metUni="GERAL", munSel=MORD[0];
+
+  function val(o,met){ if(!o) return null;
+    if(met==="GERAL"){ const v=["CN","CH","LC","MT","RD"].map(k=>o[k]).filter(x=>x!=null); return v.length?+(v.reduce((s,x)=>s+x,0)/v.length).toFixed(1):null; }
+    return o[met]==null?null:o[met]; }
+  const serie=(anos,years,met)=>years.map(y=>val(anos[y],met));
+  const topSerie=(years,met)=>years.map(y=>{const o=HIST_BENCH.top100.anos[y];return o?val(o,met):null;});
+
+  function opts(met){ const ti=met==="GERAL"?"Nota média (5 áreas)":(met==="RD"?"Nota média de Redação":"Nota média");
+    return {responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10},usePointStyle:true}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y!=null?c.parsed.y:'—'}`}}},
+      scales:{y:{ticks:{font:{size:10}},grid:{color:'#f1f5f9'},title:{display:true,text:ti,font:{size:10}}},
+              x:{ticks:{font:{size:11}},grid:{display:false}}}}; }
+
+  let chMer=null, chUni=null;
+  function buildMercado(){ const years=["2021","2022","2023","2024","2025"], m=metMer;
+    const mun=HIST_BENCH.municipios[munSel];
+    const ds=[
+      {label:'Rede privada de '+mun.nome, data:serie(mun.anos,years,m), borderColor:C_JF, backgroundColor:C_JF+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:C_JF, fill:false},
+      {label:'Rede privada de '+ufSig, data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
+      {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
+      {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
+    ];
+    if(chMer) chMer.destroy();
+    chMer=new Chart(document.getElementById('chartHistMercado'),{type:'line',data:{labels:years,datasets:ds},options:opts(m)}); }
+
+  function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
+    const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];
+      return {label:nome,data:serie(anos,years,m),borderColor:c,backgroundColor:c,borderWidth:2.4,tension:0,pointRadius:4,fill:false}; });
+    if(!MULTI){ const mun=HIST_BENCH.municipios[MORD[0]];
+      ds.push({label:'Rede privada de '+mun.nome,data:serie(mun.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
+      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_MG,borderWidth:1.6,borderDash:[4,4],pointRadius:3,fill:false});
+    } else {
+      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
+    }
+    ds.push({label:'Brasil',data:serie(HIST_BENCH.brasil.anos,years,m),borderColor:C_BR,borderWidth:1.6,borderDash:[2,3],pointRadius:3,fill:false});
+    ds.push({label:'Top 100 BR',data:topSerie(years,m),borderColor:TOP,borderWidth:1.8,borderDash:[4,3],pointRadius:3,fill:false});
+    if(chUni) chUni.destroy();
+    chUni=new Chart(document.getElementById('chartHistUnidades'),{type:'line',data:{labels:years,datasets:ds},options:opts(m)}); }
+
+  function btns(box, items, ativo, onPick){ box.innerHTML=''; const a=ACC();
+    items.forEach(([k,lbl])=>{ const on=k===ativo;
+      const b=document.createElement('button'); b.textContent=lbl;
+      b.style.cssText=`padding:5px 12px;border-radius:7px;border:1px solid ${on?a:'#e2e8f0'};background:${on?a:'#fff'};color:${on?'#fff':'#475569'};font-size:0.74rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;transition:all .15s`;
+      b.onclick=()=>onPick(k); box.appendChild(b); }); }
+
+  function selMerArea(){ btns(document.getElementById('histMetricSel'), METRICAS, metMer, k=>{metMer=k;selMerArea();buildMercado();}); }
+  function selMun(){ const box=document.getElementById('histMunSel'); if(!box||!MULTI) return;
+    btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel, k=>{munSel=k;selMun();buildMercado();}); }
+  function selUniArea(){ btns(document.getElementById('histMetricSel2'), METRICAS, metUni, k=>{metUni=k;selUniArea();buildUnidades();}); }
+
+  function init(){ if(!document.getElementById('chartHistMercado')) return; selMun(); selMerArea(); selUniArea(); buildMercado(); buildUnidades(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
 </body>
 </html>

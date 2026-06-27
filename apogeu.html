@@ -304,6 +304,7 @@
 <div class="card" style="margin-bottom:16px">
   <div class="card-titulo">Médias da rede privada de Juiz de Fora — 2021 a 2025</div>
   <div class="card-sub">Nota média da rede privada do município ao longo dos anos, com referências de <span style="color:#94a3b8;font-weight:600">Minas Gerais</span>, <span style="color:#64748b;font-weight:600">Brasil</span> e <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>. Use os botões para alternar a área.</div>
+  
   <div id="histMetricSel" class="hist-sel"></div>
   <div class="chart-wrap" style="height:320px"><canvas id="chartHistMercado"></canvas></div>
   <div class="hist-nota">O <strong>Top 100 BR</strong> (média das 100 melhores escolas do país) só aparece a partir de 2024: ranquear escolas exige o código da escola, que o INEP suprimiu nos microdados de 2021 a 2023.</div>
@@ -1420,73 +1421,70 @@ criarChips();buildCompBars();buildPresenca();buildTabela();buildRankAreaTabs();b
 
 <script>
 (function(){
-const HIST_UNIDADES = {"Santo Antônio I": {"2024": {"CN": 625.5, "CH": 653.3, "LC": 627.1, "MT": 760.1, "RD": 931.9}, "2025": {"CN": 642.2, "CH": 646.5, "LC": 623.1, "MT": 753.9, "RD": 884.7}}, "Santo Antônio II": {"2024": {"CN": 556.8, "CH": 575.4, "LC": 565.3, "MT": 648.3, "RD": 847.7}, "2025": {"CN": 557.5, "CH": 571.1, "LC": 577.2, "MT": 638.6, "RD": 783.9}}, "Zona Norte": {"2024": {"CN": 551.9, "CH": 556.6, "LC": 541.2, "MT": 623.8, "RD": 772.2}, "2025": {"CN": 555.5, "CH": 570.6, "LC": 568.2, "MT": 626.1, "RD": 754.4}}};
-const HIST_BENCH = {"municipio": {"nome": "Juiz de Fora", "anos": {"2021": {"CN": 553.7, "CH": 588.1, "LC": 563.9, "MT": 635.4, "RD": 768.3}, "2022": {"CN": 555.6, "CH": 591.1, "LC": 573.3, "MT": 642.8, "RD": 804.6}, "2023": {"CN": 573.3, "CH": 595.0, "LC": 573.5, "MT": 671.8, "RD": 814.5}, "2024": {"CN": 575.9, "CH": 595.3, "LC": 580.8, "MT": 661.0, "RD": 836.0}, "2025": {"CN": 572.4, "CH": 589.6, "LC": 593.3, "MT": 655.7, "RD": 798.9}}}, "uf": {"sigla": "MG", "anos": {"2021": {"CN": 559.2, "CH": 588.4, "LC": 561.7, "MT": 641.4, "RD": 787.5}, "2022": {"CN": 553.6, "CH": 588.9, "LC": 569.5, "MT": 648.5, "RD": 807.1}, "2023": {"CN": 569.0, "CH": 591.9, "LC": 572.5, "MT": 669.5, "RD": 819.3}, "2024": {"CN": 568.4, "CH": 590.6, "LC": 575.9, "MT": 653.0, "RD": 819.8}, "2025": {"CN": 571.5, "CH": 584.9, "LC": 589.5, "MT": 659.6, "RD": 788.9}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
+const HIST_UNIDADES = {"Zona Norte": {"2024": {"CN": 551.9, "CH": 556.6, "LC": 541.2, "MT": 623.8, "RD": 772.2}, "2025": {"CN": 555.5, "CH": 570.6, "LC": 568.2, "MT": 626.1, "RD": 754.4}}, "Santo Antônio I": {"2024": {"CN": 625.5, "CH": 653.3, "LC": 627.1, "MT": 760.1, "RD": 931.9}, "2025": {"CN": 642.2, "CH": 646.5, "LC": 623.1, "MT": 753.9, "RD": 884.7}}, "Santo Antônio II": {"2024": {"CN": 556.8, "CH": 575.4, "LC": 565.3, "MT": 648.3, "RD": 847.7}, "2025": {"CN": 557.5, "CH": 571.1, "LC": 577.2, "MT": 638.6, "RD": 783.9}}};
+const HIST_BENCH = {"municipios": {"3136702": {"nome": "Juiz de Fora", "anos": {"2021": {"CN": 553.7, "CH": 588.1, "LC": 563.9, "MT": 635.4, "RD": 768.3}, "2022": {"CN": 555.6, "CH": 591.1, "LC": 573.3, "MT": 642.8, "RD": 804.6}, "2023": {"CN": 573.3, "CH": 595.0, "LC": 573.5, "MT": 671.8, "RD": 814.5}, "2024": {"CN": 575.9, "CH": 595.3, "LC": 580.8, "MT": 661.0, "RD": 836.0}, "2025": {"CN": 572.4, "CH": 589.6, "LC": 593.3, "MT": 655.7, "RD": 798.9}}}}, "mun_ordem": ["3136702"], "uf": {"sigla": "MG", "nome": "Minas Gerais", "anos": {"2021": {"CN": 559.2, "CH": 588.4, "LC": 561.7, "MT": 641.4, "RD": 787.5}, "2022": {"CN": 553.6, "CH": 588.9, "LC": 569.5, "MT": 648.5, "RD": 807.1}, "2023": {"CN": 569.0, "CH": 591.9, "LC": 572.5, "MT": 669.5, "RD": 819.3}, "2024": {"CN": 568.4, "CH": 590.6, "LC": 575.9, "MT": 653.0, "RD": 819.8}, "2025": {"CN": 571.5, "CH": 584.9, "LC": 589.5, "MT": 659.6, "RD": 788.9}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
+
   const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
-  const PAL = ["#2563eb","#f97316","#16a34a","#9333ea"];
-  const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";  // familia de contexto (mesmas cores nos 2 graficos)
-  const css = k => (getComputedStyle(document.documentElement).getPropertyValue(k)||"").trim();
-  const ACC = () => css('--azul-m') || '#2563eb';
-  let metMer = "GERAL", metUni = "GERAL", chMer = null, chUni = null;
+  const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
+  const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
+  const cssv = k => (getComputedStyle(document.documentElement).getPropertyValue(k)||"").trim();
+  const ACC = () => cssv('--azul-m') || '#2563eb';
+  const MORD = HIST_BENCH.mun_ordem, MULTI = MORD.length > 1;
+  const ufNome = HIST_BENCH.uf.nome, ufSig = HIST_BENCH.uf.sigla;
+  let metMer="GERAL", metUni="GERAL", munSel=MORD[0];
 
-  function val(o, met){
-    if(!o) return null;
-    if(met==="GERAL"){ const v=["CN","CH","LC","MT","RD"].map(k=>o[k]).filter(x=>x!=null); return v.length ? +(v.reduce((s,x)=>s+x,0)/v.length).toFixed(1) : null; }
-    return o[met]==null ? null : o[met];
-  }
-  const serie = (anos, years, met) => years.map(y => val(anos[y], met));
-  const topSerie = (years, met) => years.map(y => { const o = HIST_BENCH.top100 && HIST_BENCH.top100.anos[y]; return o ? val(o, met) : null; });
+  function val(o,met){ if(!o) return null;
+    if(met==="GERAL"){ const v=["CN","CH","LC","MT","RD"].map(k=>o[k]).filter(x=>x!=null); return v.length?+(v.reduce((s,x)=>s+x,0)/v.length).toFixed(1):null; }
+    return o[met]==null?null:o[met]; }
+  const serie=(anos,years,met)=>years.map(y=>val(anos[y],met));
+  const topSerie=(years,met)=>years.map(y=>{const o=HIST_BENCH.top100.anos[y];return o?val(o,met):null;});
 
-  function opts(met){
-    const ti = met==="GERAL" ? "Nota média (5 áreas)" : (met==="RD" ? "Nota média de Redação" : "Nota média");
+  function opts(met){ const ti=met==="GERAL"?"Nota média (5 áreas)":(met==="RD"?"Nota média de Redação":"Nota média");
     return {responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10},usePointStyle:true}},
         tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y!=null?c.parsed.y:'—'}`}}},
       scales:{y:{ticks:{font:{size:10}},grid:{color:'#f1f5f9'},title:{display:true,text:ti,font:{size:10}}},
-              x:{ticks:{font:{size:11}},grid:{display:false}}}};
-  }
+              x:{ticks:{font:{size:11}},grid:{display:false}}}}; }
 
-  function buildMercado(){
-    const years=["2021","2022","2023","2024","2025"], m=metMer;
+  let chMer=null, chUni=null;
+  function buildMercado(){ const years=["2021","2022","2023","2024","2025"], m=metMer;
+    const mun=HIST_BENCH.municipios[munSel];
     const ds=[
-      {label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:C_JF, backgroundColor:C_JF+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:C_JF, fill:false},
-      {label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
+      {label:'Rede privada de '+mun.nome, data:serie(mun.anos,years,m), borderColor:C_JF, backgroundColor:C_JF+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:C_JF, fill:false},
+      {label:'Rede privada de '+ufSig, data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[6,4], tension:0.25, pointRadius:2, fill:false},
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
     if(chMer) chMer.destroy();
-    chMer = new Chart(document.getElementById('chartHistMercado'), {type:'line', data:{labels:years,datasets:ds}, options:opts(m)});
-  }
+    chMer=new Chart(document.getElementById('chartHistMercado'),{type:'line',data:{labels:years,datasets:ds},options:opts(m)}); }
 
-  function buildUnidades(){
-    const years=["2024","2025"], m=metUni; let i=0;
-    const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{
-      const c=PAL[i++%PAL.length];
-      return {label:nome, data:serie(anos,years,m), borderColor:c, backgroundColor:c, borderWidth:2.6, tension:0, pointRadius:5, fill:false};
-    });
-    ds.push({label:'Rede privada de JF', data:serie(HIST_BENCH.municipio.anos,years,m), borderColor:C_JF, borderWidth:1.8, borderDash:[6,4], pointRadius:3, fill:false});
-    ds.push({label:'Rede privada de MG', data:serie(HIST_BENCH.uf.anos,years,m), borderColor:C_MG, borderWidth:1.6, borderDash:[4,4], pointRadius:3, fill:false});
-    ds.push({label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
-    ds.push({label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], pointRadius:3, fill:false});
+  function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
+    const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];
+      return {label:nome,data:serie(anos,years,m),borderColor:c,backgroundColor:c,borderWidth:2.4,tension:0,pointRadius:4,fill:false}; });
+    if(!MULTI){ const mun=HIST_BENCH.municipios[MORD[0]];
+      ds.push({label:'Rede privada de '+mun.nome,data:serie(mun.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
+      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_MG,borderWidth:1.6,borderDash:[4,4],pointRadius:3,fill:false});
+    } else {
+      ds.push({label:'Rede privada de '+ufSig,data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_JF,borderWidth:1.8,borderDash:[6,4],pointRadius:3,fill:false});
+    }
+    ds.push({label:'Brasil',data:serie(HIST_BENCH.brasil.anos,years,m),borderColor:C_BR,borderWidth:1.6,borderDash:[2,3],pointRadius:3,fill:false});
+    ds.push({label:'Top 100 BR',data:topSerie(years,m),borderColor:TOP,borderWidth:1.8,borderDash:[4,3],pointRadius:3,fill:false});
     if(chUni) chUni.destroy();
-    chUni = new Chart(document.getElementById('chartHistUnidades'), {type:'line', data:{labels:years,datasets:ds}, options:opts(m)});
-  }
+    chUni=new Chart(document.getElementById('chartHistUnidades'),{type:'line',data:{labels:years,datasets:ds},options:opts(m)}); }
 
-  function selBtns(id, metAtual, onPick){
-    const box=document.getElementById(id); if(!box) return; box.innerHTML='';
-    METRICAS.forEach(([k,lbl])=>{
-      const on=k===metAtual, a=ACC();
+  function btns(box, items, ativo, onPick){ box.innerHTML=''; const a=ACC();
+    items.forEach(([k,lbl])=>{ const on=k===ativo;
       const b=document.createElement('button'); b.textContent=lbl;
       b.style.cssText=`padding:5px 12px;border-radius:7px;border:1px solid ${on?a:'#e2e8f0'};background:${on?a:'#fff'};color:${on?'#fff':'#475569'};font-size:0.74rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;transition:all .15s`;
-      b.onclick=()=>onPick(k);
-      box.appendChild(b);
-    });
-  }
-  function selMer(){ selBtns('histMetricSel', metMer, k=>{ metMer=k; selMer(); buildMercado(); }); }
-  function selUni(){ selBtns('histMetricSel2', metUni, k=>{ metUni=k; selUni(); buildUnidades(); }); }
+      b.onclick=()=>onPick(k); box.appendChild(b); }); }
 
-  function init(){ if(!document.getElementById('chartHistMercado')) return; selMer(); selUni(); buildMercado(); buildUnidades(); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+  function selMerArea(){ btns(document.getElementById('histMetricSel'), METRICAS, metMer, k=>{metMer=k;selMerArea();buildMercado();}); }
+  function selMun(){ const box=document.getElementById('histMunSel'); if(!box||!MULTI) return;
+    btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel, k=>{munSel=k;selMun();buildMercado();}); }
+  function selUniArea(){ btns(document.getElementById('histMetricSel2'), METRICAS, metUni, k=>{metUni=k;selUniArea();buildUnidades();}); }
+
+  function init(){ if(!document.getElementById('chartHistMercado')) return; selMun(); selMerArea(); selUniArea(); buildMercado(); buildUnidades(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
 </body>
