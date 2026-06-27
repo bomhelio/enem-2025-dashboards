@@ -558,7 +558,7 @@ function buildPresenca() {
   const wrap=document.getElementById('presencaCard'); wrap.innerHTML='';
   sel().forEach(n=>{
     const g=DADOS[n]; const pres=g.taxa_presenca; const aus=(100-pres).toFixed(1);
-    const cor=pres>=95?'#16a34a':pres>=90?CORES[n]:'#dc2626';
+    const cor=CORES[n];
     const row=document.createElement('div'); row.className='presenca-row';
     row.innerHTML=`<div class="presenca-nome">${n}</div>
       <div class="pres-bar-bg"><div class="pres-bar-fill" style="width:${pres}%;background:${cor}">${pres}%</div></div>
