@@ -310,7 +310,7 @@
 
 <p class="section-titulo" id="sec-notas">Notas por Área Objetiva</p>
 <div class="grid-3">
-  <div class="card"><div class="card-titulo">Médias por Área — Comparativo entre Unidades</div><div class="card-sub">Linha tracejada = média nacional</div><div class="chart-wrap tall"><canvas id="chartAreas"></canvas></div></div>
+  <div class="card"><div class="card-titulo">Médias por Área — Comparativo entre Unidades</div><div class="card-sub">Linha tracejada: <span style="color:#10b981">&#9135; Top 100 entrada</span> &nbsp;&middot;&nbsp; <span style="color:#f59e0b">&#9135; Top 100 média</span></div><div class="chart-wrap tall"><canvas id="chartAreas"></canvas></div></div>
   <div class="card"><div class="card-titulo">Radar de Performance</div><div class="card-sub">Unidades selecionadas vs. Top 100 nacional</div><div class="chart-wrap tall"><canvas id="chartRadar"></canvas></div></div>
 </div>
 
@@ -468,7 +468,7 @@ function buildAreas() {
   const datasets=sel().map(u=>({label:u,data:AREAS.map(a=>DADOS.unidades[u].areas[a].media),backgroundColor:corIdx(u)+'33',borderColor:corIdx(u),borderWidth:2}));
   if(charts.areas) charts.areas.destroy();
   charts.areas=new Chart(document.getElementById('chartAreas'),{type:'bar',data:{labels,datasets},
-    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{x,y}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const refs=[491.6,502.9,524.5,513.8];const bw=x.width/AREAS.length;refs.forEach((v,i)=>{const px=x.left+bw*(i+0.5)-bw/2;const py=y.getPixelForValue(v);ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+bw,py);ctx.stroke()});ctx.restore();}}],
+    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{x,y}}=ch;const bw=x.width/AREAS.length;const refSets=[{vals:[TOPTIERS.CN.entrada_top100,TOPTIERS.CH.entrada_top100,TOPTIERS.LC.entrada_top100,TOPTIERS.MT.entrada_top100],color:'#10b981'},{vals:[TOPTIERS.CN.media_top100,TOPTIERS.CH.media_top100,TOPTIERS.LC.media_top100,TOPTIERS.MT.media_top100],color:'#f59e0b'}];refSets.forEach(function(rs){ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle=rs.color;ctx.lineWidth=1.5;rs.vals.forEach(function(v,i){var px=x.left+bw*(i+0.5)-bw/2;var py=y.getPixelForValue(v);ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+bw,py);ctx.stroke()});ctx.restore();});}}],
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y: { min: 0, max: 1000,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}}}
   });
 }
