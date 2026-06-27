@@ -37,27 +37,27 @@
   .chip:not(.ativo) { opacity: 0.45; }
 
   /* KPI por marca */
-  .marcas-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-  .marca-card { border-radius: 12px; padding: 20px; border: 2px solid; }
+  .marcas-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .marca-card { border-radius: 14px; padding: 18px 16px; border: 1px solid; border-top-width: 3px; transition: transform .16s ease, box-shadow .16s ease; }
   .marca-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
   .marca-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
   .marca-nome { font-size: 1rem; font-weight: 800; }
   .marca-sub { font-size: 0.72rem; color: var(--sec); }
   .kpis-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .kpi-mini { text-align: center; }
-  .kpi-mini-val { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .kpi-mini-val { font-size: 1.25rem; font-weight: 800; line-height: 1; }
   .kpi-mini-lab { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--sec); margin-top: 2px; }
   .kpi-mini-sub { font-size: 0.7rem; color: var(--sec); }
 
   /* Seção — divisor centralizado */
   .section-titulo { display:flex; align-items:center; gap:14px; margin:52px 0 28px;
     font-size:1.05rem; font-weight:600; text-transform:uppercase; letter-spacing:0.10em;
-    color:#2563eb; white-space:nowrap; }
+    color:#334155; white-space:nowrap; }
   .section-titulo::before, .section-titulo::after { content:''; flex:1; height:1px; background:var(--borda,#e2e8f0); }
 
   /* Cards */
-  .card { background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid var(--borda);
-    border-top: 3px solid #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .card { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid var(--borda);
+    border-top: 3px solid #334155; box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 6px 16px rgba(15,23,42,0.05); }
   .card-titulo { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
   .card-sub { font-size: 0.74rem; color: var(--sec); margin-bottom: 14px; }
   .chart-wrap { position: relative; height: 280px; }
@@ -70,7 +70,7 @@
   /* Tabela */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  th { background: #2563eb; color: white; padding: 10px 12px; text-align: center; font-weight: 600; font-size: 0.74rem; letter-spacing: 0.04em; white-space: nowrap; }
+  th { background: #1e293b; color: white; padding: 10px 12px; text-align: center; font-weight: 600; font-size: 0.74rem; letter-spacing: 0.04em; white-space: nowrap; }
   th:first-child { text-align: left; }
   td { padding: 10px 12px; text-align: center; border-bottom: 1px solid var(--borda); }
   td:first-child { text-align: left; font-weight: 600; }
@@ -81,7 +81,7 @@
   .igual { color: var(--amarelo); }
 
   /* Barra de competências */
-  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
   .comp-marca-titulo { font-size: 0.78rem; font-weight: 600; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid; }
   .comp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .comp-nome { font-size: 0.68rem; color: var(--sec); width: 130px; flex-shrink: 0; line-height: 1.3; }
@@ -91,7 +91,7 @@
 
   /* Ranking */
   .rank-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  .rank-table th { background: #2563eb; color: white; padding: 10px 12px; text-align: center; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.04em; }
+  .rank-table th { background: #1e293b; color: white; padding: 10px 12px; text-align: center; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.04em; }
   .rank-table th:first-child { text-align: left; }
   .rank-table td { padding: 10px 14px; text-align: center; border-bottom: 1px solid var(--borda); }
   .rank-table td:first-child { text-align: left; }
@@ -141,7 +141,7 @@
 
   /* Wave 3 Multimarcas */
   .rank-grid { display:grid; grid-template-columns:repeat(5,1fr); }
-  .rank-grid-head { background:#2563eb; color:white; padding:10px 16px;
+  .rank-grid-head { background:#1e293b; color:white; padding:10px 16px;
     font-size:0.74rem; font-weight:600; letter-spacing:0.04em; }
   .rank-grid-area { grid-column:1/-1; background:#f8fafc; padding:7px 16px;
     font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;
@@ -158,7 +158,7 @@
   .rank-mm-pos { font-size:0.76rem; color:#475569; line-height:1.6; }
   .rank-mm-gap { font-size:0.73rem; font-weight:700; margin-top:5px; padding-top:5px;
     border-top:1px solid #f1f5f9; }
-  .mm-priority-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:12px; }
+  .mm-priority-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:14px; margin-top:12px; }
   .mm-priority-col { background:var(--card); border-radius:10px; border:1px solid var(--borda);
     padding:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
   .mm-priority-marca { font-size:0.82rem; font-weight:700; margin-bottom:10px;
@@ -171,6 +171,14 @@
   .mm-priority-gap  { font-size:0.75rem; font-weight:600; }
   .top-tier-note { font-size:0.72rem; color:#f59e0b; margin-top:4px; }
 
+
+  /* Refinamentos visuais */
+  .filtro-label { font-size:0.78rem; font-weight:700; color:var(--sec); text-transform:uppercase; letter-spacing:0.07em; }
+  #filtroChips { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .card { transition: transform .16s ease, box-shadow .16s ease; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15,23,42,0.07), 0 16px 32px rgba(15,23,42,0.09); }
+  .marca-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,23,42,0.08); }
+  .section-titulo { font-weight:700; }
 </style>
 </head>
 <body>
