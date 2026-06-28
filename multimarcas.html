@@ -202,13 +202,6 @@
 <div class="marcas-row" id="marcasRow"></div>
 <p class="section-titulo" id="sec-mm-historico" style="scroll-margin-top:84px">Evolução Comparativa das Marcas</p>
 <div class="card" style="margin-bottom:16px">
-  <div class="card-titulo">Marcas — 2024 e 2025</div>
-  <div class="card-sub">Nota média de cada marca ao longo do tempo, comparada ao <span style="color:#64748b;font-weight:600">Brasil</span> (rede privada) e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>. Use os botões para alternar a área.</div>
-  <div id="mmHistSel1" class="mm-hist-sel"></div>
-  <div class="chart-wrap" style="height:340px"><canvas id="chartMMHist"></canvas></div>
-  <div class="mm-hist-nota">A série por marca cobre 2024–2025: o INEP suprimiu o código da escola nos microdados de 2021 a 2023, então não é possível recompor a nota de uma escola — e, portanto, de uma marca — nesses anos.</div>
-</div>
-<div class="card" style="margin-bottom:16px">
   <div class="card-titulo">Mercado nacional e estadual — 2021 a 2025</div>
   <div class="card-sub">Pano de fundo macro ao longo de cinco anos: <span style="color:#334155;font-weight:600">Brasil</span> (rede privada), as redes privadas dos estados <span style="color:#2563eb;font-weight:600">RJ</span>, <span style="color:#16a34a;font-weight:600">MG</span> e <span style="color:#9333ea;font-weight:600">RS</span>, e o <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>.</div>
   <div id="mmHistSel2" class="mm-hist-sel"></div>
@@ -218,6 +211,13 @@
 
 
 <!-- Médias por Área -->
+<div class="card" style="margin-bottom:16px">
+  <div class="card-titulo">Marcas — 2024 e 2025</div>
+  <div class="card-sub">Nota média de cada marca ao longo do tempo, comparada ao <span style="color:#64748b;font-weight:600">Brasil</span> (rede privada) e ao <span style="color:#f59e0b;font-weight:600">Top 100 BR</span>. Use os botões para alternar a área.</div>
+  <div id="mmHistSel1" class="mm-hist-sel"></div>
+  <div class="chart-wrap" style="height:340px"><canvas id="chartMMHist"></canvas></div>
+  <div class="mm-hist-nota">A série por marca cobre 2024–2025: o INEP suprimiu o código da escola nos microdados de 2021 a 2023, então não é possível recompor a nota de uma escola — e, portanto, de uma marca — nesses anos.</div>
+</div>
 <p class="section-titulo">Notas por Área — Comparativo das 5 Marcas (2025)</p>
 <div class="grid-3c">
   <div class="card">
@@ -845,13 +845,13 @@ const MARCA_LBL = {"Apogeu": "Apogeu", "QI Bilíngue": "QI Bilíngue", "Matriz E
   function buildMarcas(){ const years=["2024","2025"], m=met1;
     const ds=Object.keys(HIST_MARCAS).map(marca=>{ const c=MARCA_COR[marca];
       return {label:MARCA_LBL[marca], data:years.map(y=>val(HIST_MARCAS[marca][y],m)), borderColor:c, backgroundColor:c, borderWidth:2.8, tension:0, pointRadius:5, fill:false}; });
-    ds.push({label:'Brasil', data:years.map(y=>val(HIST_BR[y],m)), borderColor:BR_COR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
+    ds.push({label:'Rede privada do Brasil', data:years.map(y=>val(HIST_BR[y],m)), borderColor:BR_COR, borderWidth:1.6, borderDash:[2,3], pointRadius:3, fill:false});
     ds.push({label:'Top 100 BR', data:years.map(y=>{const o=HIST_TOP[y];return o?val(o,m):null;}), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], pointRadius:3, fill:false});
     ch1=syncChart(ch1,'chartMMHist',years,ds,opts(m)); }
 
   function buildMercado(){ const years=["2021","2022","2023","2024","2025"], m=met2;
     const ds=[
-      {label:'Brasil — rede privada', data:years.map(y=>val(HIST_BR[y],m)), borderColor:NEUT, backgroundColor:NEUT+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:NEUT, fill:false},
+      {label:'Rede privada do Brasil', data:years.map(y=>val(HIST_BR[y],m)), borderColor:NEUT, backgroundColor:NEUT+'22', borderWidth:2.8, tension:0.25, pointRadius:4, pointBackgroundColor:NEUT, fill:false},
     ];
     ["RJ","MG","RS"].forEach(uf=>{ ds.push({label:'Rede privada de '+uf, data:years.map(y=>val(HIST_UF[uf][y],m)), borderColor:UF_COR[uf], borderWidth:1.7, borderDash:[5,3], tension:0.25, pointRadius:2, fill:false}); });
     ds.push({label:'Top 100 BR', data:years.map(y=>{const o=HIST_TOP[y];return o?val(o,m):null;}), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false});
