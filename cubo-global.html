@@ -1425,6 +1425,8 @@ const HIST_UNIDADES = {"Barra da Tijuca (ABM)": {"2024": {"CN": 568.8, "CH": 575
 const HIST_BENCH = {"municipios": {"3304557": {"nome": "Rio de Janeiro", "anos": {"2021": {"CN": 536.3, "CH": 568.5, "LC": 546.3, "MT": 611.1, "RD": 735.4}, "2022": {"CN": 538.1, "CH": 580.4, "LC": 564.4, "MT": 623.6, "RD": 763.1}, "2023": {"CN": 550.0, "CH": 581.3, "LC": 564.4, "MT": 640.3, "RD": 769.0}, "2024": {"CN": 547.0, "CH": 574.3, "LC": 567.5, "MT": 621.2, "RD": 768.7}, "2025": {"CN": 548.6, "CH": 568.8, "LC": 580.6, "MT": 623.5, "RD": 735.5}}}}, "mun_ordem": ["3304557"], "uf": {"sigla": "RJ", "nome": "Rio de Janeiro", "anos": {"2021": {"CN": 531.9, "CH": 563.7, "LC": 542.8, "MT": 602.6, "RD": 735.1}, "2022": {"CN": 534.7, "CH": 576.0, "LC": 560.9, "MT": 615.4, "RD": 763.2}, "2023": {"CN": 545.5, "CH": 576.7, "LC": 560.4, "MT": 630.8, "RD": 769.6}, "2024": {"CN": 544.1, "CH": 570.3, "LC": 564.5, "MT": 613.6, "RD": 770.8}, "2025": {"CN": 545.5, "CH": 565.3, "LC": 577.5, "MT": 616.1, "RD": 737.2}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
 const UNI_MUN = {"Barra da Tijuca (ABM)": "3304557", "Botafogo": "3304557"};
 
+  const MARCA_NOME="Cubo Global";
+  const HIST_MARCA={"3304557": {"2025": {"CN": 543.1, "CH": 579.5, "LC": 585.7, "MT": 630.4, "RD": 745.6}, "2024": {"CN": 580.5, "CH": 589.2, "LC": 583.6, "MT": 668.2, "RD": 813.4}}};
   const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
   const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
   const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
@@ -1471,7 +1473,7 @@ const UNI_MUN = {"Barra da Tijuca (ABM)": "3304557", "Botafogo": "3304557"};
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
-    chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
+    ds.push({label:'Média '+MARCA_NOME, data:years.map(y=>{const o=HIST_MARCA[munSel]&&HIST_MARCA[munSel][y];return o?val(o,m):null;}), borderColor:ACC(), backgroundColor:ACC(), borderWidth:3.4, tension:0.25, pointRadius:5, pointBackgroundColor:ACC(), spanGaps:false, fill:false}); chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
 
   function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
     const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];

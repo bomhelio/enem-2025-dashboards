@@ -1444,6 +1444,8 @@ const HIST_UNIDADES = {"Zona Norte": {"2024": {"CN": 551.9, "CH": 556.6, "LC": 5
 const HIST_BENCH = {"municipios": {"3136702": {"nome": "Juiz de Fora", "anos": {"2021": {"CN": 553.7, "CH": 588.1, "LC": 563.9, "MT": 635.4, "RD": 768.3}, "2022": {"CN": 555.6, "CH": 591.1, "LC": 573.3, "MT": 642.8, "RD": 804.6}, "2023": {"CN": 573.3, "CH": 595.0, "LC": 573.5, "MT": 671.8, "RD": 814.5}, "2024": {"CN": 575.9, "CH": 595.3, "LC": 580.8, "MT": 661.0, "RD": 836.0}, "2025": {"CN": 572.4, "CH": 589.6, "LC": 593.3, "MT": 655.7, "RD": 798.9}}}}, "mun_ordem": ["3136702"], "uf": {"sigla": "MG", "nome": "Minas Gerais", "anos": {"2021": {"CN": 559.2, "CH": 588.4, "LC": 561.7, "MT": 641.4, "RD": 787.5}, "2022": {"CN": 553.6, "CH": 588.9, "LC": 569.5, "MT": 648.5, "RD": 807.1}, "2023": {"CN": 569.0, "CH": 591.9, "LC": 572.5, "MT": 669.5, "RD": 819.3}, "2024": {"CN": 568.4, "CH": 590.6, "LC": 575.9, "MT": 653.0, "RD": 819.8}, "2025": {"CN": 571.5, "CH": 584.9, "LC": 589.5, "MT": 659.6, "RD": 788.9}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
 const UNI_MUN = {"Zona Norte": "3136702", "Santo Antônio I": "3136702", "Santo Antônio II": "3136702"};
 
+  const MARCA_NOME="Apogeu";
+  const HIST_MARCA={"3136702": {"2025": {"CN": 568.7, "CH": 581.1, "LC": 582.2, "MT": 652.6, "RD": 793.6}, "2024": {"CN": 565.9, "CH": 583.8, "LC": 570.7, "MT": 660.9, "RD": 849.2}}};
   const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
   const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
   const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
@@ -1490,7 +1492,7 @@ const UNI_MUN = {"Zona Norte": "3136702", "Santo Antônio I": "3136702", "Santo 
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
-    chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
+    ds.push({label:'Média '+MARCA_NOME, data:years.map(y=>{const o=HIST_MARCA[munSel]&&HIST_MARCA[munSel][y];return o?val(o,m):null;}), borderColor:ACC(), backgroundColor:ACC(), borderWidth:3.4, tension:0.25, pointRadius:5, pointBackgroundColor:ACC(), spanGaps:false, fill:false}); chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
 
   function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
     const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];

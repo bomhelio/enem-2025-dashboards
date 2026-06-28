@@ -1425,6 +1425,8 @@ const HIST_UNIDADES = {"Alfa": {"2024": {"CN": 609.2, "CH": 628.6, "LC": 602.9, 
 const HIST_BENCH = {"municipios": {"4314902": {"nome": "Porto Alegre", "anos": {"2021": {"CN": 548.8, "CH": 590.5, "LC": 568.7, "MT": 632.1, "RD": 743.3}, "2022": {"CN": 553.9, "CH": 588.3, "LC": 579.2, "MT": 645.6, "RD": 773.0}, "2023": {"CN": 558.7, "CH": 588.7, "LC": 579.9, "MT": 658.6, "RD": 776.4}, "2024": {"CN": 556.9, "CH": 581.2, "LC": 578.3, "MT": 632.8, "RD": 772.1}, "2025": {"CN": 561.1, "CH": 583.5, "LC": 598.2, "MT": 651.7, "RD": 747.0}}}}, "mun_ordem": ["4314902"], "uf": {"sigla": "RS", "nome": "Rio Grande do Sul", "anos": {"2021": {"CN": 543.0, "CH": 577.8, "LC": 558.1, "MT": 617.4, "RD": 737.7}, "2022": {"CN": 541.0, "CH": 577.9, "LC": 567.4, "MT": 626.2, "RD": 761.9}, "2023": {"CN": 550.9, "CH": 580.6, "LC": 570.8, "MT": 642.3, "RD": 771.3}, "2024": {"CN": 550.6, "CH": 573.5, "LC": 572.2, "MT": 620.8, "RD": 769.2}, "2025": {"CN": 550.1, "CH": 572.5, "LC": 587.7, "MT": 632.7, "RD": 744.4}}}, "brasil": {"anos": {"2021": {"CN": 538.4, "CH": 565.5, "LC": 544.6, "MT": 607.1, "RD": 734.2}, "2022": {"CN": 538.4, "CH": 572.7, "LC": 558.0, "MT": 615.9, "RD": 759.3}, "2023": {"CN": 549.4, "CH": 574.4, "LC": 560.3, "MT": 632.3, "RD": 768.9}, "2024": {"CN": 549.0, "CH": 569.5, "LC": 564.6, "MT": 616.2, "RD": 772.8}, "2025": {"CN": 551.9, "CH": 566.2, "LC": 577.6, "MT": 620.3, "RD": 738.9}}}, "top100": {"anos": {"2024": {"CN": 643.8, "CH": 662.6, "LC": 624.1, "MT": 770.4, "RD": 896.7}, "2025": {"CN": 660.5, "CH": 657.0, "LC": 643.6, "MT": 786.9, "RD": 873.0}}}};
 const UNI_MUN = {"Alfa": "4314902", "Beta": "4314902"};
 
+  const MARCA_NOME="Leonardo da Vinci";
+  const HIST_MARCA={"4314902": {"2025": {"CN": 611.6, "CH": 615.8, "LC": 626.2, "MT": 725.3, "RD": 812.3}, "2024": {"CN": 593.7, "CH": 620.4, "LC": 599.8, "MT": 705.1, "RD": 839.2}}, "4304606": {"2024": {"CN": 597.6, "CH": 652.3, "LC": 612.6, "MT": 706.4, "RD": 848.9}}};
   const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
   const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
   const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
@@ -1471,7 +1473,7 @@ const UNI_MUN = {"Alfa": "4314902", "Beta": "4314902"};
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
-    chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
+    ds.push({label:'Média '+MARCA_NOME, data:years.map(y=>{const o=HIST_MARCA[munSel]&&HIST_MARCA[munSel][y];return o?val(o,m):null;}), borderColor:ACC(), backgroundColor:ACC(), borderWidth:3.4, tension:0.25, pointRadius:5, pointBackgroundColor:ACC(), spanGaps:false, fill:false}); chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
 
   function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
     const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];
