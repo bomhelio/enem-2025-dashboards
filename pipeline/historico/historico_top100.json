@@ -1,0 +1,60 @@
+{
+ "2025": {
+  "CN": {
+   "media_top100": 660.5,
+   "entrada_top100": 631.1,
+   "n": 100
+  },
+  "CH": {
+   "media_top100": 657.0,
+   "entrada_top100": 636.7,
+   "n": 100
+  },
+  "LC": {
+   "media_top100": 643.6,
+   "entrada_top100": 629.4,
+   "n": 100
+  },
+  "MT": {
+   "media_top100": 786.9,
+   "entrada_top100": 750.2,
+   "n": 100
+  },
+  "RD": {
+   "media_top100": 873.0,
+   "entrada_top100": 860.4,
+   "n": 100
+  }
+ },
+ "2024": {
+  "CN": {
+   "media_top100": 643.8,
+   "entrada_top100": 622.5,
+   "n": 100
+  },
+  "CH": {
+   "media_top100": 662.6,
+   "entrada_top100": 642.3,
+   "n": 100
+  },
+  "LC": {
+   "media_top100": 624.1,
+   "entrada_top100": 611.4,
+   "n": 100
+  },
+  "MT": {
+   "media_top100": 770.4,
+   "entrada_top100": 733.5,
+   "n": 100
+  },
+  "RD": {
+   "media_top100": 896.7,
+   "entrada_top100": 881.7,
+   "n": 100
+  }
+ },
+ "_metodo": {
+  "dep_priv": true,
+  "min_n": 30
+ }
+}
