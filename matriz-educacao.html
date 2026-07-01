@@ -178,7 +178,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px; }
   .manchete-unidade { font-size: 0.85rem; font-weight: 600; color: var(--texto,#1e293b);
     display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
-  .manchete-pos-grande { font-size: 1.4rem; font-weight: 900; line-height: 1; color: #d97706; }
+  .manchete-pos-grande { font-size: 1.4rem; font-weight: 900; line-height: 1; color: #1e293b; }
   .manchete-pos-ctx { font-size: 0.72rem; color: var(--texto-sec,#64748b); font-weight: 400; }
   .manchete-linha { font-size: 0.76rem; color: var(--texto,#1e293b);
     margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9;
@@ -983,28 +983,28 @@ function buildSintese() {
 
   var cards = [
     {
-      tipo: '🏅 Ponto forte', cor: '#16a34a',
+      tipo: 'Ponto forte', cor: '#16a34a',
       titulo: areaNome[melhorA],
       sub: 'Média da marca: ' + (g.areas[melhorA]?.media||0),
       valor: (deltaM>0?'+':'')+deltaM+' pts vs Brasil',
       corValor: '#16a34a'
     },
     {
-      tipo: '⭐ Destaque', cor: '#15803d',
+      tipo: 'Destaque', cor: '#15803d',
       titulo: destUnit,
       sub: 'Melhor nota geral da marca',
       valor: (DADOS.unidades[destUnit]?.nota_geral?.media||0) + ' pts',
       corValor: '#15803d'
     },
     {
-      tipo: piorUnit ? '⚠ Atenção' : '✓ Equilíbrio', cor: piorUnit ? '#dc2626' : '#16a34a',
+      tipo: piorUnit ? 'Atenção' : 'Equilíbrio', cor: piorUnit ? '#dc2626' : '#16a34a',
       titulo: piorUnit || 'Todas as unidades',
       sub: piorUnit ? 'C. Natureza: '+(DADOS.unidades[piorUnit]?.areas?.CN?.media||0) : 'CN sem gaps significativos',
       valor: piorUnit ? piorGap.toFixed(1)+' pts vs média da marca' : '—',
       corValor: piorUnit ? '#dc2626' : '#16a34a'
     },
     {
-      tipo: '✏ Redação', cor: '#7c3aed',
+      tipo: 'Redação', cor: '#7c3aed',
       titulo: COMP_NOMES_W2[piorComp],
       sub: 'Competência mais fraca',
       valor: (comps[piorComp]?.media||0)+'/200 ('+Math.round((comps[piorComp]?.media||0)/200*100)+'%)',
@@ -1013,7 +1013,7 @@ function buildSintese() {
   ];
 
   wrap.innerHTML = cards.map(function(c) {
-    return '<div class="sintese-mini">'
+    return '<div class="sintese-mini" style="border-top-color:'+c.cor+'">'
       +'<div class="sintese-mini-tipo" style="color:'+c.cor+'">'+c.tipo+'</div>'
       +'<div class="sintese-mini-titulo">'+c.titulo+'</div>'
       +'<div class="sintese-mini-sub">'+c.sub+'</div>'
@@ -1100,7 +1100,7 @@ function buildManchete() {
       var posMain = (temPequenas && posFilt) ? posFilt : bp;
       var nMain   = (temPequenas && posFilt) ? nFilt : (bairro.n_escolas || '?');
       var labelMain = temPequenas ? ' escolas no bairro (N\u226530)' : ' escolas no bairro';
-      var medal = posMain===1?'🥇':posMain===2?'🥈':posMain===3?'🥉':'';
+      var medal = '';
       var posTexto = medal ? medal+' '+posMain+'º' : posMain+'º';
       var secundarioHtml = (temPequenas && posFilt)
         ? '<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px">'+bp+'º de '+(bairro.n_escolas||'?')+' incluindo todas as escolas</div>'
@@ -1124,7 +1124,7 @@ function buildManchete() {
         var p    = pos.areas[bestBR];
         var tier = TOPTIERS && TOPTIERS[bestBR];
         var gap  = tier ? parseFloat((p.media - tier.entrada_top100).toFixed(1)) : null;
-        var gapCor = gap !== null ? (gap >= 0 ? '#16a34a' : '#dc2626') : '#64748b';
+        var gapCor = gap !== null ? (gap >= 0 ? '#15803d' : '#b91c1c') : '#64748b';
         rankHtml = '<div class="manchete-linha">'
           +(p.rank_mun ? '<span class="manchete-rank">'+p.rank_mun+'º em '+pos.municipio+'</span>' : '')
           +(p.rank_uf && p.total_uf > 0 ? '<span class="manchete-rank">'+p.rank_uf+'º/'+p.total_uf+' '+pos.uf+'</span>' : '')
@@ -1151,9 +1151,9 @@ function buildManchete() {
 
 // C3 — Tipo de ação nos cards de prioridade (integrado no buildPriorityPanel)
 var ACAO_TIPO = {
-  marketing:    {label:'📢 Comunicar',  cor:'#15803d', desc:'Resultado acima da média — divulgar'},
-  valorizacao:  {label:'🏆 Valorizar',  cor:'#d97706', desc:'Destaque pedagógico a reconhecer'},
-  remediacao:   {label:'📚 Remediar',   cor:'#dc2626', desc:'Gap a atacar com ação pedagógica'},
+  marketing:    {label:'Comunicar',  cor:'#15803d', desc:'Resultado acima da média — divulgar'},
+  valorizacao:  {label:'Valorizar',  cor:'#d97706', desc:'Destaque pedagógico a reconhecer'},
+  remediacao:   {label:'Remediar',   cor:'#dc2626', desc:'Gap a atacar com ação pedagógica'},
 };
 function classificarAcao(item) {
   if(item.positivo && item.gap > 20) return 'marketing';
@@ -1304,7 +1304,7 @@ function markSmallSamples() {
         if(cell) {
           var b = document.createElement('span');
           b.className = 'aviso-amostra';
-          b.innerHTML = '⚠ n='+d.n_inscritos;
+          b.innerHTML = '† n='+d.n_inscritos;
           cell.appendChild(b);
         }
       }
