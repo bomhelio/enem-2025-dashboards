@@ -327,16 +327,25 @@ def gerar_html(
     # Subtítulo do card "Concorrentes por Município": "★ = unidade Apogeu"
     html = html.replace("unidade Apogeu", f"unidade {marca_segura}")
 
-    # Logo do header — no template repaginado é um <span> com o nome da marca.
-    html = html.replace(
-        ';white-space:nowrap;">Apogeu</span>',
-        f';white-space:nowrap;">{marca_segura}</span>')
-    # Fallback: caso o template ainda use a logo em <img>
-    logo_text = (
-        f'<span style="color:#ffffff;font-size:1.6rem;font-weight:700;'
-        f'letter-spacing:0.01em;white-space:nowrap;">{marca_segura}</span>'
-    )
-    html = re.sub(r'<img\s+src="data:image[^"]*"[^>]*>', logo_text, html, count=1)
+    # Logo do header — injeta a logo base64 embutida da marca (asset em logos/{safe}.imgtag).
+    # Fallback: <span> com o nome da marca, caso o asset não exista.
+    _safe = marca.replace(" ", "_").replace("é", "e").replace("ô", "o")
+    _logo_path = os.path.join(ANALISE_DIR, "logos", f"{_safe}.imgtag")
+    if os.path.exists(_logo_path):
+        with open(_logo_path, encoding="utf-8") as _lf:
+            logo_html = _lf.read().strip()
+    else:
+        logo_html = (
+            f'<span style="color:#ffffff;font-size:1.6rem;font-weight:700;'
+            f'letter-spacing:0.01em;white-space:nowrap;">{marca_segura}</span>'
+        )
+    # Substitui o placeholder <span>Apogeu</span> do template pela logo.
+    html = re.sub(
+        r'<span style="color:#ffffff;font-size:1\.6rem;font-weight:700;'
+        r'letter-spacing:0\.01em;white-space:nowrap;">Apogeu</span>',
+        lambda _m: logo_html, html, count=1)
+    # Fallback adicional: caso o template ainda traga uma logo em <img> antiga.
+    html = re.sub(r'<img\s+src="data:image[^"]*"[^>]*>', lambda _m: logo_html, html, count=1)
 
     # KPI placeholder estático "3 unidades" (será sobrescrito pelo JS, mas bom garantir)
     html = html.replace(

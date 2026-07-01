@@ -84,10 +84,48 @@ def montar_consts(marca, mp):
     return hu, HB, uf, uni_mun
 
 
-def consts_js(hu, HB, uni_mun):
+def montar_hist_marca(mp):
+    """Media ponderada por participantes das unidades da marca, por municipio/ano/area.
+    So 2024-2025 (a serie por escola nao existe antes). Reproduz o HIST_MARCA do deploy."""
+    acc = {}
+    for co in mp:
+        node = UNID[co]
+        mc = str(node["municipio"])
+        for y in ("2024", "2025"):
+            av = node["anos"].get(y)
+            if not av:
+                continue
+            for a in AR:
+                v = av.get(a)
+                n = av.get("n_" + a)
+                if v is None or not n:
+                    continue
+                acc.setdefault(mc, {}).setdefault(y, {}).setdefault(a, [0.0, 0])
+                acc[mc][y][a][0] += v * n
+                acc[mc][y][a][1] += n
+    out = {}
+    for mc, ys in acc.items():
+        for y, ars in ys.items():
+            for a, (sw, sn) in ars.items():
+                if sn:
+                    out.setdefault(mc, {}).setdefault(y, {})[a] = round(sw / sn, 1)
+    return out
+
+
+# Nome curto usado no rotulo "Media X" da linha da marca (quando difere do nome completo).
+MARCA_LABEL = {
+    "Matriz Educação": "Matriz",
+    "Colégio Leonardo da Vinci": "Leonardo da Vinci",
+}
+
+
+def consts_js(hu, HB, uni_mun, marca, hist_marca):
+    label = MARCA_LABEL.get(marca, marca)
     return ("const HIST_UNIDADES = " + json.dumps(hu, ensure_ascii=False) + ";\n"
             + "const HIST_BENCH = " + json.dumps(HB, ensure_ascii=False) + ";\n"
-            + "const UNI_MUN = " + json.dumps(uni_mun, ensure_ascii=False) + ";\n")
+            + "const UNI_MUN = " + json.dumps(uni_mun, ensure_ascii=False) + ";\n"
+            + "\n  const MARCA_NOME=" + json.dumps(label, ensure_ascii=False) + ";\n"
+            + "  const HIST_MARCA=" + json.dumps(hist_marca, ensure_ascii=False) + ";")
 
 
 SCRIPT_TMPL = '''<script>
@@ -116,6 +154,15 @@ __CONSTS__
               x:{ticks:{font:{size:11}},grid:{display:false}}}}; }
 
   let chMer=null, chUni=null;
+  function renderHistTable(chart, cid){ const box=document.getElementById(cid); if(!box||!chart) return;
+    const yrs=chart.data.labels; const ki=yrs.length-2, li=yrs.length-1;
+    const lbl=(yrs.length>=2)?('Variação '+String(yrs[ki]).slice(-2)+'→'+String(yrs[li]).slice(-2)):'Variação';
+    let h='<table class="hist-tbl"><thead><tr><th>Série</th>'+yrs.map(y=>'<th>'+y+'</th>').join('')+'<th>'+lbl+'</th><th>%</th></tr></thead><tbody>';
+    chart.data.datasets.forEach((d,idx)=>{ if(chart.getDatasetMeta(idx).hidden) return; const c=d.borderColor||'#64748b';
+      let dif='–', pct='–', cls=''; const a=ki>=0?d.data[ki]:null, b=d.data[li];
+      if(a!=null&&b!=null){ const s=+(b-a).toFixed(1); const p=a?+(s/a*100).toFixed(1):null; cls=s>0?'pos':(s<0?'neg':''); const sg=s>0?'+':''; dif=sg+s.toFixed(1); pct=(p==null?'–':sg+p.toFixed(1)+'%'); }
+      h+='<tr><td><span class="hist-dot" style="background:'+c+'"></span>'+d.label+'</td>'+yrs.map((_,j)=>'<td>'+(d.data[j]==null?'–':d.data[j])+'</td>').join('')+'<td class="hist-saldo '+cls+'">'+dif+'</td><td class="hist-saldo '+cls+'">'+pct+'</td></tr>'; });
+    h+='</tbody></table>'; box.innerHTML=h; }
   function syncChart(inst, id, labels, datasets, opt){
     if(inst && inst.data.datasets.length===datasets.length){
       inst.data.labels=labels;
@@ -133,7 +180,7 @@ __CONSTS__
       {label:'Brasil', data:serie(HIST_BENCH.brasil.anos,years,m), borderColor:C_BR, borderWidth:1.6, borderDash:[2,3], tension:0.25, pointRadius:2, fill:false},
       {label:'Top 100 BR', data:topSerie(years,m), borderColor:TOP, borderWidth:1.8, borderDash:[4,3], tension:0.25, pointRadius:3, pointBackgroundColor:TOP, spanGaps:false, fill:false},
     ];
-    chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); }
+    ds.push({label:'Média '+MARCA_NOME, data:years.map(y=>{const o=HIST_MARCA[munSel]&&HIST_MARCA[munSel][y];return o?val(o,m):null;}), borderColor:ACC(), backgroundColor:ACC(), borderWidth:3.4, tension:0.25, pointRadius:5, pointBackgroundColor:ACC(), spanGaps:false, fill:false}); chMer=syncChart(chMer,'chartHistMercado',years,ds,opts(m)); renderHistTable(chMer,'histTblMercado'); }
 
   function buildUnidades(){ const years=["2024","2025"], m=metUni; let i=0;
     const ds=Object.entries(HIST_UNIDADES).map(([nome,anos])=>{ const c=(typeof corIdx==='function'&&corIdx(nome))?corIdx(nome):PAL[i++%PAL.length];
@@ -143,7 +190,7 @@ __CONSTS__
     ds.push({label:'Rede privada de '+ufSig+' (estado)',data:serie(HIST_BENCH.uf.anos,years,m),borderColor:C_MG,borderWidth:1.6,borderDash:[4,4],pointRadius:3,fill:false});
     ds.push({label:'Brasil',data:serie(HIST_BENCH.brasil.anos,years,m),borderColor:C_BR,borderWidth:1.6,borderDash:[2,3],pointRadius:3,fill:false});
     ds.push({label:'Top 100 BR',data:topSerie(years,m),borderColor:TOP,borderWidth:1.8,borderDash:[4,3],pointRadius:3,fill:false});
-    chUni=syncChart(chUni,'chartHistUnidades',years,ds,opts(m)); }
+    chUni=syncChart(chUni,'chartHistUnidades',years,ds,opts(m)); renderHistTable(chUni,'histTblUnidades'); }
 
   function btns(box, items, ativo, onPick){ box.innerHTML=''; const a=ACC();
     items.forEach(([k,lbl])=>{ const on=k===ativo;
@@ -156,7 +203,7 @@ __CONSTS__
     btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel, k=>{munSel=k;selMun();buildMercado();}); }
   function applyMunFilter(){ if(!chUni) return;
     chUni.data.datasets.forEach((d,i)=>{ const mc=UNI_MUN[d.label]; if(mc!==undefined) chUni.getDatasetMeta(i).hidden=(mc!==String(munSel2)); });
-    chUni.update(); }
+    chUni.update(); renderHistTable(chUni,'histTblUnidades'); }
   function selMun2(){ const box=document.getElementById('histMunSel2'); if(!box||!MULTI) return;
     btns(box, MORD.map(c=>[c, HIST_BENCH.municipios[c].nome]), munSel2, k=>{munSel2=k;selMun2();buildUnidades();applyMunFilter();}); }
   function selUniArea(){ btns(document.getElementById('histMetricSel2'), METRICAS, metUni, k=>{metUni=k;selUniArea();buildUnidades();}); }
@@ -204,6 +251,10 @@ def secao_html(marca, HB, uf):
   {munsel1}
   <div id="histMetricSel" class="hist-sel"></div>
   <div class="chart-wrap" style="height:320px"><canvas id="chartHistMercado"></canvas></div>
+  <div class="hist-data">
+    <button type="button" class="hist-data-btn" aria-expanded="false" onclick="var w=this.parentNode.querySelector('.hist-tbl-wrap');var o=getComputedStyle(w).display==='none';w.style.display=o?'block':'none';this.innerHTML=o?'Ocultar dados &#9652;':'Ver dados &#9662;';">Ver dados &#9662;</button>
+    <div class="hist-tbl-wrap" id="histTblMercado" style="display:none"></div>
+  </div>
   <div class="hist-nota">O <strong>Top 100 BR</strong> (média das 100 melhores escolas do país) só aparece a partir de 2024: ranquear escolas exige o código da escola, que o INEP suprimiu nos microdados de 2021 a 2023.</div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -212,6 +263,10 @@ def secao_html(marca, HB, uf):
   {munsel2}
   <div id="histMetricSel2" class="hist-sel"></div>
   <div class="chart-wrap" style="height:300px"><canvas id="chartHistUnidades"></canvas></div>
+  <div class="hist-data">
+    <button type="button" class="hist-data-btn" aria-expanded="false" onclick="var w=this.parentNode.querySelector('.hist-tbl-wrap');var o=getComputedStyle(w).display==='none';w.style.display=o?'block':'none';this.innerHTML=o?'Ocultar dados &#9652;':'Ver dados &#9662;';">Ver dados &#9662;</button>
+    <div class="hist-tbl-wrap" id="histTblUnidades" style="display:none"></div>
+  </div>
   <div class="hist-nota">A série por escola começa em 2024 — o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
 </div>
 '''
@@ -219,6 +274,19 @@ def secao_html(marca, HB, uf):
 
 CSS = '''  .hist-sel { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 6px; }
   .hist-nota { margin-top:10px; font-size:0.74rem; color:#94a3b8; font-style:italic; line-height:1.5; }
+  .hist-data{margin-top:10px}
+  .hist-data-btn{background:#f1f5f9;border:1px solid #e2e8f0;color:#475569;font-size:0.74rem;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;letter-spacing:.02em}
+  .hist-data-btn:hover{background:#e2e8f0}
+  .hist-tbl-wrap{margin-top:10px;overflow-x:auto}
+  .hist-tbl{border-collapse:collapse;width:100%;font-size:0.78rem}
+  .hist-tbl th,.hist-tbl td{border:1px solid #e9eef3;padding:5px 9px;text-align:center;white-space:nowrap}
+  .hist-tbl th{background:#f8fafc;color:#334155;font-weight:700}
+  .hist-tbl th:first-child,.hist-tbl td:first-child{text-align:left}
+  .hist-tbl tbody tr:nth-child(even){background:#fbfdff}
+  .hist-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .hist-saldo{font-weight:600}
+  .hist-saldo.pos{color:#15803d}
+  .hist-saldo.neg{color:#b91c1c}
 </style>'''
 
 
@@ -232,6 +300,7 @@ def aplicar(marca, html_path=None):
         print(f"[{marca}] nenhuma unidade casada com o historico — pulando")
         return
     hu, HB, uf, uni_mun = montar_consts(marca, mp)
+    hist_marca = montar_hist_marca(mp)
     t = io.open(html_path, encoding="utf-8").read()
     if 'id="sec-historico"' in t:
         print(f"[{marca}] secao ja presente — ok (idempotente)")
@@ -242,7 +311,7 @@ def aplicar(marca, html_path=None):
         return
     t = t.replace(a1, secao_html(marca, HB, uf) + a1, 1)
     t = t.replace("</style>", CSS, 1)
-    t = t.replace("</body>", SCRIPT_TMPL.replace("__CONSTS__", consts_js(hu, HB, uni_mun)) + "</body>", 1)
+    t = t.replace("</body>", SCRIPT_TMPL.replace("__CONSTS__", consts_js(hu, HB, uni_mun, marca, hist_marca)) + "</body>", 1)
     io.open(html_path, "w", encoding="utf-8").write(t)
     tipo = "multi" if len(HB["mun_ordem"]) > 1 else "single"
     print(f"[{marca}] secao inserida | unidades={len(mp)} | municipios={len(HB['mun_ordem'])} ({tipo}) | uf={uf}")
