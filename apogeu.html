@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apogeu — ENEM 2025</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>if(window.Chart){Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";}</script>
 <style>
   :root {
     --azul: #1a3a6e;
@@ -364,7 +365,7 @@
 
 <p class="section-titulo" id="sec-redacao">Redação — 2025</p>
 <div class="grid-red3">
-  <div class="card"><div class="card-titulo">Média da Redação por Unidade</div><div class="card-sub">Linha tracejada = média nacional 618,8</div><div class="chart-wrap"><canvas id="chartRedacao"></canvas></div></div>
+  <div class="card"><div class="card-titulo">Média da Redação por Unidade</div><div class="card-sub">Linha tracejada = média Top 100 BR</div><div class="chart-wrap"><canvas id="chartRedacao"></canvas></div></div>
   <div class="card"><div class="card-titulo">Competências da Redação — Geral Apogeu</div><div class="card-sub">Nota máxima por competência: 200 pontos</div><div id="compBars"></div></div>
   <div class="card">
 <div class="card-titulo" style="margin-bottom:4px">Competências de Redação por Unidade</div>
@@ -540,9 +541,9 @@ function buildRedacao() {
   const labels=sel();
   const dados=labels.map(u=>DADOS.unidades[u].redacao.media);
   if(charts.redacao) charts.redacao.destroy();
-  charts.redacao=new Chart(document.getElementById('chartRedacao'),{type:'bar',data:{labels,datasets:[{label:'Média Redação',data:dados,backgroundColor:labels.map(u=>corIdx(u)+'bb'),borderColor:labels.map(u=>corIdx(u)),borderWidth:2}]},
-    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{y,x}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;const py=y.getPixelForValue(618.8);ctx.beginPath();ctx.moveTo(x.left,py);ctx.lineTo(x.right,py);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font='10px sans-serif';ctx.fillText('Brasil 618,8',x.right-70,py-4);ctx.restore();}}],
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x: { min: 0, max: 1000,ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}}}});
+  charts.redacao=new Chart(document.getElementById('chartRedacao'),{type:'bar',data:{labels,datasets:[{label:'Média Redação',data:dados,backgroundColor:labels.map(u=>corIdx(u)+'cc'),borderColor:labels.map(u=>corIdx(u)),borderWidth:1,borderRadius:6,borderSkipped:false}]},
+    plugins:[{id:'ref',afterDraw(ch){const{ctx,scales:{y,x}}=ch;ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#94a3b8';ctx.lineWidth=1.5;var _ref=(typeof TOPTIERS!=='undefined'&&TOPTIERS.REDACAO&&TOPTIERS.REDACAO.media_top100)||618.8;const px=x.getPixelForValue(_ref);ctx.beginPath();ctx.moveTo(px,y.top);ctx.lineTo(px,y.bottom);ctx.stroke();ctx.fillStyle='#94a3b8';ctx.font='10px "Segoe UI", system-ui, sans-serif';ctx.textAlign='right';ctx.fillText('Top 100 BR '+Math.round(_ref),px-5,y.top-5);ctx.restore();}}],
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',layout:{padding:{top:18}},plugins:{legend:{display:false}},scales:{x: { min: 0, max: 1000,ticks:{font:{size:11},color:'#64748b'},grid:{color:'#eef2f6'}},y:{ticks:{font:{size:11.5},color:'#64748b'},grid:{display:false}}}}});
 }
 function buildCompBars() {
   const wrap=document.getElementById('compBars'); wrap.innerHTML='';
