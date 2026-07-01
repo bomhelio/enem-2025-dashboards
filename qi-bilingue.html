@@ -175,7 +175,10 @@
   /* Cards de unidade — mesmo padrão de sintese-mini */
   .manchete-item { background: #fff; border: 1px solid var(--cinza-borda,#e2e8f0);
     border-top: 3px solid var(--azul,#065f46); border-radius: 10px; padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px; }
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px;
+    position: relative; }
+  .manchete-medal { position: absolute; top: 8px; right: 12px;
+    filter: drop-shadow(0 1px 1.5px rgba(0,0,0,0.28)); }
   .manchete-unidade { font-size: 0.85rem; font-weight: 600; color: var(--texto,#1e293b);
     display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
   .manchete-pos-grande { font-size: 1.4rem; font-weight: 900; line-height: 1; color: #1e293b; }
@@ -1086,7 +1089,7 @@ function buildManchete() {
     if(!hasData) return;
 
     // Bloco 1 — Posição no bairro
-    var bairroHtml = '';
+    var bairroHtml = ''; var medalCanto = '';
     if(bairro && bairro.nossa_pos) {
       var bp = bairro.nossa_pos;
       var efilt = (bairro.escolas||[]).filter(function(e){ return e.nossa || (e.n && e.n >= 30); });
@@ -1098,8 +1101,21 @@ function buildManchete() {
       var posMain = (temPequenas && posFilt) ? posFilt : bp;
       var nMain   = (temPequenas && posFilt) ? nFilt : (bairro.n_escolas || '?');
       var labelMain = temPequenas ? ' escolas no bairro (N\u226530)' : ' escolas no bairro';
-      var medal = '';
-      var posTexto = medal ? medal+' '+posMain+'º' : posMain+'º';
+      var posTexto = posMain+'º';
+      medalCanto = '';
+      if(posMain>=1 && posMain<=3){
+        var _mt = posMain===1?['#f4dd88','#cf9f22','#876611']:posMain===2?['#e8eaee','#b2b4ba','#82848a']:['#e4ae7e','#bb7940','#7c4a20'];
+        var _mnum = posMain===1?'#4a3708':posMain===2?'#3a3d42':'#3d220a';
+        var _mid = 'med'+UNIDADES.indexOf(u);
+        medalCanto = '<svg class="manchete-medal" width="33" height="45" viewBox="0 0 36 47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+posMain+'o lugar no bairro">'
+          +'<defs><radialGradient id="'+_mid+'" cx="38%" cy="30%" r="72%"><stop offset="0" stop-color="'+_mt[0]+'"/><stop offset="0.55" stop-color="'+_mt[1]+'"/><stop offset="1" stop-color="'+_mt[2]+'"/></radialGradient></defs>'
+          +'<path d="M12 2 L18 3 L19 21 L11 21 Z" fill="#455168"/>'
+          +'<path d="M24 2 L18 3 L17 21 L25 21 Z" fill="#5d6b86"/>'
+          +'<circle cx="18" cy="31" r="13.5" fill="url(#'+_mid+')" stroke="'+_mt[2]+'" stroke-width="1"/>'
+          +'<circle cx="18" cy="31" r="10" fill="none" stroke="rgba(255,255,255,0.32)" stroke-width="1"/>'
+          +'<text x="18" y="35.6" text-anchor="middle" font-size="13" font-weight="700" fill="'+_mnum+'">'+posMain+'</text>'
+          +'</svg>';
+      }
       var secundarioHtml = (temPequenas && posFilt)
         ? '<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px">'+bp+'º de '+(bairro.n_escolas||'?')+' incluindo todas as escolas</div>'
         : '';
@@ -1132,7 +1148,7 @@ function buildManchete() {
       }
     }
 
-    items.push('<div class="manchete-item">'
+    items.push('<div class="manchete-item">'+medalCanto
       +'<div class="manchete-unidade">'
       +'<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+cor+';flex-shrink:0"></span>'
       +u+'</div>'
