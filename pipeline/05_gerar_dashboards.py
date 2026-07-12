@@ -9,10 +9,10 @@ Uso:
 Depende de:
     output/{marca}_resultados.csv   (gerado por 01_extrair.py)
     output/benchmark_municipal.json (benchmark rede privada por município)
-    output/benchmark_bairro.json    (comparativo por bairro — opcional)
-    output/ranking_posicoes.json    (ranking nacional/UF/mun — opcional)
-    output/ranking_toptiers.json    (top 100 Brasil — opcional)
-    output/mapa_escola_bairro.json  (nomes de unidades — opcional)
+    output/benchmark_bairro.json    (comparativo por bairro - opcional)
+    output/ranking_posicoes.json    (ranking nacional/UF/mun - opcional)
+    output/ranking_toptiers.json    (top 100 Brasil - opcional)
+    output/mapa_escola_bairro.json  (nomes de unidades - opcional)
     output/Apogeu_Dashboard.html    (template HTML base)
 """
 
@@ -163,10 +163,10 @@ def computar_dados(df: pd.DataFrame, mapa: dict, codigos: list) -> dict:
     unidades = {}
     for co_esc, sub in df.groupby("CO_ESCOLA"):
         co_str = str(int(co_esc))
-        # Label: mapa → {label minus "Marca — "} or municipio or code
+        # Label: mapa → {label minus "Marca - "} or municipio or code
         if co_str in mapa:
             full_label = mapa[co_str].get("label", co_str)
-            # Remove prefix "Marca — " se presente
+            # Remove prefix "Marca — " se presente (o mapa usa travessão como separador interno)
             partes = full_label.split(" — ", 1)
             nome = partes[-1]
         else:
@@ -221,12 +221,12 @@ def bench_para_unidades(unidades_nomes: list, mapa: dict, bench_mun: dict) -> tu
 
     # BENCH_GERAL = benchmark do município mais frequente (ou primeiros)
     bg = {}
-    label = "Rede Privada — Município"
+    label = "Rede Privada - Município"
     if todos_muns:
         chave_prim = next(iter(todos_muns))
         if chave_prim in bench_mun:
             bg = bench_mun[chave_prim]
-            label = f"{bg.get('municipio',chave_prim)} — Rede Privada"
+            label = f"{bg.get('municipio',chave_prim)} - Rede Privada"
 
     return bu, bg, label
 
@@ -309,8 +309,8 @@ def gerar_html(
 
     # Substituições de texto estático (brand name, title, etc.)
     marca_segura = marca  # nome completo da marca
-    html = html.replace("<title>Apogeu — ENEM 2025</title>",
-                        f"<title>{marca_segura} — ENEM 2025</title>")
+    html = html.replace("<title>Apogeu - ENEM 2025</title>",
+                        f"<title>{marca_segura} - ENEM 2025</title>")
 
     # Subtitle linha da header
     html = html.replace(
@@ -327,7 +327,7 @@ def gerar_html(
     # Subtítulo do card "Concorrentes por Município": "★ = unidade Apogeu"
     html = html.replace("unidade Apogeu", f"unidade {marca_segura}")
 
-    # Logo do header — injeta a logo base64 embutida da marca (asset em logos/{safe}.imgtag).
+    # Logo do header - injeta a logo base64 embutida da marca (asset em logos/{safe}.imgtag).
     # Fallback: <span> com o nome da marca, caso o asset não exista.
     _safe = marca.replace(" ", "_").replace("é", "e").replace("ô", "o")
     _logo_path = os.path.join(ANALISE_DIR, "logos", f"{_safe}.imgtag")
@@ -433,7 +433,7 @@ def processar_marca(marca: str):
         unidades_nomes, mapa, bench_mun
     )
 
-    # Bairro e ranking — só para esta marca
+    # Bairro e ranking - só para esta marca
     bench_bairro = bench_bairro_all.get(marca, {})
     ranking      = ranking_all.get(marca, {})
     bairro_ausentes = _load_json(AUSENTES_JSON).get(marca, {})
@@ -485,7 +485,7 @@ def main():
 
     for marca in alvos:
         if marca not in ESCOLAS:
-            print(f"  AVISO: '{marca}' não encontrado em config.py — ignorando.")
+            print(f"  AVISO: '{marca}' não encontrado em config.py - ignorando.")
             continue
         processar_marca(marca)
 
