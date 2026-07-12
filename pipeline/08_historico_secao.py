@@ -131,7 +131,7 @@ def consts_js(hu, HB, uni_mun, marca, hist_marca):
 SCRIPT_TMPL = '''<script>
 (function(){
 __CONSTS__
-  const METRICAS = [["GERAL","Geral"],["CN","C. Natureza"],["CH","C. Humanas"],["LC","Linguagens"],["MT","Matemática"],["RD","Redação"]];
+  const METRICAS = [["GERAL","Geral"],["CN","CN"],["CH","CH"],["LC","LC"],["MT","MT"],["RD","RD"]];
   const PAL = ["#2563eb","#f97316","#16a34a","#9333ea","#0891b2","#db2777","#ca8a04","#4f46e5"];
   const TOP = "#f59e0b", C_JF = "#334155", C_MG = "#94a3b8", C_BR = "#b6c2cf";
   const cssv = k => (getComputedStyle(document.documentElement).getPropertyValue(k)||"").trim();
@@ -149,7 +149,7 @@ __CONSTS__
   function opts(met){ const ti=met==="GERAL"?"Nota média (5 áreas)":(met==="RD"?"Nota média de Redação":"Nota média");
     return {responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10},usePointStyle:true}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y!=null?c.parsed.y:'—'}`}}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y!=null?c.parsed.y:'-'}`}}},
       scales:{y:{ticks:{font:{size:10}},grid:{color:'#f1f5f9'},title:{display:true,text:ti,font:{size:10}}},
               x:{ticks:{font:{size:11}},grid:{display:false}}}}; }
 
@@ -219,7 +219,7 @@ def secao_html(marca, HB, uf):
     multi = len(HB["mun_ordem"]) > 1
     sig = HB["uf"]["sigla"]
     if multi:
-        titulo1 = "Médias da rede privada por município — 2021 a 2025"
+        titulo1 = "Médias da rede privada por município - 2021 a 2025"
         sub1 = (f'Escolha o município e a área. Nota média da rede privada municipal ao longo dos anos, '
                 f'com referências de <span style="color:#94a3b8;font-weight:600">{sig} (estado)</span>, '
                 f'<span style="color:#64748b;font-weight:600">Brasil</span> e '
@@ -233,7 +233,7 @@ def secao_html(marca, HB, uf):
                 f'<span style="color:#f59e0b;font-weight:600">Top 100 BR</span> (linhas tracejadas).')
     else:
         mun_nome = HB["municipios"][HB["mun_ordem"][0]]["nome"]
-        titulo1 = f"Médias da rede privada de {mun_nome} — 2021 a 2025"
+        titulo1 = f"Médias da rede privada de {mun_nome} - 2021 a 2025"
         sub1 = (f'Nota média da rede privada do município ao longo dos anos, com referências de '
                 f'<span style="color:#94a3b8;font-weight:600">{sig} (estado)</span>, '
                 f'<span style="color:#64748b;font-weight:600">Brasil</span> e '
@@ -258,7 +258,7 @@ def secao_html(marca, HB, uf):
   <div class="hist-nota">O <strong>Top 100 BR</strong> (média das 100 melhores escolas do país) só aparece a partir de 2024: ranquear escolas exige o código da escola, que o INEP suprimiu nos microdados de 2021 a 2023.</div>
 </div>
 <div class="card" style="margin-bottom:16px">
-  <div class="card-titulo">Médias das Unidades — 2024 e 2025</div>
+  <div class="card-titulo">Médias das Unidades - 2024 e 2025</div>
   <div class="card-sub">{sub2}</div>
   {munsel2}
   <div id="histMetricSel2" class="hist-sel"></div>
@@ -267,7 +267,7 @@ def secao_html(marca, HB, uf):
     <button type="button" class="hist-data-btn" aria-expanded="false" onclick="var w=this.parentNode.querySelector('.hist-tbl-wrap');var o=getComputedStyle(w).display==='none';w.style.display=o?'block':'none';this.innerHTML=o?'Ocultar dados &#9652;':'Ver dados &#9662;';">Ver dados &#9662;</button>
     <div class="hist-tbl-wrap" id="histTblUnidades" style="display:none"></div>
   </div>
-  <div class="hist-nota">A série por escola começa em 2024 — o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
+  <div class="hist-nota">A série por escola começa em 2024 - o INEP suprimiu o código da escola de 2021 a 2023, então não é possível recuperar a nota de uma unidade específica nesses anos. O contexto de mercado (gráfico acima), por depender só de município e rede, cobre os cinco anos.</div>
 </div>
 '''
 
@@ -293,21 +293,23 @@ CSS = '''  .hist-sel { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 6px;
 def aplicar(marca, html_path=None):
     html_path = html_path or os.path.join(OUTPUT_DIR, f"{safe_nome(marca)}_Dashboard.html")
     if not os.path.exists(html_path):
-        print(f"[{marca}] dashboard nao encontrado: {os.path.basename(html_path)} — pulando")
+        print(f"[{marca}] dashboard nao encontrado: {os.path.basename(html_path)} - pulando")
         return
     mp = mapear_nomes(marca, html_path)
     if not mp:
-        print(f"[{marca}] nenhuma unidade casada com o historico — pulando")
+        print(f"[{marca}] nenhuma unidade casada com o historico - pulando")
         return
     hu, HB, uf, uni_mun = montar_consts(marca, mp)
     hist_marca = montar_hist_marca(mp)
     t = io.open(html_path, encoding="utf-8").read()
     if 'id="sec-historico"' in t:
-        print(f"[{marca}] secao ja presente — ok (idempotente)")
+        print(f"[{marca}] secao ja presente - ok (idempotente)")
         return
-    a1 = '<p class="section-titulo">Filtrar por Unidade</p>'
+    a1_id = '<p class="section-titulo" id="sec-filtro">Filtrar por Unidade</p>'
+    a1_plain = '<p class="section-titulo">Filtrar por Unidade</p>'
+    a1 = a1_id if t.count(a1_id) == 1 else a1_plain
     if t.count(a1) != 1 or t.count("</style>") < 1 or t.count("</body>") != 1:
-        print(f"[{marca}] ancoras inesperadas no HTML — pulando")
+        print(f"[{marca}] ancoras inesperadas no HTML - pulando")
         return
     t = t.replace(a1, secao_html(marca, HB, uf) + a1, 1)
     t = t.replace("</style>", CSS, 1)
