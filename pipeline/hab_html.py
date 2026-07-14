@@ -150,7 +150,7 @@ reais dos alunos cruzadas com o gabarito da sua prova. Base da leitura pedagógi
 
 <h2><span class="tag">Mapa de calor</span>Domínio de habilidades (H1&ndash;H30 por área)</h2>
 <p class="desc">Cada célula é uma habilidade da Matriz de Referência. A cor indica o percentual de acerto da rede
-naquela habilidade - do vermelho (dificuldade) ao verde (domínio). Passe o mouse para ver o acerto e o nº de itens.
+naquela habilidade - do vermelho (dificuldade) ao verde (domínio). Passe o mouse para ver o acerto e as respostas.
 Alterne entre a rede e cada unidade.</p>
 <div class="tabs" id="heat-tabs"></div>
 <div class="legend">
@@ -241,8 +241,10 @@ function renderHeat(){
       const anul=r.status==="anulada";
       const bg=anul?"repeating-linear-gradient(45deg,#e2e8f0,#e2e8f0 5px,#eef2f7 5px,#eef2f7 10px)":corAcerto(v);
       const inner=anul?"&empty;":(v==null?"-":Math.round(v));
+      const nResp = heatMode==="rede" ? r.n : (r.unidades_n ? (r.unidades_n[heatMode]||0) : 0);
+      const nAl = heatMode==="rede" ? D.n_avaliados[a] : ((D.n_avaliados_und[heatMode]||{})[a]||0);
       h+=`<div class="cell" style="background:${bg}${anul?';color:#94a3b8':''}" data-area="${a}" data-hab="${r.hab}"
-        data-desc="${desc}" data-v="${v==null?'':v}" data-n="${r.n}" data-status="${r.status}">
+        data-desc="${desc}" data-v="${v==null?'':v}" data-n="${nResp}" data-alunos="${nAl}" data-status="${r.status}">
         <span class="hn">H${r.hab}</span><span>${inner}</span></div>`;
     });
     h+=`</div></div>`;
@@ -273,12 +275,17 @@ function renderHeat(){
   }
   heat.addEventListener("mouseover",e=>{
     const c=e.target.closest(".cell"); if(!c) return;
-    const a=c.dataset.area, hab=c.dataset.hab, v=c.dataset.v, n=c.dataset.n, st=c.dataset.status;
+    const a=c.dataset.area, hab=c.dataset.hab, v=c.dataset.v, n=c.dataset.n, al=c.dataset.alunos, st=c.dataset.status;
     const desc=c.dataset.desc||"(sem descrição)";
     const anul = st==="anulada";
     const pctxt = anul ? "anulada" : (v==="" ? "sem dados" : (+v).toFixed(1)+"% de acerto");
-    const tn = anul ? "Questão anulada pelo INEP (item previamente exposto) - sem dados de acerto"
-                    : `${AN[a]} &middot; ${n} itens avaliados`;
+    let tn;
+    if (anul) tn = "Questão anulada pelo INEP (item previamente exposto) - sem dados de acerto";
+    else {
+      const R=+n, A=+al;
+      if (A>0 && R % A === 0) { const q=R/A; tn = `${R} respostas = ${A} alunos &times; ${q} ${q===1?'questão da prova':'questões da prova'}`; }
+      else tn = `${R} respostas de ${A} alunos`;
+    }
     tip.innerHTML=`<div class="th"><span class="badge">${a} &middot; H${hab}</span><span class="pct">${pctxt}</span></div>
       <div class="td">${desc}</div><div class="tn">${tn}</div>`;
     tip.classList.add("on"); move(e);
@@ -298,7 +305,7 @@ function renderHeat(){
       let ac;
       if(r.status==="anulada") ac=`<span class="badge-anul">anulada</span>`;
       else if(r.status==="ausente") ac=`<span class="mini">não avaliada</span>`;
-      else ac=`<b style="color:${corAcerto(r.acerto)}">${fmt(r.acerto)}%</b> <span class="mini">&middot; ${r.n} itens</span>`;
+      else ac=`<b style="color:${corAcerto(r.acerto)}">${fmt(r.acerto)}%</b> <span class="mini">&middot; ${r.n} respostas</span>`;
       h+=`<tr><td class="hb">H${r.hab}</td><td>${r.desc||""}</td><td class="ac">${ac}</td></tr>`;
     });
     h+=`</tbody></table>`;

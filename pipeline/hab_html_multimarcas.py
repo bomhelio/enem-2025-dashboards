@@ -132,7 +132,7 @@ gargalo, vermelho = pior. Serve para achar quem lidera cada um. <span style="col
 <div class="card" style="overflow-x:auto"><table class="mtx" id="mtx"></table></div>
 
 <h2><span class="tag">Mapa de calor</span>Domínio de habilidades das 5 marcas (H1-H30 por área)</h2>
-<p class="desc">Cada célula é uma habilidade. Alterne entre o total das marcas e cada uma. Passe o mouse para ver o acerto e o nº de itens.</p>
+<p class="desc">Cada célula é uma habilidade. Alterne entre o total das marcas e cada uma. Passe o mouse para ver o acerto e as respostas.</p>
 <div class="tabs" id="heat-tabs"></div>
 <div class="legend">
   <span><span class="sw" style="background:#c0392b"></span>&lt;40%</span>
@@ -240,7 +240,9 @@ function renderHeat(){
     rows.forEach(r=>{
       const v = heatMode==="rede" ? r.rede : r.marcas[heatMode];
       const desc=(r.desc||"").replace(/"/g,"&quot;");
-      h+=`<div class="cell" style="background:${corAcerto(v)}" data-a="${a}" data-h="${r.hab}" data-d="${desc}" data-v="${v==null?'':v}" data-n="${r.n}">
+      const nResp = heatMode==="rede" ? r.n : (r.marcas_n ? (r.marcas_n[heatMode]||0) : 0);
+      const nAl = heatMode==="rede" ? D.n_avaliados[a] : ((D.n_avaliados_marca[heatMode]||{})[a]||0);
+      h+=`<div class="cell" style="background:${corAcerto(v)}" data-a="${a}" data-h="${r.hab}" data-d="${desc}" data-v="${v==null?'':v}" data-n="${nResp}" data-alunos="${nAl}">
         <span class="hn">H${r.hab}</span><span>${v==null?"-":Math.round(v)}</span></div>`;
     });
     h+=`</div></div>`;
@@ -248,8 +250,10 @@ function renderHeat(){
   el.innerHTML=h;
   el.querySelectorAll(".cell").forEach(c=>{
     c.onmousemove=e=>{const v=c.dataset.v;const modo=heatMode==="rede"?"Multimarcas":(MARCAS.find(m=>m.nome===heatMode)||{}).curta;
+      const R=+c.dataset.n, A=+c.dataset.alunos;
+      const comp = (A>0 && R%A===0) ? `${R} respostas = ${A} alunos &times; ${R/A} ${R/A===1?'questão da prova':'questões da prova'}` : `${R} respostas de ${A} alunos`;
       showTip(`<div class="th"><span class="badge">${c.dataset.a} &middot; H${c.dataset.h}</span><span class="pct">${v===""?"sem dados":v+"% de acerto"}</span></div>
-        <div>${c.dataset.d||""}</div><div class="tn">${modo} &middot; ${c.dataset.n} itens avaliados</div>`,e);};
+        <div>${c.dataset.d||""}</div><div class="tn">${modo} &middot; ${comp}</div>`,e);};
     c.onmouseleave=hideTip;
   });
 }
