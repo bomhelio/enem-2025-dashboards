@@ -116,6 +116,7 @@ def analisar(marca):
             "diff": {a: {t: _mk() for t in ("facil", "medio", "dificil")} for a in AREAS},
             "area": {a: _mk() for a in AREAS},
             "branco_fim": {a: _mk() for a in AREAS},
+            "nval": {a: 0 for a in AREAS},   # alunos com resposta valida por area
             "n_red": 0, "red": {c: 0.0 for c in range(1, 6)},
         }
 
@@ -134,6 +135,8 @@ def analisar(marca):
             s = seq(r[f"CO_PROVA_{area}"], area, r.TP_LINGUA)
             if len(resp) != len(s):
                 continue
+            rede["nval"][area] += 1
+            A["nval"][area] += 1
             tot = 0
             n_items = len(s)
             for i, (hab, gab, aban, terc) in enumerate(s):
@@ -186,6 +189,7 @@ def analisar(marca):
                 "hab": h, "label": label_hab(a, h), "desc": desc_hab(a, h),
                 "rede": pct(rd), "n": rd["tot"], "status": status,
                 "unidades": {c: pct(und[c]["hab"][a][h]) for c in UNIT_NAMES},
+                "unidades_n": {c: und[c]["hab"][a][h]["tot"] for c in UNIT_NAMES},
             })
         heat[a] = linhas
 
@@ -260,6 +264,8 @@ def analisar(marca):
         "accent": ACCENTS.get(marca, "#2563eb"),
         "n_alunos": len(df),
         "n_presentes": {a: int((df[f"TP_PRESENCA_{a}"] == 1).sum()) for a in AREAS},
+        "n_avaliados": {a: rede["nval"][a] for a in AREAS},
+        "n_avaliados_und": {c: {a: und[c]["nval"][a] for a in AREAS} for c in UNIT_NAMES},
         "area_nomes": AREA_NOMES,
         "unidades": unidades_meta,
         "acerto_area": acerto_area,

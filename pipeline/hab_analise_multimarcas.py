@@ -40,6 +40,7 @@ def novo_agg():
         "hab": {a: {h: _mk() for h in range(1, 31)} for a in AREAS},
         "diff": {a: {t: _mk() for t in ("facil", "medio", "dificil")} for a in AREAS},
         "area": {a: _mk() for a in AREAS},
+        "nval": {a: 0 for a in AREAS},   # alunos com resposta valida por area
     }
 
 
@@ -65,6 +66,8 @@ def computar():
                 s = ha.seq(r[f"CO_PROVA_{area}"], area, r.TP_LINGUA)
                 if len(resp) != len(s):
                     continue
+                rede["nval"][area] += 1
+                mrc[m]["nval"][area] += 1
                 for i, (hab, gab, aban, terc) in enumerate(s):
                     if hab != 0:
                         rede["hab"][area][hab]["seen"] += 1
@@ -133,6 +136,7 @@ def montar_dados():
                 "rede": pct(rd), "n": rd["tot"],
                 "status": "ok" if rd["tot"] > 0 else "anulada",
                 "marcas": {m: pct(mrc[m]["hab"][a][h]) for m in MARCAS},
+                "marcas_n": {m: mrc[m]["hab"][a][h]["tot"] for m in MARCAS},
             })
         heat[a] = linhas
 
@@ -174,6 +178,8 @@ def montar_dados():
                    for m in MARCAS],
         "area_nomes": ha.AREA_NOMES,
         "acerto_area_rede": {a: pct(rede["area"][a]) for a in AREAS},
+        "n_avaliados": {a: rede["nval"][a] for a in AREAS},
+        "n_avaliados_marca": {m: {a: mrc[m]["nval"][a] for a in AREAS} for m in MARCAS},
         "heat": heat,
         "gargalos": gargalos,
         "dificuldade": dificuldade,
