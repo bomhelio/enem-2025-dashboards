@@ -205,18 +205,13 @@ CSS = """
     .mb-val { font-weight:600; color:#0f172a; text-align:right; font-variant-numeric:tabular-nums; }
     .ref-legend { display:flex; gap:20px; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:10px; }
     .ref-legend i { display:inline-block; width:14px; height:0; border-top:2px dashed #94a3b8; vertical-align:middle; margin-right:5px; }
-    .cmp-row { display:flex; align-items:center; gap:8px; margin-top:7px; font-size:11px; color:var(--muted); }
-    .cmp-lbl { width:78px; flex:0 0 auto; }
-    .cmp-track { flex:1; background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
-    .cmp-bar { height:100%; border-radius:5px; }
-    .cmp-val { width:40px; flex:0 0 auto; text-align:right; font-weight:600; color:#334155; font-variant-numeric:tabular-nums; }
     footer { color:var(--muted); font-size:12px; text-align:center; padding:20px 0 4px; }
     @media (max-width: 900px) { .stats { grid-template-columns:repeat(2,1fr); } .mb-row { grid-template-columns:120px 1fr 56px; } }
     @media (max-width: 600px) { .stats, .grid { grid-template-columns:1fr; } }
 """
 
 
-def gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo):
+def gerar_html(rede, marcas, unidades, raiz_logo):
     # ---- stats (Resultado geral da rede)
     melhor = marcas[0]
     melhor_uni = unidades[0]
@@ -266,39 +261,6 @@ def gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo):
           <div class="mb-ref" style="left:{pos(TOP100_NG):.1f}%"></div>
         </div>
         <div class="mb-val">{fmt(m['ng'])}</div>
-      </div>""")
-
-    # ---- melhor unidade por area (stats idiom)
-    camp_html = "\n".join(
-        f'      <div class="stat"><small>{AREA_NOME[a]}</small>'
-        f'<strong class="txt">{campeas[a]["unidade"]}</strong>'
-        f'<span style="border-left:3px solid {campeas[a]["cor"]};padding-left:8px">'
-        f'{campeas[a]["marca"]} · {fmt(campeas[a]["media"])}</span></div>'
-        for a in AREAS
-    )
-
-    # ---- alto desempenho (>=700): rede vs rede privada vs Brasil
-    fx_cards = []
-    for a in AREAS:
-        rede_p = funil[a]["p700"]
-        priv_p = (excelencia.get("privada", {}).get(a) or {}).get("pct_700")
-        br_p = (excelencia.get("brasil", {}).get(a) or {}).get("pct_700")
-        series = [("Rede Raiz", rede_p, "#1e293b"),
-                  ("Rede privada", priv_p, "#94a3b8"),
-                  ("Brasil", br_p, "#cbd5e1")]
-        escala = max(v for _, v, _ in series if v is not None) * 1.08 or 1
-        barras = "\n".join(
-            f'        <div class="cmp-row"><span class="cmp-lbl">{lbl}</span>'
-            f'<span class="cmp-track"><span class="cmp-bar" '
-            f'style="display:block;width:{(v or 0)/escala*100:.1f}%;background:{cor}"></span></span>'
-            f'<span class="cmp-val">{fmt(v)}%</span></div>'
-            for lbl, v, cor in series
-        )
-        fx_cards.append(f"""      <div class="stat">
-        <small>{AREA_NOME[a]}</small>
-        <strong>{fmt(rede_p)}%</strong>
-        <span>da rede com nota ≥ 700</span>
-{barras}
       </div>""")
 
     # ---- cards de marca (portal)
@@ -363,14 +325,6 @@ def gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo):
 {chr(10).join(mb_rows)}
       <div class="ref-legend"><span><i></i>Brasil {fmt(BRASIL_NG)}</span><span><i></i>Top 100 BR {fmt(TOP100_NG)}</span></div>
     </div>
-    <p class="section-title">Melhor unidade da rede por área</p>
-    <section class="stats">
-{camp_html}
-    </section>
-    <p class="section-title">Alto desempenho · nota ≥ 700</p>
-    <section class="stats">
-{chr(10).join(fx_cards)}
-    </section>
     <p class="section-title">Dashboards por marca</p>
     <section class="grid">
 {chr(10).join(cards)}
@@ -386,10 +340,8 @@ def gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo):
 def main():
     raiz_logo = logo_src("raiz.imgtag")
     dados = carregar()
-    rede, marcas, unidades, campeas, funil = montar_modelo(dados)
-    exc_path = os.path.join(OUT, "benchmark_excelencia.json")
-    excelencia = json.load(open(exc_path, encoding="utf-8")) if os.path.exists(exc_path) else {}
-    html = gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo)
+    rede, marcas, unidades, _campeas, _funil = montar_modelo(dados)
+    html = gerar_html(rede, marcas, unidades, raiz_logo)
     dest = os.path.join(OUT, "Home_Raiz.html")
     open(dest, "w", encoding="utf-8").write(html)
     print(f"OK -> {dest} ({len(html):,} chars) | rede NG={rede['ng']:.1f} "
