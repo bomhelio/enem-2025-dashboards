@@ -95,6 +95,8 @@
   .card-titulo { font-size: 0.85rem; font-weight: 700; color: var(--texto); margin-bottom: 4px; }
   .card-sub { font-size: 0.75rem; color: var(--texto-sec); margin-bottom: 16px; }
   .chart-wrap { position: relative; height: 280px; }
+  .card:has(> .chart-wrap) { display: flex; flex-direction: column; }
+  .card:has(> .chart-wrap) .chart-wrap { flex: 1 1 auto; }
   .chart-wrap.tall { height: 340px; }
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
@@ -1314,7 +1316,7 @@ function buildPriorityPanel() {
       +'<td class="'+dMCls+'">'+(r.dMarca>0?'+':'')+r.dMarca+'</td>'
       +'<td class="'+dBCls+'">'+(r.dBrasil>0?'+':'')+r.dBrasil+'</td>'
       +(hasTop ? '<td class="'+dTCls+'">'+(r.dTop>=0?'+':'')+r.dTop+'</td>' : '')
-      +'<td><span class="prio-badge" style="background:'+acaoCor+'14;color:'+acaoCor+';border:1px solid '+acaoCor+'55;font-weight:600">'+acao+'</span></td>'
+      +'<td><span class="prio-badge" style="background:'+acaoCor+';color:white;border:none">'+acao+'</span></td>'
       +'</tr>';
   });
   tbody += '</tbody>';
