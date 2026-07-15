@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """09_gerar_home.py — Home consolidada da Rede Raiz (ENEM 2025).
 
+Identidade visual: réplica da home da Análise UERJ (uerj-eq1-2027.vercel.app):
+header navy com wordmark do exame, stats em cards, section-titles à esquerda
+com hairline, faixas hist-link/top-details e cards de marca com tile de logo.
+
 Le o const DADOS e o BENCH_UNIDADE dos HTMLs de deploy do repo (fonte auditada)
-e gera output/Home_Raiz.html: portal com KPIs de rede, cards por marca e
-analises ineditas cross-marca (ranking de unidades, marcas vs referencias,
-campeas por area, funil de excelencia).
+e gera output/Home_Raiz.html com KPIs de rede, analises cross-marca e o portal
+dos dashboards.
 
 Uso: python 09_gerar_home.py
 Deploy: projeto Vercel proprio (enem-2025-raiz) — nao altera as URLs das marcas.
@@ -16,14 +19,20 @@ import sys
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(BASE, "output")
+LOGOS = os.path.join(BASE, "logos")
 REPO = r"C:\Users\helio.barbosa\AppData\Local\Temp\enem-2025-dashboards"
 
 MARCAS = {
-    "Apogeu": {"html": "apogeu.html", "url": "https://apogeu-enem-deploy.vercel.app", "cor": "#2563eb", "escura": "#1a3a6e"},
-    "QI Bilíngue": {"html": "qi-bilingue.html", "url": "https://qi-enem-deploy.vercel.app", "cor": "#7c3aed", "escura": "#4c1d95"},
-    "Matriz Educação": {"html": "matriz-educacao.html", "url": "https://matriz-enem-deploy.vercel.app", "cor": "#15803d", "escura": "#0a4d2b"},
-    "Colégio Leonardo da Vinci": {"html": "leonardo-da-vinci.html", "url": "https://leonardo-enem-deploy.vercel.app", "cor": "#c2560a", "escura": "#b44408"},
-    "Cubo Global": {"html": "cubo-global.html", "url": "https://cubo-enem-deploy.vercel.app", "cor": "#0f9d96", "escura": "#097570"},
+    "Apogeu": {"html": "apogeu.html", "url": "https://apogeu-enem-deploy.vercel.app",
+               "cor": "#2563eb", "tile": "#1a3a6e", "logo": "Apogeu.imgtag"},
+    "QI Bilíngue": {"html": "qi-bilingue.html", "url": "https://qi-enem-deploy.vercel.app",
+                    "cor": "#7c3aed", "tile": "#4c1d95", "logo": "QI_Bilíngue.imgtag"},
+    "Matriz Educação": {"html": "matriz-educacao.html", "url": "https://matriz-enem-deploy.vercel.app",
+                        "cor": "#15803d", "tile": "#0a4d2b", "logo": "Matriz_Educação.imgtag"},
+    "Colégio Leonardo da Vinci": {"html": "leonardo-da-vinci.html", "url": "https://leonardo-enem-deploy.vercel.app",
+                                  "cor": "#c2560a", "tile": "#b44408", "logo": "Colegio_Leonardo_da_Vinci.imgtag"},
+    "Cubo Global": {"html": "cubo-global.html", "url": "https://cubo-enem-deploy.vercel.app",
+                    "cor": "#0f9d96", "tile": "#097570", "logo": "Cubo_Global.imgtag"},
 }
 MULTIMARCAS_URL = "https://multimarcas-enem-deploy.vercel.app"
 
@@ -42,6 +51,20 @@ def fmt(v, dec=1):
         return "-"
     s = f"{v:,.{dec}f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return s
+
+
+def milhar(v):
+    return f"{v:,}".replace(",", ".")
+
+
+def logo_src(fname):
+    """extrai o data-URI do .imgtag (logo branca extraida dos dashboards)."""
+    path = os.path.join(LOGOS, fname)
+    if not os.path.exists(path):
+        return None
+    tag = open(path, encoding="utf-8").read()
+    m = re.search(r'src="(data:image/png;base64,[^"]+)"', tag)
+    return m.group(1) if m else None
 
 
 def extrair(html, nome):
@@ -65,9 +88,7 @@ def montar_modelo(dados):
     unidades = []
     tot_insc = tot_pres = 0
     ng_s = ng_n = 0.0
-    # funil de excelencia (ponderado por n de cada area)
     funil = {a: {"s600": 0.0, "s700": 0.0, "n": 0} for a in ["CN", "CH", "LC", "MT"]}
-    red_800 = {"s": 0.0, "n": 0}
 
     for marca, cfg in MARCAS.items():
         g = dados[marca]["DADOS"]["geral"]
@@ -75,7 +96,8 @@ def montar_modelo(dados):
         bench = dados[marca]["BENCH_UNIDADE"]
         ngm = g.get("nota_geral") or {}
         marcas.append({
-            "marca": marca, "cor": cfg["cor"], "escura": cfg["escura"], "url": cfg["url"],
+            "marca": marca, "cor": cfg["cor"], "tile": cfg["tile"], "url": cfg["url"],
+            "logo": logo_src(cfg["logo"]),
             "n": g["n_inscritos"], "unidades": len(unis), "presenca": g["taxa_presenca"],
             "ng": ngm.get("media"), "mt": g["areas"]["MT"]["media"],
             "rd": g["redacao"]["media"], "p700mt": g["areas"]["MT"]["pct_700"],
@@ -121,213 +143,239 @@ def montar_modelo(dados):
     return rede, marcas, unidades, campeas, funil_out
 
 
-def gerar_html(rede, marcas, unidades, campeas, funil, logo_tag):
-    css = """
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#f6f8fb;color:#0f172a;line-height:1.45}
-header{background:linear-gradient(135deg,#fa820a 0%,#c45800 100%);height:110px;padding:0 32px;display:flex;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-header .divisor{width:1px;height:58px;background:rgba(255,255,255,.35);margin:0 22px}
-header h1{color:#fff;font-size:1.25rem;font-weight:600;letter-spacing:.2px}
-header .sub{color:rgba(255,255,255,.85);font-size:.8rem;font-weight:400;display:block;margin-top:2px}
-.wrap{max-width:1180px;margin:0 auto;padding:8px 24px 64px}
-.section-titulo{text-align:center;font-size:.92rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c45800;margin:52px 0 22px;display:flex;align-items:center;gap:18px}
-.section-titulo::before,.section-titulo::after{content:"";flex:1;height:1px;background:#e2e8f0}
-.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px rgba(15,23,42,.05)}
-.card-sub{color:#64748b;font-size:.8rem}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:26px}
-.kpi{background:#fff;border:1px solid #e2e8f0;border-top:3px solid #c45800;border-radius:14px;padding:18px 20px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px rgba(15,23,42,.05)}
-.kpi-label{font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#64748b}
-.kpi-value{font-size:1.9rem;font-weight:700;color:#c45800;margin:2px 0}
-.kpi-sub{font-size:.75rem;color:#94a3b8}
-.grid-marcas{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.marca-card{display:flex;flex-direction:column;gap:12px;border-top:4px solid;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
-.marca-card:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(15,23,42,.08),0 12px 28px rgba(15,23,42,.12)}
-.marca-head{display:flex;justify-content:space-between;align-items:baseline}
-.marca-nome{font-weight:700;font-size:1.02rem}
-.marca-meta{font-size:.72rem;color:#94a3b8}
-.marca-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.mk{text-align:center}
-.mk b{display:block;font-size:1.05rem}
-.mk span{font-size:.62rem;letter-spacing:.6px;text-transform:uppercase;color:#94a3b8}
-.marca-cta{font-size:.78rem;font-weight:600;text-align:right}
-.rk-row{display:grid;grid-template-columns:34px minmax(150px,1.4fr) minmax(90px,1fr) 3fr 64px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:.82rem}
-.rk-row:last-child{border-bottom:none}
-.rk-pos{color:#94a3b8;font-weight:700;text-align:right}
-.rk-row.top3 .rk-pos{color:#0f172a}
-.rk-uni{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rk-uni small{display:block;font-weight:400;color:#94a3b8;font-size:.68rem}
-.rk-chip{font-size:.66rem;font-weight:700;letter-spacing:.4px;padding:2px 8px;border-radius:99px;justify-self:start;white-space:nowrap}
-.rk-bar-bg{background:#eef2f6;border-radius:6px;height:14px;position:relative;overflow:hidden}
-.rk-bar{height:100%;border-radius:6px}
-.rk-val{font-weight:700;text-align:right}
-.ref-legend{display:flex;gap:20px;justify-content:flex-end;font-size:.72rem;color:#64748b;margin-top:10px}
-.ref-legend i{display:inline-block;width:14px;height:0;border-top:2px dashed #94a3b8;vertical-align:middle;margin-right:5px}
-.mb-row{display:grid;grid-template-columns:minmax(150px,1.2fr) 4fr 64px;gap:12px;align-items:center;padding:8px 0;font-size:.84rem}
-.mb-bar-wrap{position:relative;background:#eef2f6;border-radius:6px;height:18px}
-.mb-bar{height:100%;border-radius:6px}
-.mb-ref{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px dashed #94a3b8}
-.grid-camp{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.camp-card{border-top:3px solid;text-align:center;padding:18px 14px}
-.camp-area{font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#64748b}
-.camp-uni{font-weight:700;font-size:1rem;margin:6px 0 1px}
-.camp-marca{font-size:.72rem;color:#94a3b8}
-.camp-val{font-size:1.45rem;font-weight:700;margin-top:6px}
-.fx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.fx-card{padding:18px 20px}
-.fx-area{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#64748b;margin-bottom:10px}
-.fx-line{display:flex;justify-content:space-between;font-size:.78rem;margin:8px 0 3px}
-.fx-line b{font-size:.85rem}
-.fx-bar-bg{background:#eef2f6;border-radius:5px;height:10px;overflow:hidden}
-.fx-bar{height:100%;border-radius:5px}
-footer{text-align:center;color:#94a3b8;font-size:.75rem;padding:26px 0;border-top:1px solid #e2e8f0;margin-top:56px}
-footer a{color:#c45800;text-decoration:none;font-weight:600}
-@media(max-width:720px){.rk-row{grid-template-columns:26px 1.4fr 2.2fr 52px}.rk-chip{display:none}header{padding:0 16px}}
+CSS = """
+    :root { --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI", system-ui, Arial, sans-serif; }
+    header { background:linear-gradient(135deg,#1e293b 0%,#0a1940 100%); box-shadow:0 4px 12px rgba(0,0,0,.25); }
+    .hero { max-width:1120px; margin:0 auto; min-height:96px; padding:0 24px; display:flex; align-items:center; gap:18px; }
+    .hero h1 { margin:0; color:#fff; font-size:24px; font-weight:800; letter-spacing:-.01em; }
+    .hero p { margin:0; color:rgba(255,255,255,.75); font-size:14px; }
+    .hero-divider { width:1px; height:44px; background:rgba(255,255,255,.35); flex-shrink:0; }
+    main { max-width:1120px; margin:0 auto; padding:28px 24px 40px; }
+    .stats { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .stat small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
+    .stat strong { display:block; color:#0f172a; font-size:22px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
+    .stat strong.txt { font-size:17px; line-height:1.25; min-height:38px; }
+    .stat span { display:block; margin-top:5px; color:var(--muted); font-size:12px; }
+    .section-title { margin:30px 0 14px; color:#334155; font-size:14px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; display:flex; align-items:center; gap:12px; }
+    .section-title::after { content:""; flex:1; height:1px; background:var(--line); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }
+    a.card { display:flex; align-items:center; gap:16px; min-height:104px; padding:16px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; color:inherit; text-decoration:none; box-shadow:0 1px 2px rgba(15,23,42,.04); transition:box-shadow .15s ease, border-color .15s ease; }
+    a.card:hover { border-color:var(--brand); box-shadow:0 10px 24px color-mix(in srgb, var(--brand) 18%, transparent); }
+    .mark { width:104px; height:64px; border-radius:12px; display:grid; place-items:center; padding:0 10px; color:#fff; font-weight:800; font-size:20px; flex:0 0 auto; }
+    .mark img { max-height:44px; max-width:84px; width:auto; display:block; }
+    .card-body { display:block; }
+    .name { display:block; font-size:17px; font-weight:800; color:#0f172a; }
+    .meta { display:block; margin-top:4px; color:var(--muted); font-size:13px; }
+    .top-details { margin-top:10px; }
+    .top-details summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; color:#334155; font-size:13px; box-shadow:0 1px 2px rgba(15,23,42,.04); transition:border-color .15s ease; }
+    .top-details summary::-webkit-details-marker { display:none; }
+    .top-details summary:hover { border-color:#1e293b; }
+    .top-details summary b { color:#0f172a; }
+    .top-details[open] .caret { transform:rotate(180deg); }
+    .caret { transition:transform .15s ease; }
+    .top-panel { margin-top:10px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:6px 18px 14px; box-shadow:0 1px 2px rgba(15,23,42,.04); overflow-x:auto; }
+    .top-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .top-table th, .top-table td { padding:8px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .top-table tbody tr:last-child td { border-bottom:0; }
+    .top-table th { color:#64748b; font-size:11px; background:#f8fafc; font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
+    .top-table th.num, .top-table td.num { text-align:right; white-space:nowrap; }
+    .top-brand { font-weight:600; color:#0f172a; white-space:nowrap; }
+    .top-unit { font-weight:500; color:#334155; }
+    .top-score { font-weight:600; color:#0f172a; font-variant-numeric:tabular-nums; }
+    .top-local { color:var(--muted); font-size:12px; font-weight:400; }
+    .top-flag { display:inline-block; margin-right:8px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; border-radius:999px; padding:2px 8px; font-size:10.5px; font-weight:700; white-space:nowrap; }
+    .hist-link { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; color:#334155; text-decoration:none; font-size:13px; box-shadow:0 1px 2px rgba(15,23,42,.04); transition:border-color .15s ease; }
+    .hist-link:hover { border-color:#1e293b; }
+    .hist-link b { color:#0f172a; }
+    .hist-arrow { font-weight:800; color:#0f172a; }
+    .panel { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .panel-note { margin:0 0 12px; color:var(--muted); font-size:12.5px; }
+    .mb-row { display:grid; grid-template-columns:200px 1fr 64px; gap:14px; align-items:center; padding:7px 0; font-size:13px; }
+    .mb-name { font-weight:600; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mb-track { position:relative; background:#eef2f6; border-radius:6px; height:16px; }
+    .mb-bar { height:100%; border-radius:6px; }
+    .mb-ref { position:absolute; top:-4px; bottom:-4px; width:0; border-left:2px dashed #94a3b8; }
+    .mb-val { font-weight:600; color:#0f172a; text-align:right; font-variant-numeric:tabular-nums; }
+    .ref-legend { display:flex; gap:20px; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:10px; }
+    .ref-legend i { display:inline-block; width:14px; height:0; border-top:2px dashed #94a3b8; vertical-align:middle; margin-right:5px; }
+    .fx-line { display:flex; justify-content:space-between; font-size:12.5px; margin:8px 0 4px; color:#334155; }
+    .fx-line b { color:#0f172a; font-variant-numeric:tabular-nums; }
+    .fx-track { background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
+    .fx-bar { height:100%; border-radius:5px; background:#334155; }
+    .fx-bar.soft { background:#94a3b8; }
+    footer { color:var(--muted); font-size:12px; text-align:center; padding:20px 0 4px; }
+    @media (max-width: 900px) { .stats { grid-template-columns:repeat(2,1fr); } .mb-row { grid-template-columns:120px 1fr 56px; } }
+    @media (max-width: 600px) { .stats, .grid { grid-template-columns:1fr; } }
 """
-    # ---- cards de marca
-    cards = []
-    for m in marcas:
-        cards.append(f"""
-<a class="card marca-card" style="border-top-color:{m['cor']}" href="{m['url']}">
-  <div class="marca-head"><span class="marca-nome">{m['marca']}</span>
-    <span class="marca-meta">{m['unidades']} unidades &middot; {m['n']} inscritos &middot; presença {fmt(m['presenca'])}%</span></div>
-  <div class="marca-kpis">
-    <div class="mk"><b style="color:{m['cor']}">{fmt(m['ng'])}</b><span>Nota Geral</span></div>
-    <div class="mk"><b>{fmt(m['mt'])}</b><span>Matemática</span></div>
-    <div class="mk"><b>{fmt(m['rd'])}</b><span>Redação</span></div>
-    <div class="mk"><b>{fmt(m['p700mt'])}%</b><span>&ge;700 MT</span></div>
-  </div>
-  <div class="marca-cta" style="color:{m['cor']}">Abrir dashboard &rarr;</div>
-</a>""")
-    card_mm = f"""
-<a class="card marca-card" style="border-top-color:#c45800" href="{MULTIMARCAS_URL}">
-  <div class="marca-head"><span class="marca-nome">Multimarcas - Comparativo</span>
-    <span class="marca-meta">5 marcas lado a lado</span></div>
-  <div class="card-sub">Evolução comparativa, redação, mercado local e diagnóstico por habilidade das 5 marcas em uma única tela.</div>
-  <div class="marca-cta" style="color:#c45800">Abrir comparativo &rarr;</div>
-</a>"""
 
-    # ---- ranking de unidades (escala comum)
-    ng_vals = [u["ng"] for u in unidades]
-    lo, hi = min(ng_vals) - 30, max(ng_vals) + 10
+
+def gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo):
+    # ---- stats (Resultado geral da rede)
+    melhor = marcas[0]
+    melhor_uni = unidades[0]
+    stats = [
+        ("Rede Raiz", milhar(rede["inscritos"]) + " alunos", False,
+         f"{rede['marcas']} marcas · {rede['unidades']} unidades no ENEM 2025"),
+        ("Presença 2 dias", fmt(rede["presenca"]) + "%", False,
+         f"{milhar(rede['presentes'])} presentes"),
+        ("Nota geral da rede", fmt(rede["ng"]), False,
+         f"Brasil: {fmt(BRASIL_NG)} · Top 100 BR: {fmt(TOP100_NG)}"),
+        ("Melhor marca", melhor["marca"], True, f"Nota Geral {fmt(melhor['ng'])}"),
+        ("Melhor unidade", melhor_uni["unidade"], True,
+         f"{melhor_uni['marca']} · {fmt(melhor_uni['ng'])}"),
+    ]
+    stats_html = "\n".join(
+        f'      <div class="stat"><small>{label}</small>'
+        f'<strong{" class=\"txt\"" if txt else ""}>{value}</strong><span>{note}</span></div>'
+        for label, value, txt, note in stats
+    )
+
+    # ---- ranking das unidades (top-details)
     rk_rows = []
     for i, u in enumerate(unidades, 1):
-        w = (u["ng"] - lo) / (hi - lo) * 100
-        top = " top3" if i <= 3 else ""
-        rk_rows.append(f"""
-<div class="rk-row{top}">
-  <div class="rk-pos">{i}º</div>
-  <div class="rk-uni">{u['unidade']}<small>{u['mun']} &middot; {u['n']} alunos</small></div>
-  <span class="rk-chip" style="background:{u['cor']}14;color:{u['cor']};border:1px solid {u['cor']}45">{u['marca']}</span>
-  <div class="rk-bar-bg"><div class="rk-bar" style="width:{w:.1f}%;background:{u['cor']}{'' if i<=3 else 'cc'}"></div></div>
-  <div class="rk-val">{fmt(u['ng'])}</div>
-</div>""")
+        flag = '<span class="top-flag">Top 3</span>' if i <= 3 else ""
+        rk_rows.append(
+            f'            <tr><td class="num top-score">{i}º</td>'
+            f'<td class="top-unit">{flag}{u["unidade"]}</td>'
+            f'<td class="top-brand" style="border-left:3px solid {u["cor"]};padding-left:11px">{u["marca"]}</td>'
+            f'<td class="top-local">{u["mun"]}</td>'
+            f'<td class="num">{u["n"]}</td>'
+            f'<td class="num top-score">{fmt(u["ng"])}</td></tr>'
+        )
 
-    # ---- marcas vs referencias (escala 450-900 com refs)
+    # ---- marcas vs referencias (regua 450-900)
     mb_lo, mb_hi = 450, 900
+
     def pos(v):
         return (v - mb_lo) / (mb_hi - mb_lo) * 100
+
     mb_rows = []
     for m in marcas:
-        mb_rows.append(f"""
-<div class="mb-row">
-  <div style="font-weight:600">{m['marca']}</div>
-  <div class="mb-bar-wrap">
-    <div class="mb-bar" style="width:{pos(m['ng']):.1f}%;background:{m['cor']}"></div>
-    <div class="mb-ref" style="left:{pos(BRASIL_NG):.1f}%"></div>
-    <div class="mb-ref" style="left:{pos(TOP100_NG):.1f}%"></div>
-  </div>
-  <div class="rk-val" style="color:{m['cor']}">{fmt(m['ng'])}</div>
-</div>""")
+        mb_rows.append(f"""      <div class="mb-row">
+        <div class="mb-name">{m['marca']}</div>
+        <div class="mb-track">
+          <div class="mb-bar" style="width:{pos(m['ng']):.1f}%;background:{m['cor']}"></div>
+          <div class="mb-ref" style="left:{pos(BRASIL_NG):.1f}%"></div>
+          <div class="mb-ref" style="left:{pos(TOP100_NG):.1f}%"></div>
+        </div>
+        <div class="mb-val">{fmt(m['ng'])}</div>
+      </div>""")
 
-    # ---- campeas por area
-    camp_cards = []
-    for a in AREAS:
-        c = campeas[a]
-        camp_cards.append(f"""
-<div class="card camp-card" style="border-top-color:{c['cor']}">
-  <div class="camp-area">{AREA_NOME[a]}</div>
-  <div class="camp-uni">{c['unidade']}</div>
-  <div class="camp-marca">{c['marca']}</div>
-  <div class="camp-val" style="color:{c['cor']}">{fmt(c['media'])}</div>
-</div>""")
+    # ---- melhor unidade por area (stats idiom)
+    camp_html = "\n".join(
+        f'      <div class="stat"><small>{AREA_NOME[a]}</small>'
+        f'<strong class="txt">{campeas[a]["unidade"]}</strong>'
+        f'<span style="border-left:3px solid {campeas[a]["cor"]};padding-left:8px">'
+        f'{campeas[a]["marca"]} · {fmt(campeas[a]["media"])}</span></div>'
+        for a in AREAS
+    )
 
-    # ---- funil de excelencia
+    # ---- excelencia (>=600 / >=700 por area)
     fx_cards = []
     for a in ["CN", "CH", "LC", "MT"]:
         f6, f7 = funil[a]["p600"], funil[a]["p700"]
-        fx_cards.append(f"""
-<div class="card fx-card">
-  <div class="fx-area">{AREA_NOME[a]}</div>
-  <div class="fx-line"><span>Nota &ge; 600</span><b>{fmt(f6)}%</b></div>
-  <div class="fx-bar-bg"><div class="fx-bar" style="width:{f6:.1f}%;background:#c4580999"></div></div>
-  <div class="fx-line"><span>Nota &ge; 700</span><b>{fmt(f7)}%</b></div>
-  <div class="fx-bar-bg"><div class="fx-bar" style="width:{f7:.1f}%;background:#c45800"></div></div>
-</div>""")
+        fx_cards.append(f"""      <div class="stat">
+        <small>{AREA_NOME[a]}</small>
+        <div class="fx-line"><span>Nota ≥ 600</span><b>{fmt(f6)}%</b></div>
+        <div class="fx-track"><div class="fx-bar soft" style="width:{f6:.1f}%"></div></div>
+        <div class="fx-line"><span>Nota ≥ 700</span><b>{fmt(f7)}%</b></div>
+        <div class="fx-track"><div class="fx-bar" style="width:{f7:.1f}%"></div></div>
+      </div>""")
 
-    html = f"""<!DOCTYPE html>
+    # ---- cards de marca (portal)
+    cards = []
+    raiz_img = f'<img src="{raiz_logo}" alt="Rede Raiz" />' if raiz_logo else "Raiz"
+    cards.append(f"""      <a class="card" style="--brand:#c45800" href="{MULTIMARCAS_URL}">
+        <span class="mark" style="background:linear-gradient(135deg,#fa820a 0%,#c45800 100%)">{raiz_img}</span>
+        <span class="card-body">
+          <span class="name">Multimarcas</span>
+          <span class="meta">{milhar(rede['inscritos'])} alunos · 5 marcas comparadas · abrir dashboard</span>
+        </span>
+      </a>""")
+    for m in sorted(marcas, key=lambda x: -x["n"]):
+        img = f'<img src="{m["logo"]}" alt="{m["marca"]}" />' if m["logo"] else m["marca"]
+        cards.append(f"""      <a class="card" style="--brand:{m['cor']}" href="{m['url']}">
+        <span class="mark" style="background:{m['tile']}">{img}</span>
+        <span class="card-body">
+          <span class="name">{m['marca']}</span>
+          <span class="meta">{m['n']} alunos · Nota Geral {fmt(m['ng'])} · abrir dashboard</span>
+        </span>
+      </a>""")
+
+    html = f"""<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<title>Rede Raiz - ENEM 2025</title>
-<style>{css}</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboards ENEM 2025 | Rede Raiz</title>
+  <style>{CSS}</style>
 </head>
 <body>
-<header>
-  {logo_tag}
-  <div class="divisor"></div>
-  <h1>ENEM 2025 - Análise da Rede<span class="sub">Visão consolidada das 5 marcas e portal dos dashboards</span></h1>
-</header>
-<div class="wrap">
-
-<div class="kpi-row">
-  <div class="kpi"><div class="kpi-label">Inscritos</div><div class="kpi-value">{rede['inscritos']}</div><div class="kpi-sub">{rede['marcas']} marcas &middot; {rede['unidades']} unidades</div></div>
-  <div class="kpi"><div class="kpi-label">Presentes 2 dias</div><div class="kpi-value">{rede['presentes']}</div><div class="kpi-sub">{fmt(rede['presenca'])}% de presença</div></div>
-  <div class="kpi"><div class="kpi-label">Nota Geral da Rede</div><div class="kpi-value">{fmt(rede['ng'])}</div><div class="kpi-sub">média 5 áreas por aluno &middot; Brasil: {fmt(BRASIL_NG)}</div></div>
-  <div class="kpi"><div class="kpi-label">Melhor marca</div><div class="kpi-value" style="font-size:1.35rem;line-height:2.4rem">{marcas[0]['marca']}</div><div class="kpi-sub">Nota Geral {fmt(marcas[0]['ng'])}</div></div>
-  <div class="kpi"><div class="kpi-label">Melhor unidade</div><div class="kpi-value" style="font-size:1.35rem;line-height:2.4rem">{unidades[0]['unidade']}</div><div class="kpi-sub">{unidades[0]['marca']} &middot; {fmt(unidades[0]['ng'])}</div></div>
-</div>
-
-<p class="section-titulo">Dashboards por Marca</p>
-<div class="grid-marcas">{''.join(cards)}{card_mm}</div>
-
-<p class="section-titulo">Ranking das Unidades da Rede</p>
-<div class="card">
-  <div class="card-sub" style="margin-bottom:14px">As {rede['unidades']} unidades da rede ordenadas pela Nota Geral (média das 5 áreas por aluno, presença completa e redação válida).</div>
-  {''.join(rk_rows)}
-</div>
-
-<p class="section-titulo">Marcas vs Referências Nacionais</p>
-<div class="card">
-  <div class="card-sub" style="margin-bottom:6px">Nota Geral de cada marca na régua nacional. Linhas tracejadas: Brasil {fmt(BRASIL_NG)} e Top 100 BR {fmt(TOP100_NG)} (média das 5 áreas).</div>
-  {''.join(mb_rows)}
-  <div class="ref-legend"><span><i></i>Brasil {fmt(BRASIL_NG)}</span><span><i></i>Top 100 BR {fmt(TOP100_NG)}</span></div>
-</div>
-
-<p class="section-titulo">Melhor Unidade da Rede por Área</p>
-<div class="grid-camp">{''.join(camp_cards)}</div>
-
-<p class="section-titulo">Excelência Acadêmica da Rede</p>
-<div class="card-sub" style="text-align:center;max-width:760px;margin:-8px auto 16px">Percentual de alunos da rede (todas as marcas) com nota acima dos cortes de 600 e 700 pontos, por área objetiva.</div>
-<div class="fx-grid">{''.join(fx_cards)}</div>
-
-</div>
-<footer>Diretoria de Performance Pedagógica &nbsp;|&nbsp; INEP: Microdados do Enem &nbsp;|&nbsp; Julho 2026<br>
-<a href="{MULTIMARCAS_URL}">Comparativo Multimarcas</a></footer>
+  <header>
+    <div class="hero">
+      <h1>ENEM 2025</h1>
+      <div class="hero-divider"></div>
+      <p>Análise de Performance · Microdados INEP · dashboards por marca</p>
+    </div>
+  </header>
+  <main>
+    <p class="section-title">Resultado geral da rede</p>
+    <section class="stats">
+{stats_html}
+    </section>
+    <a class="hist-link" href="{MULTIMARCAS_URL}">
+      <span><b>Comparativo Multimarcas</b> · evolução 2021–2025, redação, mercado local e diagnóstico por habilidade das 5 marcas lado a lado</span>
+      <span class="hist-arrow">→</span>
+    </a>
+    <details class="top-details">
+      <summary>
+        <span><b>Ranking das unidades</b> · as {rede['unidades']} unidades da rede ordenadas pela Nota Geral (média das 5 áreas por aluno)</span>
+        <span class="hist-arrow caret">▾</span>
+      </summary>
+      <div class="top-panel">
+        <table class="top-table">
+          <thead><tr><th class="num">Pos.</th><th>Unidade</th><th>Marca</th><th>Município</th><th class="num">Alunos</th><th class="num">Nota Geral</th></tr></thead>
+          <tbody>
+{chr(10).join(rk_rows)}
+          </tbody>
+        </table>
+      </div>
+    </details>
+    <p class="section-title">Marcas vs referências nacionais</p>
+    <div class="panel">
+      <p class="panel-note">Nota Geral de cada marca na régua de 450 a 900 pontos. Linhas tracejadas: Brasil {fmt(BRASIL_NG)} e Top 100 BR {fmt(TOP100_NG)} (média das 5 áreas).</p>
+{chr(10).join(mb_rows)}
+      <div class="ref-legend"><span><i></i>Brasil {fmt(BRASIL_NG)}</span><span><i></i>Top 100 BR {fmt(TOP100_NG)}</span></div>
+    </div>
+    <p class="section-title">Melhor unidade da rede por área</p>
+    <section class="stats">
+{camp_html}
+    </section>
+    <p class="section-title">Excelência acadêmica da rede</p>
+    <section class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+{chr(10).join(fx_cards)}
+    </section>
+    <p class="section-title">Dashboards por marca</p>
+    <section class="grid">
+{chr(10).join(cards)}
+    </section>
+    <footer>Diretoria de Performance Pedagógica · INEP: Microdados do Enem 2025 · Julho 2026</footer>
+  </main>
 </body>
-</html>"""
+</html>
+"""
     return html
 
 
 def main():
-    logo_path = os.path.join(BASE, "logos", "raiz.imgtag")
-    if not os.path.exists(logo_path):
-        sys.exit(f"Logo Raiz nao encontrada: {logo_path}")
-    logo_tag = open(logo_path, encoding="utf-8").read()
+    raiz_logo = logo_src("raiz.imgtag")
     dados = carregar()
     rede, marcas, unidades, campeas, funil = montar_modelo(dados)
-    html = gerar_html(rede, marcas, unidades, campeas, funil, logo_tag)
+    html = gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo)
     dest = os.path.join(OUT, "Home_Raiz.html")
     open(dest, "w", encoding="utf-8").write(html)
     print(f"OK -> {dest} ({len(html):,} chars) | rede NG={rede['ng']:.1f} "
