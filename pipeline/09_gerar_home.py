@@ -88,7 +88,7 @@ def montar_modelo(dados):
     unidades = []
     tot_insc = tot_pres = 0
     ng_s = ng_n = 0.0
-    funil = {a: {"s600": 0.0, "s700": 0.0, "n": 0} for a in ["CN", "CH", "LC", "MT"]}
+    funil = {a: {"s600": 0.0, "s700": 0.0, "n": 0} for a in AREAS}
 
     for marca, cfg in MARCAS.items():
         g = dados[marca]["DADOS"]["geral"]
@@ -112,6 +112,10 @@ def montar_modelo(dados):
             funil[a]["s600"] += ar["pct_600"] * ar["n"]
             funil[a]["s700"] += ar["pct_700"] * ar["n"]
             funil[a]["n"] += ar["n"]
+        red = g["redacao"]
+        funil["RD"]["s600"] += red["pct_600"] * red["n"]
+        funil["RD"]["s700"] += red["pct_700"] * red["n"]
+        funil["RD"]["n"] += red["n"]
         for u, d in unis.items():
             ung = d.get("nota_geral") or {}
             if not ung.get("media"):
@@ -201,18 +205,18 @@ CSS = """
     .mb-val { font-weight:600; color:#0f172a; text-align:right; font-variant-numeric:tabular-nums; }
     .ref-legend { display:flex; gap:20px; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:10px; }
     .ref-legend i { display:inline-block; width:14px; height:0; border-top:2px dashed #94a3b8; vertical-align:middle; margin-right:5px; }
-    .fx-line { display:flex; justify-content:space-between; font-size:12.5px; margin:8px 0 4px; color:#334155; }
-    .fx-line b { color:#0f172a; font-variant-numeric:tabular-nums; }
-    .fx-track { background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
-    .fx-bar { height:100%; border-radius:5px; background:#334155; }
-    .fx-bar.soft { background:#94a3b8; }
+    .cmp-row { display:flex; align-items:center; gap:8px; margin-top:7px; font-size:11px; color:var(--muted); }
+    .cmp-lbl { width:78px; flex:0 0 auto; }
+    .cmp-track { flex:1; background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
+    .cmp-bar { height:100%; border-radius:5px; }
+    .cmp-val { width:40px; flex:0 0 auto; text-align:right; font-weight:600; color:#334155; font-variant-numeric:tabular-nums; }
     footer { color:var(--muted); font-size:12px; text-align:center; padding:20px 0 4px; }
     @media (max-width: 900px) { .stats { grid-template-columns:repeat(2,1fr); } .mb-row { grid-template-columns:120px 1fr 56px; } }
     @media (max-width: 600px) { .stats, .grid { grid-template-columns:1fr; } }
 """
 
 
-def gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo):
+def gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo):
     # ---- stats (Resultado geral da rede)
     melhor = marcas[0]
     melhor_uni = unidades[0]
@@ -273,16 +277,28 @@ def gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo):
         for a in AREAS
     )
 
-    # ---- excelencia (>=600 / >=700 por area)
+    # ---- alto desempenho (>=700): rede vs rede privada vs Brasil
     fx_cards = []
-    for a in ["CN", "CH", "LC", "MT"]:
-        f6, f7 = funil[a]["p600"], funil[a]["p700"]
+    for a in AREAS:
+        rede_p = funil[a]["p700"]
+        priv_p = (excelencia.get("privada", {}).get(a) or {}).get("pct_700")
+        br_p = (excelencia.get("brasil", {}).get(a) or {}).get("pct_700")
+        series = [("Rede Raiz", rede_p, "#1e293b"),
+                  ("Rede privada", priv_p, "#94a3b8"),
+                  ("Brasil", br_p, "#cbd5e1")]
+        escala = max(v for _, v, _ in series if v is not None) * 1.08 or 1
+        barras = "\n".join(
+            f'        <div class="cmp-row"><span class="cmp-lbl">{lbl}</span>'
+            f'<span class="cmp-track"><span class="cmp-bar" '
+            f'style="display:block;width:{(v or 0)/escala*100:.1f}%;background:{cor}"></span></span>'
+            f'<span class="cmp-val">{fmt(v)}%</span></div>'
+            for lbl, v, cor in series
+        )
         fx_cards.append(f"""      <div class="stat">
         <small>{AREA_NOME[a]}</small>
-        <div class="fx-line"><span>Nota ≥ 600</span><b>{fmt(f6)}%</b></div>
-        <div class="fx-track"><div class="fx-bar soft" style="width:{f6:.1f}%"></div></div>
-        <div class="fx-line"><span>Nota ≥ 700</span><b>{fmt(f7)}%</b></div>
-        <div class="fx-track"><div class="fx-bar" style="width:{f7:.1f}%"></div></div>
+        <strong>{fmt(rede_p)}%</strong>
+        <span>da rede com nota ≥ 700</span>
+{barras}
       </div>""")
 
     # ---- cards de marca (portal)
@@ -327,10 +343,6 @@ def gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo):
     <section class="stats">
 {stats_html}
     </section>
-    <a class="hist-link" href="{MULTIMARCAS_URL}">
-      <span><b>Comparativo Multimarcas</b> · evolução 2021–2025, redação, mercado local e diagnóstico por habilidade das 5 marcas lado a lado</span>
-      <span class="hist-arrow">→</span>
-    </a>
     <details class="top-details">
       <summary>
         <span><b>Ranking das unidades</b> · as {rede['unidades']} unidades da rede ordenadas pela Nota Geral (média das 5 áreas por aluno)</span>
@@ -355,8 +367,8 @@ def gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo):
     <section class="stats">
 {camp_html}
     </section>
-    <p class="section-title">Excelência acadêmica da rede</p>
-    <section class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <p class="section-title">Alto desempenho · nota ≥ 700</p>
+    <section class="stats">
 {chr(10).join(fx_cards)}
     </section>
     <p class="section-title">Dashboards por marca</p>
@@ -375,7 +387,9 @@ def main():
     raiz_logo = logo_src("raiz.imgtag")
     dados = carregar()
     rede, marcas, unidades, campeas, funil = montar_modelo(dados)
-    html = gerar_html(rede, marcas, unidades, campeas, funil, raiz_logo)
+    exc_path = os.path.join(OUT, "benchmark_excelencia.json")
+    excelencia = json.load(open(exc_path, encoding="utf-8")) if os.path.exists(exc_path) else {}
+    html = gerar_html(rede, marcas, unidades, campeas, funil, excelencia, raiz_logo)
     dest = os.path.join(OUT, "Home_Raiz.html")
     open(dest, "w", encoding="utf-8").write(html)
     print(f"OK -> {dest} ({len(html):,} chars) | rede NG={rede['ng']:.1f} "

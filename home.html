@@ -63,11 +63,11 @@
     .mb-val { font-weight:600; color:#0f172a; text-align:right; font-variant-numeric:tabular-nums; }
     .ref-legend { display:flex; gap:20px; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:10px; }
     .ref-legend i { display:inline-block; width:14px; height:0; border-top:2px dashed #94a3b8; vertical-align:middle; margin-right:5px; }
-    .fx-line { display:flex; justify-content:space-between; font-size:12.5px; margin:8px 0 4px; color:#334155; }
-    .fx-line b { color:#0f172a; font-variant-numeric:tabular-nums; }
-    .fx-track { background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
-    .fx-bar { height:100%; border-radius:5px; background:#334155; }
-    .fx-bar.soft { background:#94a3b8; }
+    .cmp-row { display:flex; align-items:center; gap:8px; margin-top:7px; font-size:11px; color:var(--muted); }
+    .cmp-lbl { width:78px; flex:0 0 auto; }
+    .cmp-track { flex:1; background:#eef2f6; border-radius:5px; height:9px; overflow:hidden; }
+    .cmp-bar { height:100%; border-radius:5px; }
+    .cmp-val { width:40px; flex:0 0 auto; text-align:right; font-weight:600; color:#334155; font-variant-numeric:tabular-nums; }
     footer { color:var(--muted); font-size:12px; text-align:center; padding:20px 0 4px; }
     @media (max-width: 900px) { .stats { grid-template-columns:repeat(2,1fr); } .mb-row { grid-template-columns:120px 1fr 56px; } }
     @media (max-width: 600px) { .stats, .grid { grid-template-columns:1fr; } }
@@ -90,10 +90,6 @@
       <div class="stat"><small>Melhor marca</small><strong class="txt">Colégio Leonardo da Vinci</strong><span>Nota Geral 679,2</span></div>
       <div class="stat"><small>Melhor unidade</small><strong class="txt">Santo Antônio I</strong><span>Apogeu · 710,1</span></div>
     </section>
-    <a class="hist-link" href="https://multimarcas-enem-deploy.vercel.app">
-      <span><b>Comparativo Multimarcas</b> · evolução 2021–2025, redação, mercado local e diagnóstico por habilidade das 5 marcas lado a lado</span>
-      <span class="hist-arrow">→</span>
-    </a>
     <details class="top-details">
       <summary>
         <span><b>Ranking das unidades</b> · as 21 unidades da rede ordenadas pela Nota Geral (média das 5 áreas por aluno)</span>
@@ -186,35 +182,47 @@
       <div class="stat"><small>Matemática</small><strong class="txt">Santo Antônio I</strong><span style="border-left:3px solid #2563eb;padding-left:8px">Apogeu · 753,9</span></div>
       <div class="stat"><small>Redação</small><strong class="txt">Santo Antônio I</strong><span style="border-left:3px solid #2563eb;padding-left:8px">Apogeu · 884,7</span></div>
     </section>
-    <p class="section-title">Excelência acadêmica da rede</p>
-    <section class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <p class="section-title">Alto desempenho · nota ≥ 700</p>
+    <section class="stats">
       <div class="stat">
         <small>Ciências da Natureza</small>
-        <div class="fx-line"><span>Nota ≥ 600</span><b>30,0%</b></div>
-        <div class="fx-track"><div class="fx-bar soft" style="width:30.0%"></div></div>
-        <div class="fx-line"><span>Nota ≥ 700</span><b>1,9%</b></div>
-        <div class="fx-track"><div class="fx-bar" style="width:1.9%"></div></div>
+        <strong>1,9%</strong>
+        <span>da rede com nota ≥ 700</span>
+        <div class="cmp-row"><span class="cmp-lbl">Rede Raiz</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:60.0%;background:#1e293b"></span></span><span class="cmp-val">1,9%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Rede privada</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:92.6%;background:#94a3b8"></span></span><span class="cmp-val">3,0%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Brasil</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:34.0%;background:#cbd5e1"></span></span><span class="cmp-val">1,1%</span></div>
       </div>
       <div class="stat">
         <small>Ciências Humanas</small>
-        <div class="fx-line"><span>Nota ≥ 600</span><b>38,8%</b></div>
-        <div class="fx-track"><div class="fx-bar soft" style="width:38.8%"></div></div>
-        <div class="fx-line"><span>Nota ≥ 700</span><b>2,2%</b></div>
-        <div class="fx-track"><div class="fx-bar" style="width:2.2%"></div></div>
+        <strong>2,2%</strong>
+        <span>da rede com nota ≥ 700</span>
+        <div class="cmp-row"><span class="cmp-lbl">Rede Raiz</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:68.8%;background:#1e293b"></span></span><span class="cmp-val">2,2%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Rede privada</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:92.6%;background:#94a3b8"></span></span><span class="cmp-val">2,9%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Brasil</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:35.1%;background:#cbd5e1"></span></span><span class="cmp-val">1,1%</span></div>
       </div>
       <div class="stat">
         <small>Linguagens e Códigos</small>
-        <div class="fx-line"><span>Nota ≥ 600</span><b>38,4%</b></div>
-        <div class="fx-track"><div class="fx-bar soft" style="width:38.4%"></div></div>
-        <div class="fx-line"><span>Nota ≥ 700</span><b>0,8%</b></div>
-        <div class="fx-track"><div class="fx-bar" style="width:0.8%"></div></div>
+        <strong>0,8%</strong>
+        <span>da rede com nota ≥ 700</span>
+        <div class="cmp-row"><span class="cmp-lbl">Rede Raiz</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:71.6%;background:#1e293b"></span></span><span class="cmp-val">0,8%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Rede privada</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:92.6%;background:#94a3b8"></span></span><span class="cmp-val">1,0%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Brasil</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:27.8%;background:#cbd5e1"></span></span><span class="cmp-val">0,3%</span></div>
       </div>
       <div class="stat">
         <small>Matemática</small>
-        <div class="fx-line"><span>Nota ≥ 600</span><b>60,6%</b></div>
-        <div class="fx-track"><div class="fx-bar soft" style="width:60.6%"></div></div>
-        <div class="fx-line"><span>Nota ≥ 700</span><b>31,6%</b></div>
-        <div class="fx-track"><div class="fx-bar" style="width:31.6%"></div></div>
+        <strong>31,6%</strong>
+        <span>da rede com nota ≥ 700</span>
+        <div class="cmp-row"><span class="cmp-lbl">Rede Raiz</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:92.6%;background:#1e293b"></span></span><span class="cmp-val">31,6%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Rede privada</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:85.4%;background:#94a3b8"></span></span><span class="cmp-val">29,1%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Brasil</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:30.2%;background:#cbd5e1"></span></span><span class="cmp-val">10,3%</span></div>
+      </div>
+      <div class="stat">
+        <small>Redação</small>
+        <strong>66,6%</strong>
+        <span>da rede com nota ≥ 700</span>
+        <div class="cmp-row"><span class="cmp-lbl">Rede Raiz</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:92.6%;background:#1e293b"></span></span><span class="cmp-val">66,6%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Rede privada</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:89.1%;background:#94a3b8"></span></span><span class="cmp-val">64,1%</span></div>
+        <div class="cmp-row"><span class="cmp-lbl">Brasil</span><span class="cmp-track"><span class="cmp-bar" style="display:block;width:43.5%;background:#cbd5e1"></span></span><span class="cmp-val">31,3%</span></div>
       </div>
     </section>
     <p class="section-title">Dashboards por marca</p>
