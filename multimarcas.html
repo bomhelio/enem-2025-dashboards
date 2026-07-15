@@ -5,7 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multimarcas - Comparativo ENEM 2025</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>if(window.Chart){Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";}</script>
+<script>if(window.Chart){Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';}</script>
+<script>
+(function(){
+  function fmtTxt(s){
+    return s.replace(/(\d+)\.(\d{1,2})(?!\d)/g, function(_, i, d){
+      if(d.length === 2){
+        var v = Math.round(parseFloat(i + '.' + d) * 10) / 10;
+        var p = String(v).split('.');
+        return p[0] + ',' + (p[1] || '0');
+      }
+      return i + ',' + d;
+    });
+  }
+  function walk(node){
+    if(node.nodeType === 3){
+      if(node.nodeValue && /\d\.\d/.test(node.nodeValue)) node.nodeValue = fmtTxt(node.nodeValue);
+      return;
+    }
+    if(node.nodeType !== 1) return;
+    var tag = node.tagName;
+    if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CANVAS') return;
+    for(var c = node.firstChild; c; c = c.nextSibling) walk(c);
+  }
+  var mo = null;
+  function observe(){
+    mo = new MutationObserver(function(muts){
+      mo.disconnect();
+      for(var i = 0; i < muts.length; i++){
+        var m = muts[i];
+        if(m.type === 'characterData'){
+          if(m.target.nodeValue && /\d\.\d/.test(m.target.nodeValue)) m.target.nodeValue = fmtTxt(m.target.nodeValue);
+        } else if(m.addedNodes){
+          for(var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j]);
+        }
+      }
+      mo.observe(document.body, {childList: true, subtree: true, characterData: true});
+    });
+    mo.observe(document.body, {childList: true, subtree: true, characterData: true});
+  }
+  function run(){ walk(document.body); observe(); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
+</script>
 <style>
   :root {
     --bg: #f1f5f9; --card: #fff; --borda: #e2e8f0;

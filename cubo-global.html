@@ -5,7 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cubo Global - ENEM 2025</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>if(window.Chart){Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";}</script>
+<script>if(window.Chart){Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';}</script>
+<script>
+(function(){
+  function fmtTxt(s){
+    return s.replace(/(\d+)\.(\d{1,2})(?!\d)/g, function(_, i, d){
+      if(d.length === 2){
+        var v = Math.round(parseFloat(i + '.' + d) * 10) / 10;
+        var p = String(v).split('.');
+        return p[0] + ',' + (p[1] || '0');
+      }
+      return i + ',' + d;
+    });
+  }
+  function walk(node){
+    if(node.nodeType === 3){
+      if(node.nodeValue && /\d\.\d/.test(node.nodeValue)) node.nodeValue = fmtTxt(node.nodeValue);
+      return;
+    }
+    if(node.nodeType !== 1) return;
+    var tag = node.tagName;
+    if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CANVAS') return;
+    for(var c = node.firstChild; c; c = c.nextSibling) walk(c);
+  }
+  var mo = null;
+  function observe(){
+    mo = new MutationObserver(function(muts){
+      mo.disconnect();
+      for(var i = 0; i < muts.length; i++){
+        var m = muts[i];
+        if(m.type === 'characterData'){
+          if(m.target.nodeValue && /\d\.\d/.test(m.target.nodeValue)) m.target.nodeValue = fmtTxt(m.target.nodeValue);
+        } else if(m.addedNodes){
+          for(var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j]);
+        }
+      }
+      mo.observe(document.body, {childList: true, subtree: true, characterData: true});
+    });
+    mo.observe(document.body, {childList: true, subtree: true, characterData: true});
+  }
+  function run(){ walk(document.body); observe(); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
+</script>
 <style>
   :root {
     --azul: #097570;
@@ -416,7 +459,7 @@
 <div class="hab-scope">
 
 
-<p class="desc">Percentual de acerto nas questões objetivas (item a item), calculado a partir das respostas
+<p class="desc hab-intro" style="margin-left:auto;margin-right:auto;text-align:center;max-width:860px">Percentual de acerto nas questões objetivas (item a item), calculado a partir das respostas
 reais dos alunos cruzadas com o gabarito da sua prova. Base da leitura pedagógica que segue.</p>
 <div class="kpis" id="kpis"></div>
 
@@ -825,12 +868,12 @@ function buildCompBars() {
   [1,2,3,4,5].forEach(n=>{
     const m=geral[n].media; const pct=(m/200*100).toFixed(0);
     const div=document.createElement('div'); div.className='comp-bar-wrap';
-    div.innerHTML=`<div class="comp-row"><div class="comp-nome">C${n}. ${COMP_NOME[n]}</div><div class="comp-bar-bg"><div class="comp-bar" style="width:${pct}%;background:${CORES[n-1]}"><span>${m.toFixed(1)}</span></div></div><div style="font-size:0.75rem;font-weight:700;width:50px;text-align:right;color:${CORES[n-1]}">${pct}%</div></div>`;
+    div.innerHTML=`<div class="comp-row"><div class="comp-nome">C${n}. ${COMP_NOME[n]}</div><div class="comp-bar-bg"><div class="comp-bar" style="width:${pct}%;background:${COMP_COR[n-1]}"><span>${m.toFixed(1)}</span></div></div><div style="font-size:0.75rem;font-weight:700;width:50px;text-align:right;color:${COMP_COR[n-1]}">${pct}%</div></div>`;
     wrap.appendChild(div);
   });
 }
 function buildPresenca() {
-  const wrap=document.getElementById('presencaBars'); wrap.innerHTML='<div class="card-titulo" style="margin-bottom:16px">Taxa de Presença por Unidade</div>';
+  const wrap=document.getElementById('presencaBars'); wrap.innerHTML='<div class="card-sub" style="margin-bottom:14px">Percentual de alunos presentes nos dois dias de prova, por unidade.</div>';
   const todos=[...UNIDADES].sort((a,b)=>DADOS.unidades[b].taxa_presenca-DADOS.unidades[a].taxa_presenca);
   todos.forEach((u)=>{
     const d=DADOS.unidades[u]; const pres=d.taxa_presenca; const aus=(100-pres).toFixed(1);
@@ -1231,10 +1274,11 @@ function buildKPIs() {
     var mn=d.areas?.MT?.n||0, mm=d.areas?.MT?.media||0;
     mt_s+=mm*mn; mt_n+=mn;
   });
-  var taxa = ni>0?(np/ni*100).toFixed(1):0;
-  var ng   = ng_n>0?(ng_s/ng_n).toFixed(1):0;
-  var rd   = rd_n>0?(rd_s/rd_n).toFixed(1):0;
-  var mt   = mt_n>0?(mt_s/mt_n).toFixed(1):0;
+  var allSel = units.length===UNIDADES.length, g0=DADOS.geral;
+  var taxa = allSel?g0.taxa_presenca.toFixed(1):(ni>0?(np/ni*100).toFixed(1):0);
+  var ng   = allSel&&g0.nota_geral?g0.nota_geral.media.toFixed(1):(ng_n>0?(ng_s/ng_n).toFixed(1):0);
+  var rd   = allSel&&g0.redacao?g0.redacao.media.toFixed(1):(rd_n>0?(rd_s/rd_n).toFixed(1):0);
+  var mt   = allSel?g0.areas.MT.media.toFixed(1):(mt_n>0?(mt_s/mt_n).toFixed(1):0);
   var el;
   if((el=document.getElementById('kInscritos'))) el.textContent = ni;
   if((el=document.getElementById('kPresentes'))) el.textContent = np;
@@ -1575,7 +1619,7 @@ function buildPriorityPanel() {
       +'<td class="'+dMCls+'">'+(r.dMarca>0?'+':'')+r.dMarca+'</td>'
       +'<td class="'+dBCls+'">'+(r.dBrasil>0?'+':'')+r.dBrasil+'</td>'
       +(hasTop ? '<td class="'+dTCls+'">'+(r.dTop>=0?'+':'')+r.dTop+'</td>' : '')
-      +'<td><span class="prio-badge" style="background:'+acaoCor+';color:white;border:none">'+acao+'</span></td>'
+      +'<td><span class="prio-badge" style="background:'+acaoCor+'14;color:'+acaoCor+';border:1px solid '+acaoCor+'55;font-weight:600">'+acao+'</span></td>'
       +'</tr>';
   });
   tbody += '</tbody>';
