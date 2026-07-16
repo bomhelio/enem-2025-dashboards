@@ -137,6 +137,10 @@ def construir_fragmento(hab_html: str) -> str:
     secoes = m.group(1)
     # descarta o <h2> "Panorama" (mantem a desc como intro do bloco + os KPIs)
     secoes = re.sub(r'<h2><span class="tag">Panorama</span>[^<]*</h2>\s*', "", secoes, count=1)
+    # intro do bloco: centraliza (consistencia com subtitulos do dashboard)
+    secoes = re.sub(r'<p class="desc">', '<p class="desc hab-intro" '
+                    'style="margin-left:auto;margin-right:auto;text-align:center;max-width:860px">',
+                    secoes, count=1)
     tip = '<div id="tip" class="tip"></div>'
 
     # 3) JS do fim do corpo, sem a chamada de fonte (o dashboard ja define Chart.defaults)

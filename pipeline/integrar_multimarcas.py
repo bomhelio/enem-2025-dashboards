@@ -30,6 +30,10 @@ def construir_fragmento(hab_html: str) -> str:
     tip = '<div id="tip" class="tip"></div>'
     js = re.search(r'<div id="tip" class="tip"></div>\s*<script>(.*?)</script>',
                    hab_html, re.S).group(1).strip()
+    # intro do bloco: centraliza (consistencia com subtitulos do dashboard)
+    secoes = re.sub(r'<p class="desc">', '<p class="desc hab-intro" '
+                    'style="margin-left:auto;margin-right:auto;text-align:center;max-width:860px">',
+                    secoes, count=1)
     return (
         f'<p class="section-titulo">{BANNER}</p>\n'
         f"<style>{css_scoped}</style>\n"
