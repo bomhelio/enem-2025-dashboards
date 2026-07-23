@@ -104,7 +104,7 @@
   <div class="section-title">Evolução 2024-2025</div>
   <div class="card">
     <h3>Redes, mercado municipal e Top 100 BR</h3>
-    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · na NG a régua é a rede privada do Brasil; nas áreas, a rede privada do município selecionado</p>
     <div class="filters">
       <button class="chip hm-chip" data-m="NG">NG</button>
       <button class="chip hm-chip" data-m="CN">CN</button>
@@ -525,15 +525,24 @@ function renderConfronto(){
 })();
 
 // ---------- Evolução histórica ----------
-const HIST = {"anos":["2024","2025"],"redes":{"Matriz Educação":{"2024":{"n":532,"CN":512.6,"CH":541.9,"LC":546.8,"MT":572.1,"RD":715.2,"NG":578.7},"2025":{"n":494,"CN":519.6,"CH":539.2,"LC":562.1,"MT":578.0,"RD":674.9,"NG":577.7}},"Elite":{"2024":{"n":1882,"CN":523.3,"CH":549.3,"LC":549.8,"MT":586.4,"RD":702.1,"NG":583.5},"2025":{"n":1786,"CN":518.7,"CH":537.9,"LC":557.6,"MT":573.7,"RD":656.0,"NG":570.0}},"ZeroHum":{"2024":{"n":489,"CN":519.9,"CH":543.5,"LC":547.1,"MT":576.2,"RD":721.1,"NG":582.8},"2025":{"n":630,"CN":514.7,"CH":539.0,"LC":558.1,"MT":573.2,"RD":679.7,"NG":575.4}},"Santa Mônica":{"2024":{"n":496,"CN":541.1,"CH":575.1,"LC":566.5,"MT":614.0,"RD":784.3,"NG":617.2},"2025":{"n":541,"CN":548.2,"CH":574.4,"LC":584.0,"MT":618.8,"RD":744.6,"NG":615.0}}},"privada_municipal":{"Rio de Janeiro":{"2024":{"n":14800,"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7,"NG":617.2},"2025":{"n":14545,"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5,"NG":613.0}},"Duque de Caxias":{"2024":{"n":1079,"CN":514.5,"CH":539.9,"LC":545.1,"MT":557.7,"RD":725.6,"NG":578.0},"2025":{"n":954,"CN":519.4,"CH":537.2,"LC":559.8,"MT":562.4,"RD":691.8,"NG":576.4}},"Nova Iguaçu":{"2024":{"n":1098,"CN":516.5,"CH":540.5,"LC":543.6,"MT":560.2,"RD":710.3,"NG":575.6},"2025":{"n":1154,"CN":517.9,"CH":535.3,"LC":555.7,"MT":564.5,"RD":673.6,"NG":571.9}},"São João de Meriti":{"2024":{"n":514,"CN":509.1,"CH":529.6,"LC":543.2,"MT":552.2,"RD":713.2,"NG":571.2},"2025":{"n":454,"CN":510.7,"CH":529.5,"LC":552.4,"MT":548.8,"RD":675.2,"NG":565.0}}},"top100":{"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7,"NG":715.2,"n_escolas":100},"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0,"NG":720.3,"n_escolas":100}}};
+const HIST = {"anos":["2024","2025"],"redes":{"Matriz Educação":{"2024":{"n":532,"CN":512.6,"CH":541.9,"LC":546.8,"MT":572.1,"RD":715.2,"NG":578.7},"2025":{"n":494,"CN":519.6,"CH":539.2,"LC":562.1,"MT":578.0,"RD":674.9,"NG":577.7}},"Elite":{"2024":{"n":1882,"CN":523.3,"CH":549.3,"LC":549.8,"MT":586.4,"RD":702.1,"NG":583.5},"2025":{"n":1786,"CN":518.7,"CH":537.9,"LC":557.6,"MT":573.7,"RD":656.0,"NG":570.0}},"ZeroHum":{"2024":{"n":489,"CN":519.9,"CH":543.5,"LC":547.1,"MT":576.2,"RD":721.1,"NG":582.8},"2025":{"n":630,"CN":514.7,"CH":539.0,"LC":558.1,"MT":573.2,"RD":679.7,"NG":575.4}},"Santa Mônica":{"2024":{"n":496,"CN":541.1,"CH":575.1,"LC":566.5,"MT":614.0,"RD":784.3,"NG":617.2},"2025":{"n":541,"CN":548.2,"CH":574.4,"LC":584.0,"MT":618.8,"RD":744.6,"NG":615.0}}},"privada_municipal":{"Rio de Janeiro":{"2024":{"n":14800,"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7,"NG":617.2},"2025":{"n":14545,"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5,"NG":613.0}},"Duque de Caxias":{"2024":{"n":1079,"CN":514.5,"CH":539.9,"LC":545.1,"MT":557.7,"RD":725.6,"NG":578.0},"2025":{"n":954,"CN":519.4,"CH":537.2,"LC":559.8,"MT":562.4,"RD":691.8,"NG":576.4}},"Nova Iguaçu":{"2024":{"n":1098,"CN":516.5,"CH":540.5,"LC":543.6,"MT":560.2,"RD":710.3,"NG":575.6},"2025":{"n":1154,"CN":517.9,"CH":535.3,"LC":555.7,"MT":564.5,"RD":673.6,"NG":571.9}},"São João de Meriti":{"2024":{"n":514,"CN":509.1,"CH":529.6,"LC":543.2,"MT":552.2,"RD":713.2,"NG":571.2},"2025":{"n":454,"CN":510.7,"CH":529.5,"LC":552.4,"MT":548.8,"RD":675.2,"NG":565.0}}},"privada_brasil":{"2024":{"NG":615.9,"n":243273,"CN":549.0,"CH":569.5,"LC":564.6,"MT":616.2,"RD":772.8},"2025":{"NG":612.7,"n":249577,"CN":551.9,"CH":566.2,"LC":577.6,"MT":620.3,"RD":738.9}},"top100":{"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7,"NG":715.2,"n_escolas":100},"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0,"NG":720.3,"n_escolas":100}}};
 let histMetric = "MT", chartHist = null;
 function renderHist(){
   const anos = ["2024", "2025"];
-  const mun = document.getElementById("histMun").value;
+  const munSel = document.getElementById("histMun");
   const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
     data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
-  series.push({label: "Privada "+mun, cor: CINZA, dash: [],
-    data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  if (histMetric === "NG") {
+    // NG é leitura de rede: régua nacional, sem recorte municipal
+    munSel.style.display = "none";
+    series.push({label: "Privada Brasil", cor: CINZA, dash: [],
+      data: anos.map(a => ((HIST.privada_brasil||{})[a]||{}).NG ?? null)});
+  } else {
+    munSel.style.display = "";
+    const mun = munSel.value;
+    series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+      data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  }
   series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
     data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
   if (chartHist) chartHist.destroy();

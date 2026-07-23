@@ -177,7 +177,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   <div class="section-title">Evolução 2024-2025</div>
   <div class="card">
     <h3>Redes, mercado municipal e Top 100 BR</h3>
-    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · na NG a régua é a rede privada do Brasil; nas áreas, a rede privada do município selecionado</p>
     <div class="filters">
       <button class="chip hm-chip" data-m="NG">NG</button>
       <button class="chip hm-chip" data-m="CN">CN</button>
@@ -602,11 +602,20 @@ const HIST = __HIST__;
 let histMetric = "MT", chartHist = null;
 function renderHist(){
   const anos = ["2024", "2025"];
-  const mun = document.getElementById("histMun").value;
+  const munSel = document.getElementById("histMun");
   const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
     data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
-  series.push({label: "Privada "+mun, cor: CINZA, dash: [],
-    data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  if (histMetric === "NG") {
+    // NG é leitura de rede: régua nacional, sem recorte municipal
+    munSel.style.display = "none";
+    series.push({label: "Privada Brasil", cor: CINZA, dash: [],
+      data: anos.map(a => ((HIST.privada_brasil||{})[a]||{}).NG ?? null)});
+  } else {
+    munSel.style.display = "";
+    const mun = munSel.value;
+    series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+      data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  }
   series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
     data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
   if (chartHist) chartHist.destroy();

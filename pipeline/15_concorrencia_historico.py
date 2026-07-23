@@ -99,8 +99,12 @@ def main():
     hist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "historico")
     top100_raw = json.load(open(os.path.join(hist_dir, "historico_top100.json"), encoding="utf-8"))
 
+    bench_brasil = json.load(open(os.path.join(hist_dir, "historico_benchmark.json"),
+                                  encoding="utf-8"))["brasil"]["anos"]
+
     redes = {rede: {} for rede in g}
     privada = {nome: {} for nome in MUN_CODES.values()}
+    privada_brasil = {}
     top100 = {}
 
     for ano, path in RESULTADOS.items():
@@ -110,12 +114,17 @@ def main():
             redes[rede][ano] = metricas(df_redes[df_redes["CO_ESCOLA"].isin(codigos)])
         for cod, nome in MUN_CODES.items():
             privada[nome][ano] = metricas(df_mun[df_mun["CO_MUNICIPIO_ESC"] == cod])
+        privada_brasil[ano] = {
+            "NG": round(float(ng_br["NG"].mean()), 1), "n": int(len(ng_br)),
+            **{m: bench_brasil.get(ano, {}).get(m) for m in ["CN", "CH", "LC", "MT", "RD"]},
+        }
         areas = {m: top100_raw[ano][m]["media_top100"] for m in ["CN", "CH", "LC", "MT", "RD"]
                  if ano in top100_raw and m in top100_raw[ano]}
         top100[ano] = {**areas, **top100_ng(ng_br)}
 
     saida = {"anos": ["2024", "2025"], "redes": redes,
-             "privada_municipal": privada, "top100": top100}
+             "privada_municipal": privada, "privada_brasil": privada_brasil,
+             "top100": top100}
     destino = os.path.join(OUTPUT_DIR, "concorrencia_historico.json")
     with open(destino, "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
