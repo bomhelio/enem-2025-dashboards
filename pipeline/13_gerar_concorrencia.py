@@ -515,7 +515,9 @@ function renderConfronto(){
     '</tbody><tfoot><tr><td colspan="7" style="text-align:left;color:#64748b;font-size:12px;border:0;padding-top:10px">'+
     "Cada par: "+corA("★ "+A.label)+" × "+corB(B.label)+" · Δ = média da unidade ★ menos o concorrente · Alunos: "+
     corA(fmtInt(A.n_inscritos))+" ("+fmt(A.taxa_presenca_pct)+"% presença) × "+
-    corB(fmtInt(B.n_inscritos))+" ("+fmt(B.taxa_presenca_pct)+"% presença)</td></tr></tfoot>";
+    corB(fmtInt(B.n_inscritos))+" ("+fmt(B.taxa_presenca_pct)+"% presença)<br>"+
+    "Mediana = nota que divide a turma ao meio · P90 = nota superada apenas pelos 10% melhores alunos "+
+    "· ≥600 e ≥700 = % dos alunos que atingem esse patamar</td></tr></tfoot>";
 }
 
 // ---------- Batalha territorial ----------
