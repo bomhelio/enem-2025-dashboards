@@ -163,6 +163,30 @@
     </div>
   </details>
 
+  <div class="section-title">Evolução histórica 2021-2025</div>
+  <div class="card">
+    <h3>Redes, mercado municipal e Top 100 BR</h3>
+    <p class="sub">Média entre presentes por prova · as séries das redes começam em 2024 (os microdados 2021-2023 não identificam a escola) · Privada = todas as escolas privadas do município</p>
+    <div class="filters">
+      <button class="chip hm-chip" data-m="CN">CN</button>
+      <button class="chip hm-chip" data-m="CH">CH</button>
+      <button class="chip hm-chip" data-m="LC">LC</button>
+      <button class="chip hm-chip" data-m="MT">MT</button>
+      <button class="chip hm-chip" data-m="RD">RD</button>
+      <select id="histMun" autocomplete="off">
+        <option>Rio de Janeiro</option>
+        <option>Duque de Caxias</option>
+        <option>Nova Iguaçu</option>
+        <option>São João de Meriti</option>
+      </select>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
+    <details class="consol" style="margin-top:12px">
+      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
+      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
+    </details>
+  </div>
+
   <div class="section-title">Redação em detalhe</div>
   <div class="duo">
     <div class="card">
@@ -494,6 +518,54 @@ function renderConfronto(){
         "</td><td>"+ngc+"</td><td>"+sit+"</td></tr>";
     }).join("")+"</tbody>";
 })();
+
+// ---------- Evolução histórica ----------
+const HIST = {"anos":["2021","2022","2023","2024","2025"],"redes":{"Matriz Educação":{"2024":{"n":532,"CN":512.6,"CH":541.9,"LC":546.8,"MT":572.1,"RD":715.2},"2025":{"n":494,"CN":519.6,"CH":539.2,"LC":562.1,"MT":578.0,"RD":674.9}},"Elite":{"2024":{"n":1882,"CN":523.3,"CH":549.3,"LC":549.8,"MT":586.4,"RD":702.1},"2025":{"n":1786,"CN":518.7,"CH":537.9,"LC":557.6,"MT":573.7,"RD":656.0}},"ZeroHum":{"2024":{"n":489,"CN":519.9,"CH":543.5,"LC":547.1,"MT":576.2,"RD":721.1},"2025":{"n":630,"CN":514.7,"CH":539.0,"LC":558.1,"MT":573.2,"RD":679.7}},"Santa Mônica":{"2024":{"n":496,"CN":541.1,"CH":575.1,"LC":566.5,"MT":614.0,"RD":784.3},"2025":{"n":541,"CN":548.2,"CH":574.4,"LC":584.0,"MT":618.8,"RD":744.6}}},"privada_municipal":{"Duque de Caxias":{"2025":{"CN":519.4,"CH":537.2,"LC":559.8,"MT":562.4,"RD":691.8},"2024":{"CN":514.5,"CH":539.9,"LC":545.1,"MT":557.7,"RD":725.6},"2023":{"CN":515.7,"CH":548.9,"LC":541.7,"MT":567.3,"RD":723.9},"2022":{"CN":504.8,"CH":546.7,"LC":538.8,"MT":559.8,"RD":706.7},"2021":{"CN":503.4,"CH":531.5,"LC":516.5,"MT":549.9,"RD":690.6}},"Nova Iguaçu":{"2025":{"CN":517.9,"CH":535.3,"LC":555.7,"MT":564.5,"RD":673.6},"2024":{"CN":516.5,"CH":540.5,"LC":543.6,"MT":560.2,"RD":710.3},"2023":{"CN":518.7,"CH":552.0,"LC":538.4,"MT":574.4,"RD":706.2},"2022":{"CN":516.6,"CH":554.0,"LC":540.7,"MT":568.4,"RD":707.3},"2021":{"CN":505.1,"CH":536.4,"LC":520.8,"MT":558.6,"RD":681.9}},"Rio de Janeiro":{"2025":{"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5},"2024":{"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7},"2023":{"CN":550.0,"CH":581.3,"LC":564.4,"MT":640.3,"RD":769.0},"2022":{"CN":538.1,"CH":580.4,"LC":564.4,"MT":623.6,"RD":763.1},"2021":{"CN":536.3,"CH":568.5,"LC":546.3,"MT":611.1,"RD":735.4}},"São João de Meriti":{"2025":{"CN":510.7,"CH":529.5,"LC":552.4,"MT":548.8,"RD":675.2},"2024":{"CN":509.1,"CH":529.6,"LC":543.2,"MT":552.2,"RD":713.2},"2023":{"CN":525.5,"CH":560.5,"LC":548.5,"MT":596.9,"RD":735.4},"2022":{"CN":516.4,"CH":561.9,"LC":550.1,"MT":583.3,"RD":743.4},"2021":{"CN":510.8,"CH":549.6,"LC":530.3,"MT":575.9,"RD":709.1}}},"top100":{"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0},"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7}}};
+let histMetric = "MT", chartHist = null;
+function renderHist(){
+  const anos = HIST.anos;
+  const mun = document.getElementById("histMun").value;
+  const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
+    data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
+  series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+    data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
+    data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
+  if (chartHist) chartHist.destroy();
+  chartHist = new Chart(document.getElementById("chartHist"), {
+    type: "line",
+    data: { labels: anos, datasets: series.map(s => ({label: s.label, data: s.data,
+      borderColor: s.cor, backgroundColor: s.cor, borderDash: s.dash, borderWidth: 2.5,
+      pointRadius: 3.5, pointBackgroundColor: s.cor, spanGaps: false, fill: false, tension: .15})) },
+    options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+  document.getElementById("tblHist").innerHTML =
+    "<thead><tr><th>Série</th>"+anos.map(a=>"<th>"+a+"</th>").join("")+
+    "<th>Variação 24→25</th><th>%</th></tr></thead><tbody>"+
+    series.map(s => {
+      const v24 = s.data[3], v25 = s.data[4];
+      const dv = (v24!=null && v25!=null) ? v25-v24 : null;
+      const pc = (dv!=null && v24) ? dv/v24*100 : null;
+      const cls = dv==null ? "delta-neutro" : (dv>=0 ? "delta-pos" : "delta-neg");
+      return '<tr><td><span class="rede-dot" style="background:'+s.cor+'"></span>'+s.label+"</td>"+
+        s.data.map(v=>"<td>"+fmt(v)+"</td>").join("")+
+        '<td><span class="'+cls+'">'+(dv==null?"-":(dv>=0?"+":"−")+fmt(Math.abs(dv)))+"</span></td>"+
+        '<td><span class="'+cls+'">'+(pc==null?"-":(pc>=0?"+":"−")+fmt(Math.abs(pc))+"%")+"</span></td></tr>";
+    }).join("")+"</tbody>";
+}
+document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
+  histMetric = ch.dataset.m;
+  document.querySelectorAll(".hm-chip").forEach(c => {
+    c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? CORES["Matriz Educação"] : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155";
+  });
+  renderHist();
+});
+document.getElementById("histMun").onchange = renderHist;
+document.querySelector('.hm-chip[data-m="MT"]').click();
 
 // ---------- Redação por rede ----------
 new Chart(document.getElementById("chartRedacaoRedes"), {

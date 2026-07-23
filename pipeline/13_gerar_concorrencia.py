@@ -236,6 +236,30 @@ TEMPLATE = r"""<!DOCTYPE html>
     </div>
   </details>
 
+  <div class="section-title">Evolução histórica 2021-2025</div>
+  <div class="card">
+    <h3>Redes, mercado municipal e Top 100 BR</h3>
+    <p class="sub">Média entre presentes por prova · as séries das redes começam em 2024 (os microdados 2021-2023 não identificam a escola) · Privada = todas as escolas privadas do município</p>
+    <div class="filters">
+      <button class="chip hm-chip" data-m="CN">CN</button>
+      <button class="chip hm-chip" data-m="CH">CH</button>
+      <button class="chip hm-chip" data-m="LC">LC</button>
+      <button class="chip hm-chip" data-m="MT">MT</button>
+      <button class="chip hm-chip" data-m="RD">RD</button>
+      <select id="histMun" autocomplete="off">
+        <option>Rio de Janeiro</option>
+        <option>Duque de Caxias</option>
+        <option>Nova Iguaçu</option>
+        <option>São João de Meriti</option>
+      </select>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
+    <details class="consol" style="margin-top:12px">
+      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
+      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
+    </details>
+  </div>
+
   <div class="section-title">Redação em detalhe</div>
   <div class="duo">
     <div class="card">
@@ -568,6 +592,54 @@ function renderConfronto(){
     }).join("")+"</tbody>";
 })();
 
+// ---------- Evolução histórica ----------
+const HIST = __HIST__;
+let histMetric = "MT", chartHist = null;
+function renderHist(){
+  const anos = HIST.anos;
+  const mun = document.getElementById("histMun").value;
+  const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
+    data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
+  series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+    data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
+    data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
+  if (chartHist) chartHist.destroy();
+  chartHist = new Chart(document.getElementById("chartHist"), {
+    type: "line",
+    data: { labels: anos, datasets: series.map(s => ({label: s.label, data: s.data,
+      borderColor: s.cor, backgroundColor: s.cor, borderDash: s.dash, borderWidth: 2.5,
+      pointRadius: 3.5, pointBackgroundColor: s.cor, spanGaps: false, fill: false, tension: .15})) },
+    options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+  document.getElementById("tblHist").innerHTML =
+    "<thead><tr><th>Série</th>"+anos.map(a=>"<th>"+a+"</th>").join("")+
+    "<th>Variação 24→25</th><th>%</th></tr></thead><tbody>"+
+    series.map(s => {
+      const v24 = s.data[3], v25 = s.data[4];
+      const dv = (v24!=null && v25!=null) ? v25-v24 : null;
+      const pc = (dv!=null && v24) ? dv/v24*100 : null;
+      const cls = dv==null ? "delta-neutro" : (dv>=0 ? "delta-pos" : "delta-neg");
+      return '<tr><td><span class="rede-dot" style="background:'+s.cor+'"></span>'+s.label+"</td>"+
+        s.data.map(v=>"<td>"+fmt(v)+"</td>").join("")+
+        '<td><span class="'+cls+'">'+(dv==null?"-":(dv>=0?"+":"−")+fmt(Math.abs(dv)))+"</span></td>"+
+        '<td><span class="'+cls+'">'+(pc==null?"-":(pc>=0?"+":"−")+fmt(Math.abs(pc))+"%")+"</span></td></tr>";
+    }).join("")+"</tbody>";
+}
+document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
+  histMetric = ch.dataset.m;
+  document.querySelectorAll(".hm-chip").forEach(c => {
+    c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? CORES["Matriz Educação"] : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155";
+  });
+  renderHist();
+});
+document.getElementById("histMun").onchange = renderHist;
+document.querySelector('.hm-chip[data-m="MT"]').click();
+
 // ---------- Redação por rede ----------
 new Chart(document.getElementById("chartRedacaoRedes"), {
   type:"bar",
@@ -590,11 +662,14 @@ def main():
         data = json.load(f)
     ref_path = os.path.join(OUTPUT_DIR, "concorrencia_ref2024.json")
     ref2024 = json.load(open(ref_path, encoding="utf-8")) if os.path.exists(ref_path) else {}
+    hist_path = os.path.join(OUTPUT_DIR, "concorrencia_historico.json")
+    hist = json.load(open(hist_path, encoding="utf-8")) if os.path.exists(hist_path) else {}
 
     html = (TEMPLATE
             .replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")))
             .replace("__PRACAS__", json.dumps(PRACAS, ensure_ascii=False, separators=(",", ":")))
             .replace("__REF2024__", json.dumps(ref2024, ensure_ascii=False, separators=(",", ":")))
+            .replace("__HIST__", json.dumps(hist, ensure_ascii=False, separators=(",", ":")))
             .replace("__INSIGHT_RED__", _insight_redacao(data))
             .replace("__NOTA_SEM_DADOS__", "; ".join(data.get("concorrentes_sem_dados_2025", [])) or "nenhum")
             .replace("__GERADO_EM__", date.today().strftime("%d/%m/%Y")))
