@@ -29,13 +29,13 @@ PRACAS = [
      "nota": "Elite Madureira 3 sem dados no ENEM 2025."},
     {"titulo": "Rocha Miranda", "municipio": "Rio de Janeiro", "nossa": 33192685,
      "diretos": [], "adjacentes": [33193649, 33193720],
-     "nota": "Sem concorrente mapeado no bairro — exibidos os mais próximos (Irajá e Guadalupe)."},
+     "nota": "Sem concorrente mapeado no bairro - exibidos os mais próximos (Irajá e Guadalupe)."},
     {"titulo": "Nova Iguaçu", "municipio": "Nova Iguaçu", "nossa": 33187762,
      "diretos": [33060355, 33185000], "adjacentes": [],
      "nota": "Elite Nova Iguaçu (bairro da Luz) sem dados no ENEM 2025."},
     {"titulo": "Duque de Caxias", "municipio": "Duque de Caxias", "nossa": 33048185,
      "diretos": [], "adjacentes": [],
-     "nota": "Elite e Santa Mônica de Duque de Caxias não pontuaram no ENEM 2025 — provável concentração do 3º ano em outras praças."},
+     "nota": "Elite e Santa Mônica de Duque de Caxias não pontuaram no ENEM 2025 - provável concentração do 3º ano em outras praças."},
     {"titulo": "São João de Meriti", "municipio": "São João de Meriti", "nossa": 33190674,
      "diretos": [], "adjacentes": [],
      "nota": "Elite São João de Meriti sem dados no ENEM 2025."},
@@ -74,7 +74,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>ENEM 2025 · Inteligência Competitiva — Matriz Educação</title>
+<title>ENEM 2025 · Inteligência Competitiva - Matriz Educação</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
 <script>Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';</script>
 <style>
@@ -154,7 +154,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="wordmark">ENEM 2025</div>
     <div class="hero-divider"></div>
     <div>
-      <h1>Inteligência Competitiva — Matriz Educação</h1>
+      <h1>Inteligência Competitiva - Matriz Educação</h1>
       <p>Comparação unidade a unidade com Elite e Santa Mônica · Microdados INEP · Uso interno</p>
     </div>
   </div>
@@ -165,7 +165,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   <div class="section-title">Panorama das redes</div>
   <div class="duo">
     <div class="card">
-      <h3>Média por área — redes completas</h3>
+      <h3>Média por área - redes completas</h3>
       <p class="sub">Média entre presentes em cada prova · RD = Redação</p>
       <div class="chart-wrap"><canvas id="chartPanorama"></canvas></div>
     </div>
@@ -185,8 +185,8 @@ TEMPLATE = r"""<!DOCTYPE html>
       <button class="chip" data-rede="Matriz Educação">Matriz</button>
       <button class="chip" data-rede="Elite">Elite</button>
       <button class="chip" data-rede="Santa Mônica">Santa Mônica</button>
-      <select id="filtroMun"><option value="*">Todos os municípios</option></select>
-      <label><input type="checkbox" id="filtroN30"> só unidades com 30+ alunos</label>
+      <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
+      <label><input type="checkbox" id="filtroN30" autocomplete="off"> só unidades com 30+ alunos</label>
     </div>
     <div class="tbl-scroll"><table id="tblRanking"></table></div>
     <p class="obs">★ unidade Matriz · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
@@ -214,13 +214,13 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="tbl-scroll" style="margin-top:14px"><table id="tblConfronto"></table></div>
   </div>
 
-  <div class="section-title">Batalha territorial — praça a praça</div>
+  <div class="section-title">Batalha territorial - praça a praça</div>
   <div class="pracas" id="pracasGrid"></div>
 
   <div class="section-title">Redação em detalhe</div>
   <div class="duo">
     <div class="card">
-      <h3>Competências C1–C5 por rede</h3>
+      <h3>Competências C1-C5 por rede</h3>
       <p class="sub">Média de cada competência (0 a 200) entre redações válidas</p>
       <div class="chart-wrap"><canvas id="chartRedacaoRedes"></canvas></div>
     </div>
@@ -238,7 +238,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   Ciências da Natureza, Ciências Humanas, Linguagens e Códigos, Matemática e Redação para alunos com presença completa e redação válida.
   Rede privada municipal = todas as escolas privadas do município nos microdados.<br>
   <strong>Concorrentes sem dados no ENEM 2025:</strong> __NOTA_SEM_DADOS__.<br>
-  Fonte: Microdados ENEM 2025 e Censo Escolar 2025 (INEP) · Gerado em __GERADO_EM__ · Uso interno — não distribuir.
+  Fonte: Microdados ENEM 2025 e Censo Escolar 2025 (INEP) · Gerado em __GERADO_EM__ · Uso interno - não distribuir.
 </footer>
 <script>
 const DATA = __DATA__;
@@ -249,12 +249,12 @@ const AREAS5 = ["CN","CH","LC","MT","RD"];
 const REDES = ["Matriz Educação","Elite","Santa Mônica"];
 const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
 
-const fmt = v => (v==null || isNaN(v)) ? "—" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
-const fmtInt = v => v==null ? "—" : v.toLocaleString("pt-BR");
+const fmt = v => (v==null || isNaN(v)) ? "-" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmtInt = v => v==null ? "-" : v.toLocaleString("pt-BR");
 const areaStat = (u,a) => a==="RD" ? (u.redacao||{}) : ((u.areas||{})[a]||{});
 const ngOf = u => (u.nota_geral||{}).media ?? null;
 const dot = rede => '<span class="rede-dot" style="background:'+CORES[rede]+'"></span>';
-const deltaHtml = d => d==null ? '<span class="delta-neutro">—</span>'
+const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
   : '<span class="'+(d>=0?'delta-pos':'delta-neg')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+'</span>';
 
 // ---------- Cards do topo ----------
@@ -373,7 +373,10 @@ document.querySelectorAll(".chip").forEach(ch => ch.onclick = () => {
   const sel = document.getElementById("filtroMun");
   muns.forEach(m => sel.insertAdjacentHTML("beforeend", '<option value="'+m+'">'+m+"</option>"));
   sel.onchange = () => { fMun = sel.value; renderRanking(); };
-  document.getElementById("filtroN30").onchange = e => { fN30 = e.target.checked; renderRanking(); };
+  const chk = document.getElementById("filtroN30");
+  chk.onchange = () => { fN30 = chk.checked; renderRanking(); };
+  // o browser pode restaurar estado do formulário no reload; sincroniza antes do 1º render
+  fMun = sel.value; fN30 = chk.checked;
   document.querySelector('.chip[data-rede="*"]').click();
 })();
 
@@ -397,8 +400,8 @@ Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
     });
     selB.appendChild(og);
   });
-  selA.value = 33183368;  // Matriz — Campo Grande
-  selB.value = 33520321;  // Elite — Campo Grande I
+  selA.value = 33183368;  // Matriz - Campo Grande
+  selB.value = 33520321;  // Elite - Campo Grande I
   selA.onchange = selB.onchange = renderConfronto;
   renderConfronto();
 })();
@@ -410,7 +413,7 @@ function renderConfronto(){
   document.getElementById("placar").innerHTML =
     '<div><div class="num" style="color:'+CORES[A.rede]+'">'+fmt(ngA)+'</div><span class="who">'+A.label+"</span></div>"+
     '<div class="vs">NG<br><span class="badge-delta" style="background:'+(d>=0?"#15803d":"#b91c1c")+'">'+
-      (d==null?"—":(d>=0?"+":"−")+fmt(Math.abs(d)))+"</span></div>"+
+      (d==null?"-":(d>=0?"+":"−")+fmt(Math.abs(d)))+"</span></div>"+
     '<div><div class="num" style="color:'+CORES[B.rede]+'">'+fmt(ngB)+'</div><span class="who">'+B.label+"</span></div>";
 
   const bench = benchByMun[A.municipio];
@@ -478,7 +481,7 @@ function renderConfronto(){
     } else {
       corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>Δ NG</th><th>Δ MT</th><th>Δ RD</th></tr></thead><tbody>'+
         '<tr class="nossa-row"><td>'+dot(nossa.rede)+'<span class="star">★ </span>'+nossa.label+"</td><td>"+
-        fmtInt(nossa.n_inscritos)+"</td><td><strong>"+fmt(ngN)+"</strong></td><td>—</td><td>—</td><td>—</td></tr>"+
+        fmtInt(nossa.n_inscritos)+"</td><td><strong>"+fmt(ngN)+"</strong></td><td>-</td><td>-</td><td>-</td></tr>"+
         rivais.map(({u,adj}) => {
           const dNG = (ngN!=null && ngOf(u)!=null) ? ngN-ngOf(u) : null;
           const dMT = areaStat(nossa,"MT").media!=null && areaStat(u,"MT").media!=null ? areaStat(nossa,"MT").media-areaStat(u,"MT").media : null;

@@ -70,14 +70,14 @@ def main():
 
     unidades = []
 
-    # Nossas unidades (labels do mapa: "Matriz — Campo Grande")
+    # Nossas unidades (labels do mapa; travessão normalizado p/ traço simples)
     for co, grupo in df_nossa.groupby("CO_ESCOLA"):
         info = mapa.get(str(co), {})
         unidades.append({
             "co": int(co),
             "rede": MARCA,
             "nossa": True,
-            "label": info.get("label", f"Escola {co}"),
+            "label": info.get("label", f"Escola {co}").replace("—", "-"),
             "municipio": info.get("municipio", ""),
             "bairro": info.get("bairro", ""),
             **stats_df(grupo),
@@ -92,7 +92,7 @@ def main():
             "co": int(co),
             "rede": info["rede"],
             "nossa": False,
-            "label": info["label"],
+            "label": info["label"].replace("—", "-"),
             "municipio": info["municipio"],
             "bairro": info["bairro"],
             **stats_df(grupo),
@@ -111,7 +111,7 @@ def main():
     bench = {k: {kk: vv for kk, vv in v.items() if kk != "todas_escolas"}
              for k, v in bench_raw.items()}
 
-    sem_dados = [m["label"] for m in conc_meta.values() if not m["tem_dados_2025"]]
+    sem_dados = [m["label"].replace("—", "-") for m in conc_meta.values() if not m["tem_dados_2025"]]
 
     saida = {
         "marca": MARCA,

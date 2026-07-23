@@ -125,7 +125,7 @@ def extrair():
         for co, info in unidades.items():
             meta[str(co)] = {
                 "rede": rede,
-                "label": f"{rede} — {info['label']}",
+                "label": f"{rede} - {info['label']}",
                 "municipio": info["municipio"],
                 "bairro": info["bairro"],
                 "tem_dados_2025": co in encontrados,
