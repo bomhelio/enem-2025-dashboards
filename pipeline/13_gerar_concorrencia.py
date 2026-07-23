@@ -25,20 +25,20 @@ PRACAS = [
      "diretos": [33159130], "adjacentes": [33122245],
      "nota": "Elite Realengo exibido como praça adjacente."},
     {"titulo": "Madureira", "municipio": "Rio de Janeiro", "nossa": 33197466,
-     "diretos": [33140626, 33149780, 33094861], "adjacentes": [],
+     "diretos": [33140626, 33149780, 33094861, 33197350], "adjacentes": [],
      "nota": "Elite Madureira 3 sem dados no ENEM 2024 e 2025."},
     {"titulo": "Rocha Miranda", "municipio": "Rio de Janeiro", "nossa": 33192685,
      "diretos": [], "adjacentes": [33193649, 33193720],
      "nota": "Sem concorrente mapeado no bairro - exibidos os mais próximos (Irajá e Guadalupe)."},
     {"titulo": "Nova Iguaçu", "municipio": "Nova Iguaçu", "nossa": 33187762,
-     "diretos": [33060355, 33185000], "adjacentes": [],
+     "diretos": [33060355, 33185000, 33187681], "adjacentes": [33198926],
      "nota": "Elite Nova Iguaçu (bairro da Luz) sem dados no ENEM 2024 e 2025."},
     {"titulo": "Duque de Caxias", "municipio": "Duque de Caxias", "nossa": 33048185,
      "diretos": [], "adjacentes": [], "ref2024": [33173850],
      "nota": "O Elite de Caxias pontuou no ENEM 2024 (referência acima) e não registrou participantes em 2025. Santa Mônica de Caxias sem dados nos dois anos."},
     {"titulo": "São João de Meriti", "municipio": "São João de Meriti", "nossa": 33190674,
-     "diretos": [], "adjacentes": [], "ref2024": [33176752],
-     "nota": "O Elite de São João de Meriti pontuou no ENEM 2024 (referência acima) e não registrou participantes em 2025."},
+     "diretos": [33200572], "adjacentes": [], "ref2024": [33176752, 33185700],
+     "nota": "Elite S. J. de Meriti e ZeroHum Jardim Metrópole pontuaram no ENEM 2024 (referências acima) e não registraram participantes em 2025."},
 ]
 
 
@@ -48,23 +48,26 @@ def _pt(v: float) -> str:
 
 def _insight_redacao(data: dict) -> str:
     redes = data["redes"]
+    curto = lambda r: "Matriz" if r == "Matriz Educação" else r
+    medias = {r: redes[r]["redacao"].get("media") or 0 for r in redes}
+    lider = max(medias, key=medias.get)
+    outros = sorted((r for r in medias if r != lider), key=lambda r: -medias[r])
+    outros_txt = ", ".join(f"{_pt(medias[r])} do {curto(r)}" for r in outros)
     m = redes["Matriz Educação"]["redacao"]["comps"]
-    s = redes["Santa Mônica"]["redacao"]["comps"]
-    e = redes["Elite"]["redacao"]["comps"]
-    deltas = {c: (s[c] or 0) - (m[c] or 0) for c in m}
+    l = redes[lider]["redacao"]["comps"]
+    vence_todas = all(
+        (l[c] or 0) >= max((redes[r]["redacao"]["comps"][c] or 0) for r in redes) for c in l)
+    deltas = {c: (l[c] or 0) - (m[c] or 0) for c in m}
     pior = max(deltas, key=deltas.get)
     nomes = {"C1": "norma culta", "C2": "compreensão da proposta", "C3": "seleção de argumentos",
              "C4": "coesão", "C5": "proposta de intervenção"}
-    med_m = data["redes"]["Matriz Educação"]["redacao"].get("media")
-    med_s = data["redes"]["Santa Mônica"]["redacao"].get("media")
-    med_e = data["redes"]["Elite"]["redacao"].get("media")
     baixas = sorted(m, key=lambda c: m[c] or 0)[:2]
     baixas_txt = " e ".join(f"{c} ({nomes[c]}: {_pt(m[c])})" for c in baixas)
     return (
-        f"O Santa Mônica lidera a redação com folga (média {_pt(med_s)}, contra {_pt(med_m)} do Matriz "
-        f"e {_pt(med_e)} do Elite) e vence nas cinco competências. A maior distância do Matriz para o "
-        f"Santa Mônica está em {pior} ({nomes[pior]}): {_pt(m[pior])} × {_pt(s[pior])}. Internamente, "
-        f"as competências mais baixas do Matriz seguem sendo {baixas_txt}."
+        f"O {curto(lider)} lidera a redação (média {_pt(medias[lider])}, contra {outros_txt})"
+        f"{', vencendo nas cinco competências' if vence_todas else ''}. A maior distância do Matriz "
+        f"para o {curto(lider)} está em {pior} ({nomes[pior]}): {_pt(m[pior])} × {_pt(l[pior])}. "
+        f"Internamente, as competências mais baixas do Matriz seguem sendo {baixas_txt}."
     )
 
 
@@ -88,8 +91,9 @@ TEMPLATE = r"""<!DOCTYPE html>
   .hero h1 { margin:0; color:#fff; font-size:22px; font-weight:800; letter-spacing:-.01em; }
   .hero p { margin:2px 0 0; color:rgba(255,255,255,.75); font-size:13px; }
   main { max-width:1180px; margin:0 auto; padding:28px 24px 40px; }
-  .stats { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
-  @media (max-width:900px){ .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .stats { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; }
+  @media (max-width:1000px){ .stats { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:640px){ .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
   .stat small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
   .stat strong { display:block; color:#0f172a; font-size:22px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
@@ -186,6 +190,7 @@ TEMPLATE = r"""<!DOCTYPE html>
       <button class="chip" data-rede="Matriz Educação">Matriz</button>
       <button class="chip" data-rede="Elite">Elite</button>
       <button class="chip" data-rede="Santa Mônica">Santa Mônica</button>
+      <button class="chip" data-rede="ZeroHum">ZeroHum</button>
       <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
       <label><input type="checkbox" id="filtroN30" autocomplete="off"> ocultar unidades com menos de 30 alunos</label>
     </div>
@@ -245,10 +250,10 @@ TEMPLATE = r"""<!DOCTYPE html>
 const DATA = __DATA__;
 const PRACAS = __PRACAS__;
 const REF2024 = __REF2024__;
-const CORES = {"Matriz Educação":"#15803d","Elite":"#1d4ed8","Santa Mônica":"#be123c"};
+const CORES = {"Matriz Educação":"#15803d","Elite":"#1d4ed8","Santa Mônica":"#be123c","ZeroHum":"#b45309"};
 const CINZA = "#334155";
 const AREAS5 = ["CN","CH","LC","MT","RD"];
-const REDES = ["Matriz Educação","Elite","Santa Mônica"];
+const REDES = ["Matriz Educação","Elite","Santa Mônica","ZeroHum"];
 const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
 
 const fmt = v => (v==null || isNaN(v)) ? "-" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -298,11 +303,13 @@ new Chart(document.getElementById("chartPanorama"), {
   }).join("");
   document.getElementById("tblRedes").innerHTML =
     "<thead><tr><th>Rede</th><th>Un.</th><th>Alunos</th><th>Presença</th><th>NG</th><th>MT ≥700</th><th>RD ≥800</th></tr></thead><tbody>"+rows+"</tbody>";
-  const m = DATA.redes["Matriz Educação"], e = DATA.redes["Elite"];
-  const d = ((m.nota_geral||{}).media||0) - ((e.nota_geral||{}).media||0);
+  const ngRede = r => (DATA.redes[r].nota_geral||{}).media||0;
+  const rel = d => d>=0 ? fmt(d)+" acima" : fmt(-d)+" abaixo";
+  const lider = REDES.reduce((a,b)=> ngRede(b)>ngRede(a) ? b : a);
   document.getElementById("obsPanorama").textContent =
-    "O Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
-    " do Elite na nota geral de rede; o Santa Mônica lidera entre os três, puxado pela Redação.";
+    "O Matriz está " + rel(ngRede("Matriz Educação")-ngRede("Elite")) + " do Elite e " +
+    rel(ngRede("Matriz Educação")-ngRede("ZeroHum")) + " do ZeroHum na nota geral de rede; o " +
+    lider + " lidera o grupo" + (lider==="Santa Mônica" ? ", puxado pela Redação." : ".");
 })();
 
 // ---------- Preenchimentos dos cards laterais ----------
