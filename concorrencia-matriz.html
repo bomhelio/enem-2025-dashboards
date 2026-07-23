@@ -382,19 +382,23 @@ function renderConfronto(){
         y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
   });
 
+  const corA = h => '<span style="color:'+CORES[A.rede]+';font-weight:600">'+h+"</span>";
+  const corB = h => '<span style="color:'+CORES[B.rede]+';font-weight:600">'+h+"</span>";
+  const par = (va, vb, suf) => corA(fmt(va)+(va!=null?suf:"")) + " × " + corB(fmt(vb)+(vb!=null?suf:""));
   const linhas = [["NG", u=>u.nota_geral||{}]].concat(AREAS5.map(a => [a, u=>areaStat(u,a)]));
   const rows = linhas.map(([nome, get]) => {
     const sa = get(A), sb = get(B);
     const dd = (sa.media!=null && sb.media!=null) ? sa.media-sb.media : null;
-    return "<tr><td><strong>"+nome+"</strong></td><td>"+fmt(sa.media)+"</td><td>"+fmt(sb.media)+"</td><td>"+deltaHtml(dd)+
-      "</td><td>"+fmt(sa.mediana)+" × "+fmt(sb.mediana)+"</td><td>"+fmt(sa.p90)+" × "+fmt(sb.p90)+
-      "</td><td>"+fmt(sa.pct_acima_600)+"% × "+fmt(sb.pct_acima_600)+"%</td><td>"+
-      fmt(sa.pct_acima_700)+"% × "+fmt(sb.pct_acima_700)+"%</td></tr>";
+    return "<tr><td><strong>"+nome+"</strong></td><td>"+corA(fmt(sa.media))+"</td><td>"+corB(fmt(sb.media))+"</td><td>"+deltaHtml(dd)+
+      "</td><td>"+par(sa.mediana, sb.mediana, "")+"</td><td>"+par(sa.p90, sb.p90, "")+
+      "</td><td>"+par(sa.pct_acima_600, sb.pct_acima_600, "%")+"</td><td>"+
+      par(sa.pct_acima_700, sb.pct_acima_700, "%")+"</td></tr>";
   }).join("");
   document.getElementById("tblConfronto").innerHTML =
-    "<thead><tr><th></th><th>"+A.label+" ★</th><th>"+B.label+"</th><th>Δ</th><th>Mediana (★ × conc.)</th>"+
-    "<th>P90 (★ × conc.)</th><th>≥600 (★ × conc.)</th><th>≥700 (★ × conc.)</th></tr></thead><tbody>"+rows+
+    "<thead><tr><th></th><th>"+A.label+" ★</th><th>"+B.label+"</th><th>Δ</th><th>Mediana</th>"+
+    "<th>P90</th><th>≥600</th><th>≥700</th></tr></thead><tbody>"+rows+
     '</tbody><tfoot><tr><td colspan="8" style="text-align:left;color:#64748b;font-size:12px;border:0;padding-top:10px">'+
+    "Nas colunas Mediana, P90, ≥600 e ≥700, cada par traz primeiro a unidade ★ e depois o concorrente, nas cores de cada um. · "+
     "Alunos: "+A.label+" "+fmtInt(A.n_inscritos)+" ("+fmt(A.taxa_presenca_pct)+"% presença) · "+
     B.label+" "+fmtInt(B.n_inscritos)+" ("+fmt(B.taxa_presenca_pct)+"% presença)</td></tr></tfoot>";
 }
