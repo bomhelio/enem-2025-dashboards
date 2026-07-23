@@ -186,7 +186,7 @@ TEMPLATE = r"""<!DOCTYPE html>
       <button class="chip" data-rede="Elite">Elite</button>
       <button class="chip" data-rede="Santa Mônica">Santa Mônica</button>
       <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
-      <label><input type="checkbox" id="filtroN30" autocomplete="off"> só unidades com 30+ alunos</label>
+      <label><input type="checkbox" id="filtroN30" autocomplete="off"> ocultar unidades com menos de 30 alunos</label>
     </div>
     <div class="tbl-scroll"><table id="tblRanking"></table></div>
     <p class="obs">★ unidade Matriz · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
