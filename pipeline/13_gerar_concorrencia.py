@@ -18,7 +18,7 @@ from config import OUTPUT_DIR
 PRACAS = [
     {"titulo": "Campo Grande", "municipio": "Rio de Janeiro", "nossa": 33183368,
      "diretos": [33520321, 33113114], "adjacentes": [],
-     "nota": "Elite Campo Grande II (Senador Vasconcelos) não pontuou no ENEM 2025."},
+     "nota": "Elite Campo Grande II (Senador Vasconcelos) sem dados no ENEM 2024 e 2025."},
     {"titulo": "Taquara", "municipio": "Rio de Janeiro", "nossa": 33187770,
      "diretos": [33169713, 33111642, 33173907], "adjacentes": [], "nota": ""},
     {"titulo": "Bangu", "municipio": "Rio de Janeiro", "nossa": 33187789,
@@ -26,19 +26,19 @@ PRACAS = [
      "nota": "Elite Realengo exibido como praça adjacente."},
     {"titulo": "Madureira", "municipio": "Rio de Janeiro", "nossa": 33197466,
      "diretos": [33140626, 33149780, 33094861], "adjacentes": [],
-     "nota": "Elite Madureira 3 sem dados no ENEM 2025."},
+     "nota": "Elite Madureira 3 sem dados no ENEM 2024 e 2025."},
     {"titulo": "Rocha Miranda", "municipio": "Rio de Janeiro", "nossa": 33192685,
      "diretos": [], "adjacentes": [33193649, 33193720],
      "nota": "Sem concorrente mapeado no bairro - exibidos os mais próximos (Irajá e Guadalupe)."},
     {"titulo": "Nova Iguaçu", "municipio": "Nova Iguaçu", "nossa": 33187762,
      "diretos": [33060355, 33185000], "adjacentes": [],
-     "nota": "Elite Nova Iguaçu (bairro da Luz) sem dados no ENEM 2025."},
+     "nota": "Elite Nova Iguaçu (bairro da Luz) sem dados no ENEM 2024 e 2025."},
     {"titulo": "Duque de Caxias", "municipio": "Duque de Caxias", "nossa": 33048185,
-     "diretos": [], "adjacentes": [],
-     "nota": "Elite e Santa Mônica de Duque de Caxias não pontuaram no ENEM 2025 - provável concentração do 3º ano em outras praças."},
+     "diretos": [], "adjacentes": [], "ref2024": [33173850],
+     "nota": "O Elite de Caxias pontuou no ENEM 2024 (referência acima) e não registrou participantes em 2025. Santa Mônica de Caxias sem dados nos dois anos."},
     {"titulo": "São João de Meriti", "municipio": "São João de Meriti", "nossa": 33190674,
-     "diretos": [], "adjacentes": [],
-     "nota": "Elite São João de Meriti sem dados no ENEM 2025."},
+     "diretos": [], "adjacentes": [], "ref2024": [33176752],
+     "nota": "O Elite de São João de Meriti pontuou no ENEM 2024 (referência acima) e não registrou participantes em 2025."},
 ]
 
 
@@ -243,6 +243,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 <script>
 const DATA = __DATA__;
 const PRACAS = __PRACAS__;
+const REF2024 = __REF2024__;
 const CORES = {"Matriz Educação":"#15803d","Elite":"#1d4ed8","Santa Mônica":"#be123c"};
 const CINZA = "#334155";
 const AREAS5 = ["CN","CH","LC","MT","RD"];
@@ -474,9 +475,10 @@ function renderConfronto(){
     const nossa = byCo[p.nossa];
     const rivais = p.diretos.map(co=>({u:byCo[co],adj:false})).concat(p.adjacentes.map(co=>({u:byCo[co],adj:true})))
       .filter(x=>x.u);
+    const refs = (p.ref2024||[]).map(co=>REF2024[co]).filter(Boolean);
     const ngN = ngOf(nossa);
     let corpo;
-    if (!rivais.length) {
+    if (!rivais.length && !refs.length) {
       corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
     } else {
       corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>Δ NG</th><th>Δ MT</th><th>Δ RD</th></tr></thead><tbody>'+
@@ -488,7 +490,11 @@ function renderConfronto(){
           const dRD = areaStat(nossa,"RD").media!=null && areaStat(u,"RD").media!=null ? areaStat(nossa,"RD").media-areaStat(u,"RD").media : null;
           return "<tr><td>"+dot(u.rede)+u.label+(adj?'<span class="tag-adj">ADJACENTE</span>':"")+"</td><td>"+
             fmtInt(u.n_inscritos)+"</td><td>"+fmt(ngOf(u))+"</td><td>"+deltaHtml(dNG)+"</td><td>"+deltaHtml(dMT)+"</td><td>"+deltaHtml(dRD)+"</td></tr>";
-        }).join("")+"</tbody></table></div>";
+        }).join("")+
+        refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.label.split(" - ")[0])+r.label+
+          '<span class="tag-adj">ENEM 2024</span></td><td>'+fmtInt(r.n_inscritos)+"</td><td>"+fmt(r.ng)+
+          "</td><td>-</td><td>-</td><td>-</td></tr>").join("")+
+        "</tbody></table></div>";
     }
     return '<div class="card praca"><h4>'+p.titulo+'</h4><div class="mun">'+p.municipio+
       " · Δ = nossa unidade menos o concorrente</div>"+corpo+(p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
@@ -515,10 +521,13 @@ new Chart(document.getElementById("chartRedacaoRedes"), {
 def main():
     with open(os.path.join(OUTPUT_DIR, "concorrencia_matriz.json"), encoding="utf-8") as f:
         data = json.load(f)
+    ref_path = os.path.join(OUTPUT_DIR, "concorrencia_ref2024.json")
+    ref2024 = json.load(open(ref_path, encoding="utf-8")) if os.path.exists(ref_path) else {}
 
     html = (TEMPLATE
             .replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")))
             .replace("__PRACAS__", json.dumps(PRACAS, ensure_ascii=False, separators=(",", ":")))
+            .replace("__REF2024__", json.dumps(ref2024, ensure_ascii=False, separators=(",", ":")))
             .replace("__INSIGHT_RED__", _insight_redacao(data))
             .replace("__NOTA_SEM_DADOS__", "; ".join(data.get("concorrentes_sem_dados_2025", [])) or "nenhum")
             .replace("__GERADO_EM__", date.today().strftime("%d/%m/%Y")))
