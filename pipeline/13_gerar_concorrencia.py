@@ -179,6 +179,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     <h3>Redes, mercado municipal e Top 100 BR</h3>
     <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
     <div class="filters">
+      <button class="chip hm-chip" data-m="NG">NG</button>
       <button class="chip hm-chip" data-m="CN">CN</button>
       <button class="chip hm-chip" data-m="CH">CH</button>
       <button class="chip hm-chip" data-m="LC">LC</button>
@@ -280,7 +281,8 @@ TEMPLATE = r"""<!DOCTYPE html>
   <strong>Metodologia.</strong> Mesma métrica dos dashboards de marca: média por área entre presentes na prova
   (TP_PRESENCA = 1); Redação entre redações válidas (TP_STATUS_REDACAO = 1); Nota Geral = média de
   Ciências da Natureza, Ciências Humanas, Linguagens e Códigos, Matemática e Redação para alunos com presença completa e redação válida.
-  Rede privada municipal = todas as escolas privadas do município nos microdados.<br>
+  Rede privada municipal = todas as escolas privadas do município nos microdados.
+  Top 100 BR = média das 100 melhores escolas privadas do país (30 ou mais alunos válidos), por área e na Nota Geral.<br>
   <strong>Concorrentes sem dados no ENEM 2025:</strong> __NOTA_SEM_DADOS__.<br>
   Fonte: Microdados ENEM 2025 e Censo Escolar 2025 (INEP) · Gerado em __GERADO_EM__ · Uso interno - não distribuir.
 </footer>
@@ -641,7 +643,7 @@ document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
   renderHist();
 });
 document.getElementById("histMun").onchange = renderHist;
-document.querySelector('.hm-chip[data-m="MT"]').click();
+document.querySelector('.hm-chip[data-m="NG"]').click();
 
 // ---------- Redação por rede ----------
 new Chart(document.getElementById("chartRedacaoRedes"), {
