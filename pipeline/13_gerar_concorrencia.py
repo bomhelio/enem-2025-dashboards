@@ -131,7 +131,9 @@ TEMPLATE = r"""<!DOCTYPE html>
   .placar .vs { color:var(--muted); font-size:13px; font-weight:700; }
   .placar .who { font-size:12px; color:var(--muted); display:block; text-align:center; margin-top:2px; max-width:190px; }
   .badge-delta { display:inline-block; border-radius:8px; padding:3px 10px; font-size:13px; font-weight:800; color:#fff; }
-  .pracas { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:14px; }
+  .pracas { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr)); gap:14px; }
+  .praca th, .praca td { padding:6px 7px; }
+  .praca th:first-child, .praca td:first-child { white-space:normal; }
   .praca h4 { margin:0; font-size:14.5px; color:#0f172a; }
   .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
   .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
