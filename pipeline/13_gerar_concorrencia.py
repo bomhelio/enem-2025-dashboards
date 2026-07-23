@@ -148,6 +148,12 @@ TEMPLATE = r"""<!DOCTYPE html>
   .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
   .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
   .verdict { font-size:12.5px; font-weight:600; margin:9px 0 0; }
+  .consol { margin-top:14px; }
+  .consol summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; font-size:13.5px; font-weight:700; color:#334155; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .consol summary::-webkit-details-marker { display:none; }
+  .consol summary .hint { color:var(--muted); font-weight:400; font-size:12.5px; }
+  .consol[open] summary { border-radius:14px 14px 0 0; }
+  .consol .body { background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:14px 18px; }
   .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
   .obs { color:var(--muted); font-size:12px; margin-top:10px; }
   footer { max-width:1180px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }
@@ -222,6 +228,13 @@ TEMPLATE = r"""<!DOCTYPE html>
 
   <div class="section-title">Batalha territorial - praça a praça</div>
   <div class="pracas" id="pracasGrid"></div>
+  <details class="consol">
+    <summary>Consolidado por praça<span class="hint">uma linha por bairro, da melhor para a pior situação · clique para abrir</span></summary>
+    <div class="body">
+      <div class="tbl-scroll"><table id="tblConsol"></table></div>
+      <p class="obs">Situação = diferença de NG entre a nossa unidade e o melhor concorrente com dados 2025 na praça · † menos de 30 alunos</p>
+    </div>
+  </details>
 
   <div class="section-title">Redação em detalhe</div>
   <div class="duo">
@@ -525,6 +538,34 @@ function renderConfronto(){
       " · médias ENEM 2025 · melhor valor da praça em negrito · † menos de 30 alunos</div>"+corpo+
       (p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
   }).join("");
+
+  // Consolidado por praça (tabela expansível)
+  const peqTag = u => u.n_inscritos<30 ? " †" : "";
+  const consol = PRACAS.map(p => {
+    const nossa = byCo[p.nossa];
+    const rivaisU = p.diretos.concat(p.adjacentes).map(co=>byCo[co]).filter(u=>u && ngOf(u)!=null);
+    const ngN = ngOf(nossa);
+    if (!rivaisU.length) return {p, nossa, ngN, melhor:null, diff:null};
+    const melhor = [...rivaisU].sort((a,b)=>ngOf(b)-ngOf(a))[0];
+    return {p, nossa, ngN, melhor, diff: ngN-ngOf(melhor), nRivais: rivaisU.length};
+  }).sort((a,b) => (b.diff==null?-1e9:b.diff) - (a.diff==null?-1e9:a.diff));
+  document.getElementById("tblConsol").innerHTML =
+    "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th><th>Melhor concorrente</th><th>NG conc.</th><th>Situação</th></tr></thead><tbody>"+
+    consol.map(c => {
+      let sit, conc, ngc;
+      if (c.melhor==null) {
+        sit = '<span class="delta-neutro">única com dados 2025 na praça</span>'; conc = "-"; ngc = "-";
+      } else {
+        conc = dot(c.melhor.rede)+c.melhor.label+peqTag(c.melhor);
+        ngc = fmt(ngOf(c.melhor));
+        sit = c.diff>=0
+          ? '<span class="delta-pos">à frente por '+fmt(c.diff)+'</span>'
+          : '<span class="delta-neg">atrás por '+fmt(-c.diff)+'</span>';
+      }
+      return "<tr><td><strong>"+c.p.titulo+"</strong></td><td>"+c.p.municipio+"</td><td>"+
+        fmtInt(c.nossa.n_inscritos)+"</td><td><strong>"+fmt(c.ngN)+"</strong></td><td>"+conc+
+        "</td><td>"+ngc+"</td><td>"+sit+"</td></tr>";
+    }).join("")+"</tbody>";
 })();
 
 // ---------- Redação por rede ----------
