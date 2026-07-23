@@ -316,7 +316,7 @@ function renderRanking(){
   const rows = lista.map((u,i) => {
     const peq = ((u.nota_geral||{}).n ?? 0) < 30 ? " †" : "";
     return '<tr class="'+(u.nossa?'nossa-row':'')+'"><td>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+
-      nomeCurto(u)+peq+"</td><td>"+u.municipio+"</td><td>"+fmtInt(u.n_inscritos)+"</td>"+
+      u.label+peq+"</td><td>"+u.municipio+"</td><td>"+fmtInt(u.n_inscritos)+"</td>"+
       ["CN","CH","LC","MT","RD"].map(a=>"<td>"+fmt(areaStat(u,a).media)+"</td>").join("")+
       "<td><strong>"+fmt(ngOf(u))+"</strong></td><td>"+(i+1)+"º</td></tr>";
   }).join("");
@@ -383,9 +383,9 @@ function renderConfronto(){
     bench ? "Linha cinza = rede privada de "+A.municipio+" ("+fmtInt(bench.n_alunos)+" alunos)" : "Média entre presentes";
 
   const dsets = [
-    { label: nomeCurto(A)+" ★", backgroundColor: CORES[A.rede]+"cc", borderColor: CORES[A.rede],
+    { label: A.label+" ★", backgroundColor: CORES[A.rede]+"cc", borderColor: CORES[A.rede],
       borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(A,a).media ?? null) },
-    { label: nomeCurto(B), backgroundColor: CORES[B.rede]+"cc", borderColor: CORES[B.rede],
+    { label: B.label, backgroundColor: CORES[B.rede]+"cc", borderColor: CORES[B.rede],
       borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(B,a).media ?? null) },
   ];
   if (bench) dsets.push({ label:"Privada "+A.municipio, type:"line", borderColor:CINZA, borderWidth:2,
@@ -403,9 +403,9 @@ function renderConfronto(){
   if (chConfComps) chConfComps.destroy();
   chConfComps = new Chart(document.getElementById("chartConfComps"), {
     type:"bar", data:{ labels:["C1","C2","C3","C4","C5"], datasets:[
-      { label:nomeCurto(A)+" ★", backgroundColor:CORES[A.rede]+"cc", borderColor:CORES[A.rede], borderRadius:6, borderSkipped:false,
+      { label:A.label+" ★", backgroundColor:CORES[A.rede]+"cc", borderColor:CORES[A.rede], borderRadius:6, borderSkipped:false,
         data:["C1","C2","C3","C4","C5"].map(c=>compsA[c] ?? null) },
-      { label:nomeCurto(B), backgroundColor:CORES[B.rede]+"cc", borderColor:CORES[B.rede], borderRadius:6, borderSkipped:false,
+      { label:B.label, backgroundColor:CORES[B.rede]+"cc", borderColor:CORES[B.rede], borderRadius:6, borderSkipped:false,
         data:["C1","C2","C3","C4","C5"].map(c=>compsB[c] ?? null) } ] },
     options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
       scales:{ x:{ grid:{ display:false } },
@@ -422,7 +422,7 @@ function renderConfronto(){
       fmt(sa.pct_acima_700)+"% × "+fmt(sb.pct_acima_700)+"%</td></tr>";
   }).join("");
   document.getElementById("tblConfronto").innerHTML =
-    "<thead><tr><th></th><th>"+nomeCurto(A)+" ★</th><th>"+nomeCurto(B)+"</th><th>Δ</th><th>Mediana (★ × conc.)</th>"+
+    "<thead><tr><th></th><th>"+A.label+" ★</th><th>"+B.label+"</th><th>Δ</th><th>Mediana (★ × conc.)</th>"+
     "<th>P90 (★ × conc.)</th><th>≥600 (★ × conc.)</th><th>≥700 (★ × conc.)</th></tr></thead><tbody>"+rows+
     '</tbody><tfoot><tr><td colspan="8" style="text-align:left;color:#64748b;font-size:12px;border:0;padding-top:10px">'+
     "Alunos: "+A.label+" "+fmtInt(A.n_inscritos)+" ("+fmt(A.taxa_presenca_pct)+"% presença) · "+
@@ -442,13 +442,13 @@ function renderConfronto(){
       corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
     } else {
       corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>Δ NG</th><th>Δ MT</th><th>Δ RD</th></tr></thead><tbody>'+
-        '<tr class="nossa-row"><td>'+dot(nossa.rede)+'<span class="star">★ </span>'+nomeCurto(nossa)+"</td><td>"+
+        '<tr class="nossa-row"><td>'+dot(nossa.rede)+'<span class="star">★ </span>'+nossa.label+"</td><td>"+
         fmtInt(nossa.n_inscritos)+"</td><td><strong>"+fmt(ngN)+"</strong></td><td>—</td><td>—</td><td>—</td></tr>"+
         rivais.map(({u,adj}) => {
           const dNG = (ngN!=null && ngOf(u)!=null) ? ngN-ngOf(u) : null;
           const dMT = areaStat(nossa,"MT").media!=null && areaStat(u,"MT").media!=null ? areaStat(nossa,"MT").media-areaStat(u,"MT").media : null;
           const dRD = areaStat(nossa,"RD").media!=null && areaStat(u,"RD").media!=null ? areaStat(nossa,"RD").media-areaStat(u,"RD").media : null;
-          return "<tr><td>"+dot(u.rede)+nomeCurto(u)+(adj?'<span class="tag-adj">ADJACENTE</span>':"")+"</td><td>"+
+          return "<tr><td>"+dot(u.rede)+u.label+(adj?'<span class="tag-adj">ADJACENTE</span>':"")+"</td><td>"+
             fmtInt(u.n_inscritos)+"</td><td>"+fmt(ngOf(u))+"</td><td>"+deltaHtml(dNG)+"</td><td>"+deltaHtml(dMT)+"</td><td>"+deltaHtml(dRD)+"</td></tr>";
         }).join("")+"</tbody></table></div>";
     }
