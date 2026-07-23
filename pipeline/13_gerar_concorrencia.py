@@ -236,10 +236,10 @@ TEMPLATE = r"""<!DOCTYPE html>
     </div>
   </details>
 
-  <div class="section-title">Evolução histórica 2021-2025</div>
+  <div class="section-title">Evolução 2024-2025</div>
   <div class="card">
     <h3>Redes, mercado municipal e Top 100 BR</h3>
-    <p class="sub">Média entre presentes por prova · as séries das redes começam em 2024 (os microdados 2021-2023 não identificam a escola) · Privada = todas as escolas privadas do município</p>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
     <div class="filters">
       <button class="chip hm-chip" data-m="CN">CN</button>
       <button class="chip hm-chip" data-m="CH">CH</button>
@@ -596,7 +596,7 @@ function renderConfronto(){
 const HIST = __HIST__;
 let histMetric = "MT", chartHist = null;
 function renderHist(){
-  const anos = HIST.anos;
+  const anos = ["2024", "2025"];
   const mun = document.getElementById("histMun").value;
   const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
     data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
@@ -618,7 +618,7 @@ function renderHist(){
     "<thead><tr><th>Série</th>"+anos.map(a=>"<th>"+a+"</th>").join("")+
     "<th>Variação 24→25</th><th>%</th></tr></thead><tbody>"+
     series.map(s => {
-      const v24 = s.data[3], v25 = s.data[4];
+      const v24 = s.data[0], v25 = s.data[1];
       const dv = (v24!=null && v25!=null) ? v25-v24 : null;
       const pc = (dv!=null && v24) ? dv/v24*100 : null;
       const cls = dv==null ? "delta-neutro" : (dv>=0 ? "delta-pos" : "delta-neg");
