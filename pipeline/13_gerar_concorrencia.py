@@ -143,6 +143,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   .praca h4 { margin:0; font-size:14.5px; color:#0f172a; }
   .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
   .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+  .verdict { font-size:12.5px; font-weight:600; margin:9px 0 0; }
   .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
   .obs { color:var(--muted); font-size:12px; margin-top:10px; }
   footer { max-width:1180px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }
@@ -481,23 +482,37 @@ function renderConfronto(){
     if (!rivais.length && !refs.length) {
       corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
     } else {
-      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>Δ NG</th><th>Δ MT</th><th>Δ RD</th></tr></thead><tbody>'+
-        '<tr class="nossa-row"><td>'+dot(nossa.rede)+'<span class="star">★ </span>'+nossa.label+"</td><td>"+
-        fmtInt(nossa.n_inscritos)+"</td><td><strong>"+fmt(ngN)+"</strong></td><td>-</td><td>-</td><td>-</td></tr>"+
-        rivais.map(({u,adj}) => {
-          const dNG = (ngN!=null && ngOf(u)!=null) ? ngN-ngOf(u) : null;
-          const dMT = areaStat(nossa,"MT").media!=null && areaStat(u,"MT").media!=null ? areaStat(nossa,"MT").media-areaStat(u,"MT").media : null;
-          const dRD = areaStat(nossa,"RD").media!=null && areaStat(u,"RD").media!=null ? areaStat(nossa,"RD").media-areaStat(u,"RD").media : null;
-          return "<tr><td>"+dot(u.rede)+u.label+(adj?'<span class="tag-adj">ADJACENTE</span>':"")+"</td><td>"+
-            fmtInt(u.n_inscritos)+"</td><td>"+fmt(ngOf(u))+"</td><td>"+deltaHtml(dNG)+"</td><td>"+deltaHtml(dMT)+"</td><td>"+deltaHtml(dRD)+"</td></tr>";
-        }).join("")+
+      const linhas = [{u:nossa, nossa:true, adj:false}].concat(rivais.map(x=>({u:x.u, nossa:false, adj:x.adj})));
+      const val = (u,m) => m==="NG" ? ngOf(u) : areaStat(u,m).media;
+      const best = {};
+      ["NG","MT","RD"].forEach(m => best[m] = Math.max(...linhas.map(l=>val(l.u,m)).filter(v=>v!=null)));
+      const cel = (u,m) => { const v = val(u,m);
+        return "<td"+(v!=null && v===best[m] ? ' style="font-weight:800"' : "")+">"+fmt(v)+"</td>"; };
+      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th></tr></thead><tbody>'+
+        linhas.map(l => '<tr class="'+(l.nossa?'nossa-row':'')+'"><td>'+dot(l.u.rede)+(l.nossa?'<span class="star">★ </span>':'')+
+          l.u.label+(l.u.n_inscritos<30?' †':'')+(l.adj?'<span class="tag-adj">ADJACENTE</span>':'')+"</td><td>"+
+          fmtInt(l.u.n_inscritos)+"</td>"+cel(l.u,"NG")+cel(l.u,"MT")+cel(l.u,"RD")+"</tr>").join("")+
         refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.label.split(" - ")[0])+r.label+
           '<span class="tag-adj">ENEM 2024</span></td><td>'+fmtInt(r.n_inscritos)+"</td><td>"+fmt(r.ng)+
-          "</td><td>-</td><td>-</td><td>-</td></tr>").join("")+
+          "</td><td>"+fmt(r.mt)+"</td><td>"+fmt(r.rd)+"</td></tr>").join("")+
         "</tbody></table></div>";
+      if (rivais.length) {
+        const ord = linhas.filter(l=>val(l.u,"NG")!=null).sort((a,b)=>val(b.u,"NG")-val(a.u,"NG"));
+        const lider = ord[0];
+        const peq = u => u.n_inscritos<30 ? " †" : "";
+        if (lider.nossa) {
+          const vice = ord[1];
+          corpo += '<p class="verdict" style="color:var(--pos)">A Matriz lidera a praça em NG, '+
+            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente de '+vice.u.label+peq(vice.u)+'.</p>';
+        } else {
+          corpo += '<p class="verdict" style="color:var(--neg)">'+lider.u.label+peq(lider.u)+
+            ' lidera a praça em NG; a Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
+        }
+      }
     }
     return '<div class="card praca"><h4>'+p.titulo+'</h4><div class="mun">'+p.municipio+
-      " · Δ = nossa unidade menos o concorrente</div>"+corpo+(p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
+      " · médias ENEM 2025 · melhor valor da praça em negrito · † menos de 30 alunos</div>"+corpo+
+      (p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
   }).join("");
 })();
 
