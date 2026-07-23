@@ -141,7 +141,7 @@ MARCAS: dict[str, dict] = {
         "hero_sub": "Comparação unidade a unidade com Pensi, Alfa CEM, pH e AZ · Microdados INEP · Uso interno",
         "municipios_bench": {3304557: "Rio de Janeiro"},
         "confronto_default": [33135924, 33161011],
-        "cores_redes": {"Pensi": "#1d4ed8", "Alfa CEM": "#0f766e", "pH": "#be123c", "AZ": "#b45309"},
+        "cores_redes": {"Pensi": "#ca8a04", "Alfa CEM": "#0f766e", "pH": "#be123c", "AZ": "#1d4ed8"},
         "concorrentes": {
             "Pensi": {
                 33135827: {"label": "Maracanã",            "municipio": "Rio de Janeiro", "bairro": "MARACANA"},
