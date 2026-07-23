@@ -100,6 +100,30 @@
 <main>
   <div class="stats" id="statsRow"></div>
 
+  <div class="section-title">Evolução 2024-2025</div>
+  <div class="card">
+    <h3>Redes, mercado municipal e Top 100 BR</h3>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
+    <div class="filters">
+      <button class="chip hm-chip" data-m="CN">CN</button>
+      <button class="chip hm-chip" data-m="CH">CH</button>
+      <button class="chip hm-chip" data-m="LC">LC</button>
+      <button class="chip hm-chip" data-m="MT">MT</button>
+      <button class="chip hm-chip" data-m="RD">RD</button>
+      <select id="histMun" autocomplete="off">
+        <option>Rio de Janeiro</option>
+        <option>Duque de Caxias</option>
+        <option>Nova Iguaçu</option>
+        <option>São João de Meriti</option>
+      </select>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
+    <details class="consol" style="margin-top:12px">
+      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
+      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
+    </details>
+  </div>
+
   <div class="section-title">Panorama das redes</div>
   <div class="duo">
     <div class="card">
@@ -162,30 +186,6 @@
       <p class="obs">Situação = diferença de NG entre a nossa unidade e o melhor concorrente com dados 2025 na praça · † menos de 30 alunos</p>
     </div>
   </details>
-
-  <div class="section-title">Evolução 2024-2025</div>
-  <div class="card">
-    <h3>Redes, mercado municipal e Top 100 BR</h3>
-    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · Privada = todas as escolas privadas do município</p>
-    <div class="filters">
-      <button class="chip hm-chip" data-m="CN">CN</button>
-      <button class="chip hm-chip" data-m="CH">CH</button>
-      <button class="chip hm-chip" data-m="LC">LC</button>
-      <button class="chip hm-chip" data-m="MT">MT</button>
-      <button class="chip hm-chip" data-m="RD">RD</button>
-      <select id="histMun" autocomplete="off">
-        <option>Rio de Janeiro</option>
-        <option>Duque de Caxias</option>
-        <option>Nova Iguaçu</option>
-        <option>São João de Meriti</option>
-      </select>
-    </div>
-    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
-    <details class="consol" style="margin-top:12px">
-      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
-      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
-    </details>
-  </div>
 
   <div class="section-title">Redação em detalhe</div>
   <div class="duo">
