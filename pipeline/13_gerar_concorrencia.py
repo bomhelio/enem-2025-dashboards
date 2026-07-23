@@ -1,59 +1,37 @@
 """
-13_gerar_concorrencia.py
-Gera a tela standalone de inteligência competitiva (piloto Matriz Educação
-vs Elite e Santa Mônica), unidade a unidade, com a identidade visual da
-home ENEM 2025 (réplica UERJ).
+13_gerar_concorrencia.py [marca]
+Gera a tela standalone de inteligência competitiva da marca (comparação
+unidade a unidade com as redes concorrentes de concorrencia_config.py),
+com a identidade visual da home ENEM 2025 (réplica UERJ).
 
-Entrada: output/concorrencia_matriz.json (produzido pelo 12)
-Saída:   output/Concorrencia_Matriz.html
+Uso: python 13_gerar_concorrencia.py "QI Bilíngue"   (default: Matriz Educação)
+
+Entradas (output/): concorrencia_{slug}.json, concorrencia_ref2024_{slug}.json,
+concorrencia_historico_{slug}.json
+Saída: output/{html_out da config}
 """
 
 import json
 import os
+import sys
 from datetime import date
 
 from config import OUTPUT_DIR
-
-# Praças da Matriz: concorrentes no mesmo bairro (diretos) e vizinhos (adjacentes)
-PRACAS = [
-    {"titulo": "Campo Grande", "municipio": "Rio de Janeiro", "nossa": 33183368,
-     "diretos": [33520321, 33113114], "adjacentes": [],
-     "nota": "Elite Campo Grande II (Senador Vasconcelos) sem dados no ENEM 2024 e 2025."},
-    {"titulo": "Taquara", "municipio": "Rio de Janeiro", "nossa": 33187770,
-     "diretos": [33169713, 33111642, 33173907], "adjacentes": [], "nota": ""},
-    {"titulo": "Bangu", "municipio": "Rio de Janeiro", "nossa": 33187789,
-     "diretos": [33159130], "adjacentes": [33122245],
-     "nota": "Elite Realengo exibido como praça adjacente."},
-    {"titulo": "Madureira", "municipio": "Rio de Janeiro", "nossa": 33197466,
-     "diretos": [33140626, 33149780, 33094861, 33197350], "adjacentes": [],
-     "nota": "Elite Madureira 3 sem dados no ENEM 2024 e 2025."},
-    {"titulo": "Rocha Miranda", "municipio": "Rio de Janeiro", "nossa": 33192685,
-     "diretos": [], "adjacentes": [33193649, 33193720],
-     "nota": "Sem concorrente mapeado no bairro - exibidos os mais próximos (Irajá e Guadalupe)."},
-    {"titulo": "Nova Iguaçu", "municipio": "Nova Iguaçu", "nossa": 33187762,
-     "diretos": [33060355, 33185000, 33187681], "adjacentes": [33198926],
-     "nota": "Elite Nova Iguaçu (bairro da Luz) sem dados no ENEM 2024 e 2025."},
-    {"titulo": "Duque de Caxias", "municipio": "Duque de Caxias", "nossa": 33048185,
-     "diretos": [], "adjacentes": [], "ref2024": [33173850],
-     "nota": "O Elite de Caxias pontuou no ENEM 2024 (referência acima) e não registrou participantes em 2025. Santa Mônica de Caxias sem dados nos dois anos."},
-    {"titulo": "São João de Meriti", "municipio": "São João de Meriti", "nossa": 33190674,
-     "diretos": [33200572], "adjacentes": [], "ref2024": [33176752, 33185700],
-     "nota": "Elite S. J. de Meriti e ZeroHum Jardim Metrópole pontuaram no ENEM 2024 (referências acima) e não registraram participantes em 2025."},
-]
+from concorrencia_config import get_marca
 
 
 def _pt(v: float) -> str:
     return f"{v:.1f}".replace(".", ",")
 
 
-def _insight_redacao(data: dict) -> str:
+def _insight_redacao(data: dict, marca: str, curto: str) -> str:
     redes = data["redes"]
-    curto = lambda r: "Matriz" if r == "Matriz Educação" else r
+    nome = lambda r: curto if r == marca else r
     medias = {r: redes[r]["redacao"].get("media") or 0 for r in redes}
     lider = max(medias, key=medias.get)
     outros = sorted((r for r in medias if r != lider), key=lambda r: -medias[r])
-    outros_txt = ", ".join(f"{_pt(medias[r])} do {curto(r)}" for r in outros)
-    m = redes["Matriz Educação"]["redacao"]["comps"]
+    outros_txt = ", ".join(f"{_pt(medias[r])} do {nome(r)}" for r in outros)
+    m = redes[marca]["redacao"]["comps"]
     l = redes[lider]["redacao"]["comps"]
     vence_todas = all(
         (l[c] or 0) >= max((redes[r]["redacao"]["comps"][c] or 0) for r in redes) for c in l)
@@ -63,11 +41,17 @@ def _insight_redacao(data: dict) -> str:
              "C4": "coesão", "C5": "proposta de intervenção"}
     baixas = sorted(m, key=lambda c: m[c] or 0)[:2]
     baixas_txt = " e ".join(f"{c} ({nomes[c]}: {_pt(m[c])})" for c in baixas)
+    if lider == marca:
+        return (
+            f"O {curto} lidera a redação (média {_pt(medias[lider])}, contra {outros_txt})"
+            f"{', vencendo nas cinco competências' if vence_todas else ''}. Internamente, as "
+            f"competências mais baixas do {curto} seguem sendo {baixas_txt}."
+        )
     return (
-        f"O {curto(lider)} lidera a redação (média {_pt(medias[lider])}, contra {outros_txt})"
-        f"{', vencendo nas cinco competências' if vence_todas else ''}. A maior distância do Matriz "
-        f"para o {curto(lider)} está em {pior} ({nomes[pior]}): {_pt(m[pior])} × {_pt(l[pior])}. "
-        f"Internamente, as competências mais baixas do Matriz seguem sendo {baixas_txt}."
+        f"O {nome(lider)} lidera a redação (média {_pt(medias[lider])}, contra {outros_txt})"
+        f"{', vencendo nas cinco competências' if vence_todas else ''}. A maior distância do {curto} "
+        f"para o {nome(lider)} está em {pior} ({nomes[pior]}): {_pt(m[pior])} × {_pt(l[pior])}. "
+        f"Internamente, as competências mais baixas do {curto} seguem sendo {baixas_txt}."
     )
 
 
@@ -77,11 +61,11 @@ TEMPLATE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>ENEM 2025 · Inteligência Competitiva - Matriz Educação</title>
+<title>ENEM 2025 · Inteligência Competitiva - __MARCA__</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
 <script>Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';</script>
 <style>
-  :root { --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --pos:#15803d; --neg:#b91c1c; }
+  :root { --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --pos:#15803d; --neg:#b91c1c; --marca:__COR_MARCA__; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI", system-ui, Arial, sans-serif; }
   header { background:linear-gradient(135deg,#1e293b 0%,#0a1940 100%); box-shadow:0 4px 12px rgba(0,0,0,.25); }
@@ -91,7 +75,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   .hero h1 { margin:0; color:#fff; font-size:22px; font-weight:800; letter-spacing:-.01em; }
   .hero p { margin:2px 0 0; color:rgba(255,255,255,.75); font-size:13px; }
   main { max-width:1180px; margin:0 auto; padding:28px 24px 40px; }
-  .stats { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; }
+  .stats { display:grid; grid-template-columns:repeat(__STATS_COLS__,minmax(0,1fr)); gap:12px; }
   @media (max-width:1000px){ .stats { grid-template-columns:repeat(3,minmax(0,1fr)); } }
   @media (max-width:640px){ .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
@@ -120,9 +104,9 @@ TEMPLATE = r"""<!DOCTYPE html>
   th:first-child, td:first-child { text-align:left; }
   .tbl-scroll { overflow-x:auto; }
   .rede-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
-  .nossa-row { background:#15803d0d; }
-  .nossa-row td:first-child { box-shadow:inset 3px 0 0 var(--pos); }
-  .star { color:var(--pos); font-weight:800; }
+  .nossa-row { background:color-mix(in srgb, var(--marca) 5%, transparent); }
+  .nossa-row td:first-child { box-shadow:inset 3px 0 0 var(--marca); }
+  .star { color:var(--marca); font-weight:800; }
   .delta-pos { color:var(--pos); font-weight:700; }
   .delta-neg { color:var(--neg); font-weight:700; }
   .delta-neutro { color:var(--muted); }
@@ -166,8 +150,8 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="wordmark">ENEM 2025</div>
     <div class="hero-divider"></div>
     <div>
-      <h1>Inteligência Competitiva - Matriz Educação</h1>
-      <p>Comparação unidade a unidade com Elite e Santa Mônica · Microdados INEP · Uso interno</p>
+      <h1>Inteligência Competitiva - __MARCA__</h1>
+      <p>__HERO_SUB__</p>
     </div>
   </div>
 </header>
@@ -176,7 +160,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 
   <div class="section-title">Evolução 2024-2025</div>
   <div class="card">
-    <h3>Redes, mercado municipal e Top 100 BR</h3>
+    <h3>Redes, mercado e Top 100 BR</h3>
     <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · na NG a régua é a rede privada do Brasil; nas áreas, a rede privada do município selecionado</p>
     <div class="filters">
       <button class="chip hm-chip" data-m="NG">NG</button>
@@ -185,12 +169,7 @@ TEMPLATE = r"""<!DOCTYPE html>
       <button class="chip hm-chip" data-m="LC">LC</button>
       <button class="chip hm-chip" data-m="MT">MT</button>
       <button class="chip hm-chip" data-m="RD">RD</button>
-      <select id="histMun" autocomplete="off">
-        <option>Rio de Janeiro</option>
-        <option>Duque de Caxias</option>
-        <option>Nova Iguaçu</option>
-        <option>São João de Meriti</option>
-      </select>
+      <select id="histMun" autocomplete="off">__HIST_MUN_OPCOES__</select>
     </div>
     <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
     <details class="consol" style="margin-top:12px">
@@ -217,17 +196,14 @@ TEMPLATE = r"""<!DOCTYPE html>
 
   <div class="section-title">Ranking unificado das unidades</div>
   <div class="card">
-    <div class="filters">
+    <div class="filters" id="filtrosRanking">
       <button class="chip" data-rede="*">Todas as redes</button>
-      <button class="chip" data-rede="Matriz Educação">Matriz</button>
-      <button class="chip" data-rede="Elite">Elite</button>
-      <button class="chip" data-rede="Santa Mônica">Santa Mônica</button>
-      <button class="chip" data-rede="ZeroHum">ZeroHum</button>
+      __CHIPS_REDES__
       <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
       <label><input type="checkbox" id="filtroN30" autocomplete="off"> ocultar unidades com menos de 30 alunos</label>
     </div>
     <div class="tbl-scroll"><table id="tblRanking"></table></div>
-    <p class="obs">★ unidade Matriz · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
+    <p class="obs">★ unidade __CURTO__ · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
   </div>
 
   <div class="section-title">Confronto direto</div>
@@ -290,10 +266,13 @@ TEMPLATE = r"""<!DOCTYPE html>
 const DATA = __DATA__;
 const PRACAS = __PRACAS__;
 const REF2024 = __REF2024__;
-const CORES = {"Matriz Educação":"#15803d","Elite":"#1d4ed8","Santa Mônica":"#be123c","ZeroHum":"#b45309"};
+const HIST = __HIST__;
+const MARCA = "__MARCA__";
+const CURTO = "__CURTO__";
+const CORES = __CORES__;
 const CINZA = "#334155";
 const AREAS5 = ["CN","CH","LC","MT","RD"];
-const REDES = ["Matriz Educação","Elite","Santa Mônica","ZeroHum"];
+const REDES = __REDES__;
 const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
 
 const fmt = v => (v==null || isNaN(v)) ? "-" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -308,8 +287,9 @@ const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
 (function(){
   const r = DATA.redes;
   const alunos = DATA.unidades.reduce((s,u)=>s+u.n_inscritos,0);
+  const nossas = DATA.unidades.filter(u=>u.nossa).length;
   const cards = [
-    {t:"Unidades comparadas", v: fmtInt(DATA.unidades.length), s: "8 Matriz · "+(DATA.unidades.length-8)+" concorrentes"},
+    {t:"Unidades comparadas", v: fmtInt(DATA.unidades.length), s: nossas+" "+CURTO+" · "+(DATA.unidades.length-nossas)+" concorrentes"},
     {t:"Alunos analisados", v: fmtInt(alunos), s: "inscritos no ENEM 2025"},
   ];
   REDES.forEach(rd => {
@@ -346,10 +326,11 @@ new Chart(document.getElementById("chartPanorama"), {
   const ngRede = r => (DATA.redes[r].nota_geral||{}).media||0;
   const rel = d => d>=0 ? fmt(d)+" acima" : fmt(-d)+" abaixo";
   const lider = REDES.reduce((a,b)=> ngRede(b)>ngRede(a) ? b : a);
+  const maiores = REDES.slice(1).sort((a,b)=>DATA.redes[b].n_inscritos-DATA.redes[a].n_inscritos).slice(0,2);
   document.getElementById("obsPanorama").textContent =
-    "O Matriz está " + rel(ngRede("Matriz Educação")-ngRede("Elite")) + " do Elite e " +
-    rel(ngRede("Matriz Educação")-ngRede("ZeroHum")) + " do ZeroHum na nota geral de rede; o " +
-    lider + " lidera o grupo" + (lider==="Santa Mônica" ? ", puxado pela Redação." : ".");
+    "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
+    rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
+    (lider===MARCA ? CURTO : lider) + " lidera o grupo.";
 })();
 
 // ---------- Preenchimentos dos cards laterais ----------
@@ -371,10 +352,10 @@ new Chart(document.getElementById("chartPanorama"), {
   const pos = comRD.indexOf(melhorNossa)+1;
   document.getElementById("fillRedacao").innerHTML =
     '<div class="mini-head">Referências em redação · 30+ alunos</div>' +
-    top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+labelMun(u)+
+    top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
       '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
-    (melhorNossa ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
-      melhorNossa.label+' · melhor do Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
+    (melhorNossa && !top3.includes(melhorNossa) ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
+      melhorNossa.label+' · melhor do '+CURTO+' ('+pos+'ª de '+comRD.length+')</span><strong>'+
       fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
 })();
 
@@ -411,10 +392,11 @@ function renderRanking(){
     renderRanking();
   });
 }
-document.querySelectorAll(".chip").forEach(ch => ch.onclick = () => {
+document.querySelectorAll("#filtrosRanking .chip").forEach(ch => ch.onclick = () => {
   fRede = ch.dataset.rede;
-  document.querySelectorAll(".chip").forEach(c => { c.classList.toggle("on", c===ch);
-    c.style.background = c===ch ? (CORES[c.dataset.rede]||"#334155") : "#fff"; });
+  document.querySelectorAll("#filtrosRanking .chip").forEach(c => { c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? (CORES[c.dataset.rede]||"#334155") : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155"; });
   renderRanking();
 });
 (function(){
@@ -426,7 +408,7 @@ document.querySelectorAll(".chip").forEach(ch => ch.onclick = () => {
   chk.onchange = () => { fN30 = chk.checked; renderRanking(); };
   // o browser pode restaurar estado do formulário no reload; sincroniza antes do 1º render
   fMun = sel.value; fN30 = chk.checked;
-  document.querySelector('.chip[data-rede="*"]').click();
+  document.querySelector('#filtrosRanking .chip[data-rede="*"]').click();
 })();
 
 // ---------- Confronto direto ----------
@@ -449,8 +431,10 @@ Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
     });
     selB.appendChild(og);
   });
-  selA.value = 33183368;  // Matriz - Campo Grande
-  selB.value = 33520321;  // Elite - Campo Grande I
+  selA.value = "__CONF_A__";
+  if (!byCo[selA.value]) selA.selectedIndex = 0;
+  selB.value = "__CONF_B__";
+  if (!byCo[selB.value]) { const o = selB.querySelector("optgroup option"); if (o) selB.value = o.value; }
   selA.onchange = selB.onchange = renderConfronto;
   renderConfronto();
 })();
@@ -527,6 +511,7 @@ function renderConfronto(){
   const grid = document.getElementById("pracasGrid");
   grid.innerHTML = PRACAS.map(p => {
     const nossa = byCo[p.nossa];
+    if (!nossa) return "";
     const rivais = p.diretos.map(co=>({u:byCo[co],adj:false})).concat(p.adjacentes.map(co=>({u:byCo[co],adj:true})))
       .filter(x=>x.u);
     const refs = (p.ref2024||[]).map(co=>REF2024[co]).filter(Boolean);
@@ -555,11 +540,11 @@ function renderConfronto(){
         const peq = u => u.n_inscritos<30 ? " †" : "";
         if (lider.nossa) {
           const vice = ord[1];
-          corpo += '<p class="verdict" style="color:var(--pos)">O Matriz lidera a praça em NG, '+
+          corpo += '<p class="verdict" style="color:var(--pos)">O '+CURTO+' lidera a praça em NG, '+
             fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente do '+vice.u.label+peq(vice.u)+'.</p>';
         } else {
           corpo += '<p class="verdict" style="color:var(--neg)">O '+lider.u.label+peq(lider.u)+
-            ' lidera a praça em NG; o Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
+            ' lidera a praça em NG; o '+CURTO+' está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
         }
       }
     }
@@ -570,13 +555,13 @@ function renderConfronto(){
 
   // Consolidado por praça (tabela expansível)
   const peqTag = u => u.n_inscritos<30 ? " †" : "";
-  const consol = PRACAS.map(p => {
+  const consol = PRACAS.filter(p=>byCo[p.nossa]).map(p => {
     const nossa = byCo[p.nossa];
     const rivaisU = p.diretos.concat(p.adjacentes).map(co=>byCo[co]).filter(u=>u && ngOf(u)!=null);
     const ngN = ngOf(nossa);
     if (!rivaisU.length) return {p, nossa, ngN, melhor:null, diff:null};
     const melhor = [...rivaisU].sort((a,b)=>ngOf(b)-ngOf(a))[0];
-    return {p, nossa, ngN, melhor, diff: ngN-ngOf(melhor), nRivais: rivaisU.length};
+    return {p, nossa, ngN, melhor, diff: ngN-ngOf(melhor)};
   }).sort((a,b) => (b.diff==null?-1e9:b.diff) - (a.diff==null?-1e9:a.diff));
   document.getElementById("tblConsol").innerHTML =
     "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th><th>Melhor concorrente</th><th>NG conc.</th><th>Situação</th></tr></thead><tbody>"+
@@ -598,8 +583,7 @@ function renderConfronto(){
 })();
 
 // ---------- Evolução histórica ----------
-const HIST = __HIST__;
-let histMetric = "MT", chartHist = null;
+let histMetric = "NG", chartHist = null;
 function renderHist(){
   const anos = ["2024", "2025"];
   const munSel = document.getElementById("histMun");
@@ -646,7 +630,7 @@ document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
   histMetric = ch.dataset.m;
   document.querySelectorAll(".hm-chip").forEach(c => {
     c.classList.toggle("on", c===ch);
-    c.style.background = c===ch ? CORES["Matriz Educação"] : "#fff";
+    c.style.background = c===ch ? CORES[MARCA] : "#fff";
     c.style.color = c===ch ? "#fff" : "#334155";
   });
   renderHist();
@@ -671,28 +655,50 @@ new Chart(document.getElementById("chartRedacaoRedes"), {
 """
 
 
-def main():
-    with open(os.path.join(OUTPUT_DIR, "concorrencia_matriz.json"), encoding="utf-8") as f:
+def main(marca: str, cfg: dict):
+    slug = cfg["slug"]
+    with open(os.path.join(OUTPUT_DIR, f"concorrencia_{slug}.json"), encoding="utf-8") as f:
         data = json.load(f)
-    ref_path = os.path.join(OUTPUT_DIR, "concorrencia_ref2024.json")
+    ref_path = os.path.join(OUTPUT_DIR, f"concorrencia_ref2024_{slug}.json")
     ref2024 = json.load(open(ref_path, encoding="utf-8")) if os.path.exists(ref_path) else {}
-    hist_path = os.path.join(OUTPUT_DIR, "concorrencia_historico.json")
+    hist_path = os.path.join(OUTPUT_DIR, f"concorrencia_historico_{slug}.json")
     hist = json.load(open(hist_path, encoding="utf-8")) if os.path.exists(hist_path) else {}
+
+    redes = [marca] + list(cfg["concorrentes"])
+    cores = {marca: cfg["cor"], **cfg["cores_redes"]}
+    chips = "".join(f'<button class="chip" data-rede="{r}">{cfg["curto"] if r == marca else r}</button>'
+                    for r in redes)
+    hist_muns = "".join(f"<option>{m}</option>" for m in cfg["municipios_bench"].values())
+    ncards = 2 + len(redes)
+    stats_cols = ncards if ncards <= 6 else -(-ncards // 2)
+    conf_a, conf_b = cfg["confronto_default"]
 
     html = (TEMPLATE
             .replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")))
-            .replace("__PRACAS__", json.dumps(PRACAS, ensure_ascii=False, separators=(",", ":")))
+            .replace("__PRACAS__", json.dumps(cfg["pracas"], ensure_ascii=False, separators=(",", ":")))
             .replace("__REF2024__", json.dumps(ref2024, ensure_ascii=False, separators=(",", ":")))
             .replace("__HIST__", json.dumps(hist, ensure_ascii=False, separators=(",", ":")))
-            .replace("__INSIGHT_RED__", _insight_redacao(data))
+            .replace("__CORES__", json.dumps(cores, ensure_ascii=False))
+            .replace("__REDES__", json.dumps(redes, ensure_ascii=False))
+            .replace("__MARCA__", marca)
+            .replace("__CURTO__", cfg["curto"])
+            .replace("__COR_MARCA__", cfg["cor"])
+            .replace("__HERO_SUB__", cfg["hero_sub"])
+            .replace("__CHIPS_REDES__", chips)
+            .replace("__HIST_MUN_OPCOES__", hist_muns)
+            .replace("__STATS_COLS__", str(stats_cols))
+            .replace("__CONF_A__", str(conf_a))
+            .replace("__CONF_B__", str(conf_b))
+            .replace("__INSIGHT_RED__", _insight_redacao(data, marca, cfg["curto"]))
             .replace("__NOTA_SEM_DADOS__", "; ".join(data.get("concorrentes_sem_dados_2025", [])) or "nenhum")
             .replace("__GERADO_EM__", date.today().strftime("%d/%m/%Y")))
 
-    destino = os.path.join(OUTPUT_DIR, "Concorrencia_Matriz.html")
+    destino = os.path.join(OUTPUT_DIR, cfg["html_out"])
     with open(destino, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"Tela gerada: {destino} ({os.path.getsize(destino):,} bytes)")
 
 
 if __name__ == "__main__":
-    main()
+    marca, cfg = get_marca(sys.argv)
+    main(marca, cfg)

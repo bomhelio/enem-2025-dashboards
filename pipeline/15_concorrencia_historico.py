@@ -1,7 +1,8 @@
 """
-15_concorrencia_historico.py
+15_concorrencia_historico.py [marca]
 Série 2024-2025 para a tela de concorrência: médias por área E nota geral
-(NG) das 4 redes, da rede privada municipal e do Top 100 BR.
+(NG) das redes, da rede privada municipal, da rede privada do Brasil e do
+Top 100 BR.
 
 NG = média das 5 áreas para alunos com presença completa + redação válida
 (mesma definição dos dashboards). Top 100 BR (NG) = média das 100 melhores
@@ -10,15 +11,18 @@ vindo de historico/historico_top100.json (mesma receita).
 
 CO_ESCOLA não existe nos microdados 2021-2023 - por isso a série é 24-25.
 
-Saída: output/concorrencia_historico.json
+Uso: python 15_concorrencia_historico.py "QI Bilíngue"   (default: Matriz Educação)
+Saída: output/concorrencia_historico_{slug}.json
 """
 
 import importlib
 import json
 import os
+import sys
 import pandas as pd
 
 from config import ESCOLAS, BASE_DIR, OUTPUT_DIR, CSV_SEP, CSV_ENCODING, CHUNK_SIZE
+from concorrencia_config import get_marca
 
 extrair11 = importlib.import_module("11_concorrentes_extrair")
 
@@ -27,10 +31,6 @@ RESULTADOS = {
                          "DADOS", "RESULTADOS_2024.csv"),
     "2025": os.path.join(BASE_DIR, "DADOS", "RESULTADOS_2025.csv"),
 }
-MARCA = "Matriz Educação"
-MUN_CODES = {3304557: "Rio de Janeiro", 3301702: "Duque de Caxias",
-             3303500: "Nova Iguaçu", 3305109: "São João de Meriti"}
-METRICAS = ["NG", "CN", "CH", "LC", "MT", "RD"]
 MIN_ALUNOS_TOP100 = 30
 
 
@@ -56,16 +56,9 @@ def metricas(df: pd.DataFrame) -> dict:
     return out
 
 
-def grupos() -> dict:
-    g = {MARCA: set(ESCOLAS[MARCA])}
-    for rede, unidades in extrair11.CONCORRENTES.items():
-        g[rede] = set(unidades)
-    return g
-
-
-def scan_ano(path: str, codigos_redes: set) -> tuple:
-    """Uma varredura: linhas das redes, linhas privadas dos 4 municípios,
-    e NG por escola privada do Brasil (para o Top 100)."""
+def scan_ano(path: str, codigos_redes: set, mun_codes: dict) -> tuple:
+    """Uma varredura: linhas das redes, linhas privadas dos municípios de
+    benchmark, e NG por escola privada do Brasil (para o Top 100)."""
     partes_redes, partes_mun, partes_ng = [], [], []
     for chunk in pd.read_csv(path, sep=CSV_SEP, encoding=CSV_ENCODING,
                              usecols=extrair11.COLUNAS_UTEIS, dtype={"CO_ESCOLA": "Int64"},
@@ -74,7 +67,7 @@ def scan_ano(path: str, codigos_redes: set) -> tuple:
         if not f.empty:
             partes_redes.append(f)
         priv = chunk[chunk["TP_DEPENDENCIA_ADM_ESC"] == 4]
-        mun = priv[priv["CO_MUNICIPIO_ESC"].isin(MUN_CODES)]
+        mun = priv[priv["CO_MUNICIPIO_ESC"].isin(mun_codes)]
         if not mun.empty:
             partes_mun.append(mun)
         ng = com_ng(priv[priv["CO_ESCOLA"].notna()])
@@ -92,27 +85,30 @@ def top100_ng(ng_br: pd.DataFrame) -> dict:
     return {"NG": round(float(top["mean"].mean()), 1), "n_escolas": int(len(top))}
 
 
-def main():
-    g = grupos()
+def main(marca: str, cfg: dict):
+    slug = cfg["slug"]
+    mun_codes = cfg["municipios_bench"]
+    g = {marca: set(ESCOLAS[marca])}
+    for rede, unidades in cfg["concorrentes"].items():
+        g[rede] = set(unidades)
     todos = set().union(*g.values())
 
     hist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "historico")
     top100_raw = json.load(open(os.path.join(hist_dir, "historico_top100.json"), encoding="utf-8"))
-
     bench_brasil = json.load(open(os.path.join(hist_dir, "historico_benchmark.json"),
                                   encoding="utf-8"))["brasil"]["anos"]
 
     redes = {rede: {} for rede in g}
-    privada = {nome: {} for nome in MUN_CODES.values()}
+    privada = {nome: {} for nome in mun_codes.values()}
     privada_brasil = {}
     top100 = {}
 
     for ano, path in RESULTADOS.items():
-        print(f"Varrendo {path} ...")
-        df_redes, df_mun, ng_br = scan_ano(path, todos)
+        print(f"[{marca}] Varrendo {path} ...")
+        df_redes, df_mun, ng_br = scan_ano(path, todos, mun_codes)
         for rede, codigos in g.items():
             redes[rede][ano] = metricas(df_redes[df_redes["CO_ESCOLA"].isin(codigos)])
-        for cod, nome in MUN_CODES.items():
+        for cod, nome in mun_codes.items():
             privada[nome][ano] = metricas(df_mun[df_mun["CO_MUNICIPIO_ESC"] == cod])
         privada_brasil[ano] = {
             "NG": round(float(ng_br["NG"].mean()), 1), "n": int(len(ng_br)),
@@ -125,16 +121,15 @@ def main():
     saida = {"anos": ["2024", "2025"], "redes": redes,
              "privada_municipal": privada, "privada_brasil": privada_brasil,
              "top100": top100}
-    destino = os.path.join(OUTPUT_DIR, "concorrencia_historico.json")
+    destino = os.path.join(OUTPUT_DIR, f"concorrencia_historico_{slug}.json")
     with open(destino, "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
     print(f"-> {destino}")
     for rede in redes:
         print(f"  [{rede}] NG {redes[rede]['2024']['NG']} -> {redes[rede]['2025']['NG']}")
-    print(f"  [Privada Rio] NG {privada['Rio de Janeiro']['2024']['NG']} -> {privada['Rio de Janeiro']['2025']['NG']}"
-          f" | CN 2025 {privada['Rio de Janeiro']['2025']['CN']} (esperado 548,6)")
-    print(f"  [Top 100 BR] NG {top100['2024']['NG']} -> {top100['2025']['NG']} (2025 esperado ~724,2)")
+    print(f"  [Top 100 BR] NG {top100['2024']['NG']} -> {top100['2025']['NG']}")
 
 
 if __name__ == "__main__":
-    main()
+    marca, cfg = get_marca(sys.argv)
+    main(marca, cfg)

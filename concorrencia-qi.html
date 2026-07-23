@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ENEM 2025 · Inteligência Competitiva - QI Bilíngue</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script>Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';</script>
+<style>
+  :root { --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --pos:#15803d; --neg:#b91c1c; --marca:#6d28d9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI", system-ui, Arial, sans-serif; }
+  header { background:linear-gradient(135deg,#1e293b 0%,#0a1940 100%); box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  .hero { max-width:1180px; margin:0 auto; min-height:96px; padding:0 24px; display:flex; align-items:center; gap:18px; }
+  .hero .wordmark { color:#fff; font-size:20px; font-weight:800; letter-spacing:.02em; white-space:nowrap; }
+  .hero-divider { width:1px; height:44px; background:rgba(255,255,255,.35); flex-shrink:0; }
+  .hero h1 { margin:0; color:#fff; font-size:22px; font-weight:800; letter-spacing:-.01em; }
+  .hero p { margin:2px 0 0; color:rgba(255,255,255,.75); font-size:13px; }
+  main { max-width:1180px; margin:0 auto; padding:28px 24px 40px; }
+  .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+  @media (max-width:1000px){ .stats { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:640px){ .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .stat small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
+  .stat strong { display:block; color:#0f172a; font-size:22px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .stat span { display:block; margin-top:5px; color:var(--muted); font-size:12px; }
+  .stat .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
+  .section-title { margin:30px 0 14px; color:#334155; font-size:14px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; display:flex; align-items:center; gap:12px; }
+  .section-title::after { content:""; flex:1; height:1px; background:var(--line); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .card h3 { margin:0 0 4px; font-size:15px; color:#0f172a; }
+  .card .sub { margin:0 0 12px; color:var(--muted); font-size:12.5px; }
+  .duo { display:grid; grid-template-columns:1.25fr 1fr; gap:14px; align-items:stretch; }
+  @media (max-width:900px){ .duo { grid-template-columns:1fr; } }
+  .duo > .card { display:flex; flex-direction:column; }
+  .duo > .card .chart-wrap { flex:1 1 auto; height:auto; min-height:300px; }
+  .card-fill { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); }
+  .mini-head { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; margin-bottom:6px; }
+  .mini-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid #eef2f6; }
+  .mini-row:last-child { border-bottom:0; }
+  .mini-row strong { font-variant-numeric:tabular-nums; }
+  .chart-wrap { position:relative; height:300px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
+  th, td { padding:7px 9px; text-align:right; border-bottom:1px solid #eef2f6; white-space:nowrap; }
+  th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+  th:first-child, td:first-child { text-align:left; }
+  .tbl-scroll { overflow-x:auto; }
+  .rede-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
+  .nossa-row { background:color-mix(in srgb, var(--marca) 5%, transparent); }
+  .nossa-row td:first-child { box-shadow:inset 3px 0 0 var(--marca); }
+  .star { color:var(--marca); font-weight:800; }
+  .delta-pos { color:var(--pos); font-weight:700; }
+  .delta-neg { color:var(--neg); font-weight:700; }
+  .delta-neutro { color:var(--muted); }
+  .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+  .chip { border:1px solid var(--line); background:#fff; color:#334155; border-radius:999px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .chip.on { color:#fff; border-color:transparent; }
+  select, .filters label { font-size:12.5px; color:#334155; }
+  select { border:1px solid var(--line); border-radius:8px; padding:6px 10px; background:#fff; font-family:inherit; }
+  th.sortable { cursor:pointer; user-select:none; }
+  th.sorted-desc::after { content:" ↓"; } th.sorted-asc::after { content:" ↑"; }
+  .versus { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:14px; }
+  .versus .lado { flex:1; min-width:240px; }
+  .versus .lado small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+  .versus select { width:100%; }
+  .placar { display:flex; gap:14px; align-items:center; justify-content:center; margin:6px 0 14px; }
+  .placar .num { font-size:30px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .placar .vs { color:var(--muted); font-size:13px; font-weight:700; }
+  .placar .who { font-size:12px; color:var(--muted); display:block; text-align:center; margin-top:2px; max-width:190px; }
+  .badge-delta { display:inline-block; border-radius:8px; padding:3px 10px; font-size:13px; font-weight:800; color:#fff; }
+  .pracas { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr)); gap:14px; }
+  .praca th, .praca td { padding:6px 7px; }
+  .praca th:first-child, .praca td:first-child { white-space:normal; }
+  .praca h4 { margin:0; font-size:14.5px; color:#0f172a; }
+  .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
+  .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+  .verdict { font-size:12.5px; font-weight:600; margin:9px 0 0; }
+  .consol { margin-top:14px; }
+  .consol summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; font-size:13.5px; font-weight:700; color:#334155; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .consol summary::-webkit-details-marker { display:none; }
+  .consol summary .hint { color:var(--muted); font-weight:400; font-size:12.5px; }
+  .consol[open] summary { border-radius:14px 14px 0 0; }
+  .consol .body { background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:14px 18px; }
+  .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
+  .obs { color:var(--muted); font-size:12px; margin-top:10px; }
+  footer { max-width:1180px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }
+</style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div class="wordmark">ENEM 2025</div>
+    <div class="hero-divider"></div>
+    <div>
+      <h1>Inteligência Competitiva - QI Bilíngue</h1>
+      <p>Comparação unidade a unidade com Pensi, Alfa CEM, pH e AZ · Microdados INEP · Uso interno</p>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="stats" id="statsRow"></div>
+
+  <div class="section-title">Evolução 2024-2025</div>
+  <div class="card">
+    <h3>Redes, mercado e Top 100 BR</h3>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · na NG a régua é a rede privada do Brasil; nas áreas, a rede privada do município selecionado</p>
+    <div class="filters">
+      <button class="chip hm-chip" data-m="NG">NG</button>
+      <button class="chip hm-chip" data-m="CN">CN</button>
+      <button class="chip hm-chip" data-m="CH">CH</button>
+      <button class="chip hm-chip" data-m="LC">LC</button>
+      <button class="chip hm-chip" data-m="MT">MT</button>
+      <button class="chip hm-chip" data-m="RD">RD</button>
+      <select id="histMun" autocomplete="off"><option>Rio de Janeiro</option></select>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
+    <details class="consol" style="margin-top:12px">
+      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
+      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
+    </details>
+  </div>
+
+  <div class="section-title">Panorama das redes</div>
+  <div class="duo">
+    <div class="card">
+      <h3>Média por área - redes completas</h3>
+      <p class="sub">Média entre presentes em cada prova · RD = Redação</p>
+      <div class="chart-wrap"><canvas id="chartPanorama"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Escala e funil de excelência</h3>
+      <p class="sub">Rede completa · NG = média das 5 áreas (presença completa + redação válida)</p>
+      <div class="tbl-scroll"><table id="tblRedes"></table></div>
+      <p class="obs" id="obsPanorama"></p>
+      <div class="card-fill" id="fillRedes"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Ranking unificado das unidades</div>
+  <div class="card">
+    <div class="filters" id="filtrosRanking">
+      <button class="chip" data-rede="*">Todas as redes</button>
+      <button class="chip" data-rede="QI Bilíngue">QI</button><button class="chip" data-rede="Pensi">Pensi</button><button class="chip" data-rede="Alfa CEM">Alfa CEM</button><button class="chip" data-rede="pH">pH</button><button class="chip" data-rede="AZ">AZ</button>
+      <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
+      <label><input type="checkbox" id="filtroN30" autocomplete="off"> ocultar unidades com menos de 30 alunos</label>
+    </div>
+    <div class="tbl-scroll"><table id="tblRanking"></table></div>
+    <p class="obs">★ unidade QI · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
+  </div>
+
+  <div class="section-title">Confronto direto</div>
+  <div class="card">
+    <div class="versus">
+      <div class="lado"><small>Nossa unidade</small><select id="selA"></select></div>
+      <div class="lado"><small>Concorrente (ou outra unidade)</small><select id="selB"></select></div>
+    </div>
+    <div class="placar" id="placar"></div>
+    <div class="duo">
+      <div>
+        <h3 style="font-size:14px;margin:0 0 2px">Médias por área</h3>
+        <p class="sub" id="subConfArea"></p>
+        <div class="chart-wrap"><canvas id="chartConfAreas"></canvas></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px;margin:0 0 2px">Redação por competência</h3>
+        <p class="sub">Média de C1 a C5 entre redações válidas (0 a 200)</p>
+        <div class="chart-wrap"><canvas id="chartConfComps"></canvas></div>
+      </div>
+    </div>
+    <div class="tbl-scroll" style="margin-top:14px"><table id="tblConfronto"></table></div>
+  </div>
+
+  <div class="section-title">Batalha territorial - praça a praça</div>
+  <div class="pracas" id="pracasGrid"></div>
+  <details class="consol">
+    <summary>Consolidado por praça<span class="hint">uma linha por bairro, da melhor para a pior situação · clique para abrir</span></summary>
+    <div class="body">
+      <div class="tbl-scroll"><table id="tblConsol"></table></div>
+      <p class="obs">Situação = diferença de NG entre a nossa unidade e o melhor concorrente com dados 2025 na praça · † menos de 30 alunos</p>
+    </div>
+  </details>
+
+  <div class="section-title">Redação em detalhe</div>
+  <div class="duo">
+    <div class="card">
+      <h3>Competências C1-C5 por rede</h3>
+      <p class="sub">Média de cada competência (0 a 200) entre redações válidas</p>
+      <div class="chart-wrap"><canvas id="chartRedacaoRedes"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Leitura estratégica</h3>
+      <p class="sub">Síntese automática dos microdados</p>
+      <p style="font-size:13.5px;line-height:1.65;margin:0">O Alfa CEM lidera a redação (média 878,8, contra 827,9 do pH, 807,0 do QI, 798,0 do AZ, 774,4 do Pensi), vencendo nas cinco competências. A maior distância do QI para o Alfa CEM está em C3 (seleção de argumentos): 149,9 × 167,1. Internamente, as competências mais baixas do QI seguem sendo C1 (norma culta: 144,5) e C3 (seleção de argumentos: 149,9).</p>
+      <div class="card-fill" id="fillRedacao"></div>
+    </div>
+  </div>
+</main>
+<footer>
+  <strong>Metodologia.</strong> Mesma métrica dos dashboards de marca: média por área entre presentes na prova
+  (TP_PRESENCA = 1); Redação entre redações válidas (TP_STATUS_REDACAO = 1); Nota Geral = média de
+  Ciências da Natureza, Ciências Humanas, Linguagens e Códigos, Matemática e Redação para alunos com presença completa e redação válida.
+  Rede privada municipal = todas as escolas privadas do município nos microdados.
+  Top 100 BR = média das 100 melhores escolas privadas do país (30 ou mais alunos válidos), por área e na Nota Geral.<br>
+  <strong>Concorrentes sem dados no ENEM 2025:</strong> Pensi - Recreio 1; Pensi - Icaraí 1; Pensi - Cabo Frio 1; Pensi - Cabo Frio 2; Alfa CEM - Barra da Tijuca 2; Alfa CEM - Recreio 2; Alfa CEM - Recreio 3; pH - Botafogo 2; pH - Icaraí 1; pH - Icaraí 2; pH - São João da Barra.<br>
+  Fonte: Microdados ENEM 2025 e Censo Escolar 2025 (INEP) · Gerado em 23/07/2026 · Uso interno - não distribuir.
+</footer>
+<script>
+const DATA = {"marca":"QI Bilíngue","redes":{"QI Bilíngue":{"n_inscritos":237,"n_presentes_2dias":225,"taxa_presenca_pct":94.9,"areas":{"CN":{"n":225,"media":567.7,"mediana":571.1,"dp":72.6,"min":388.9,"max":729.7,"p25":529.5,"p75":622.6,"p90":659.2,"pct_acima_500":82.2,"pct_acima_600":34.7,"pct_acima_700":0.9,"pct_acima_800":0.0},"CH":{"n":231,"media":588.2,"mediana":595.6,"dp":70.7,"min":367.6,"max":789.6,"p25":551.8,"p75":632.8,"p90":670.1,"pct_acima_500":88.3,"pct_acima_600":46.3,"pct_acima_700":3.0,"pct_acima_800":0.0},"LC":{"n":231,"media":593.3,"mediana":595.3,"dp":46.4,"min":396.6,"max":707.3,"p25":567.2,"p75":622.2,"p90":649.0,"pct_acima_500":97.0,"pct_acima_600":46.3,"pct_acima_700":1.3,"pct_acima_800":0.0},"MT":{"n":225,"media":644.2,"mediana":658.9,"dp":106.1,"min":359.5,"max":929.7,"p25":571.3,"p75":718.9,"p90":767.4,"pct_acima_500":90.7,"pct_acima_600":66.2,"pct_acima_700":32.0,"pct_acima_800":4.9}},"redacao":{"n":226,"media":807.0,"mediana":840.0,"dp":112.8,"min":380.0,"max":960.0,"p25":740.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.7,"pct_acima_600":96.0,"pct_acima_700":83.2,"pct_acima_800":63.3,"comps":{"C1":144.5,"C2":170.6,"C3":149.9,"C4":167.6,"C5":174.3}},"nota_geral":{"n":222,"media":641.4,"mediana":645.2,"dp":61.3,"min":433.8,"max":786.7,"p25":604.7,"p75":680.3,"p90":718.0,"pct_acima_500":97.7,"pct_acima_600":76.6,"pct_acima_700":18.0,"pct_acima_800":0.0},"n_unidades":6},"Pensi":{"n_inscritos":1447,"n_presentes_2dias":1418,"taxa_presenca_pct":98.0,"areas":{"CN":{"n":1420,"media":568.6,"mediana":574.3,"dp":79.4,"min":336.6,"max":840.4,"p25":516.4,"p75":623.2,"p90":665.0,"pct_acima_500":79.9,"pct_acima_600":36.6,"pct_acima_700":4.1,"pct_acima_800":0.1},"CH":{"n":1432,"media":585.9,"mediana":600.3,"dp":82.1,"min":0.0,"max":774.5,"p25":546.4,"p75":638.8,"p90":674.1,"pct_acima_500":86.3,"pct_acima_600":50.1,"pct_acima_700":4.3,"pct_acima_800":0.0},"LC":{"n":1432,"media":591.4,"mediana":597.5,"dp":58.1,"min":0.0,"max":739.3,"p25":561.2,"p75":628.7,"p90":657.6,"pct_acima_500":94.2,"pct_acima_600":48.0,"pct_acima_700":1.5,"pct_acima_800":0.0},"MT":{"n":1420,"media":667.3,"mediana":675.1,"dp":118.3,"min":325.8,"max":967.7,"p25":593.4,"p75":750.1,"p90":814.4,"pct_acima_500":90.6,"pct_acima_600":73.4,"pct_acima_700":42.0,"pct_acima_800":12.2}},"redacao":{"n":1424,"media":774.4,"mediana":800.0,"dp":129.1,"min":360.0,"max":980.0,"p25":680.0,"p75":880.0,"p90":920.0,"pct_acima_500":97.1,"pct_acima_600":90.7,"pct_acima_700":73.1,"pct_acima_800":52.7,"comps":{"C1":142.2,"C2":165.5,"C3":146.3,"C4":160.2,"C5":160.2}},"nota_geral":{"n":1413,"media":638.5,"mediana":643.3,"dp":73.0,"min":402.2,"max":815.7,"p25":592.9,"p75":693.0,"p90":727.2,"pct_acima_500":96.1,"pct_acima_600":72.0,"pct_acima_700":21.2,"pct_acima_800":0.1},"n_unidades":18},"Alfa CEM":{"n_inscritos":82,"n_presentes_2dias":82,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":82,"media":630.5,"mediana":634.1,"dp":63.8,"min":419.5,"max":777.8,"p25":598.7,"p75":664.2,"p90":706.1,"pct_acima_500":96.3,"pct_acima_600":74.4,"pct_acima_700":12.2,"pct_acima_800":0.0},"CH":{"n":82,"media":646.2,"mediana":655.9,"dp":44.3,"min":493.8,"max":736.1,"p25":617.0,"p75":676.8,"p90":689.8,"pct_acima_500":98.8,"pct_acima_600":87.8,"pct_acima_700":6.1,"pct_acima_800":0.0},"LC":{"n":82,"media":636.7,"mediana":643.0,"dp":37.2,"min":552.4,"max":726.2,"p25":611.7,"p75":662.9,"p90":678.8,"pct_acima_500":100.0,"pct_acima_600":82.9,"pct_acima_700":6.1,"pct_acima_800":0.0},"MT":{"n":82,"media":789.1,"mediana":789.5,"dp":79.9,"min":593.0,"max":967.7,"p25":728.5,"p75":844.4,"p90":878.0,"pct_acima_500":100.0,"pct_acima_600":98.8,"pct_acima_700":84.1,"pct_acima_800":45.1}},"redacao":{"n":82,"media":878.8,"mediana":900.0,"dp":64.0,"min":680.0,"max":960.0,"p25":845.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":98.8,"pct_acima_800":90.2,"comps":{"C1":156.6,"C2":182.9,"C3":167.1,"C4":183.2,"C5":189.0}},"nota_geral":{"n":82,"media":716.3,"mediana":719.8,"dp":37.9,"min":600.9,"max":805.9,"p25":693.8,"p75":739.9,"p90":757.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":70.7,"pct_acima_800":2.4},"n_unidades":4},"pH":{"n_inscritos":843,"n_presentes_2dias":824,"taxa_presenca_pct":97.7,"areas":{"CN":{"n":825,"media":592.1,"mediana":605.6,"dp":75.9,"min":331.3,"max":752.8,"p25":550.4,"p75":645.7,"p90":678.1,"pct_acima_500":87.2,"pct_acima_600":52.1,"pct_acima_700":3.9,"pct_acima_800":0.0},"CH":{"n":830,"media":605.2,"mediana":611.2,"dp":71.4,"min":354.7,"max":786.3,"p25":569.6,"p75":652.8,"p90":688.9,"pct_acima_500":91.1,"pct_acima_600":57.7,"pct_acima_700":6.9,"pct_acima_800":0.0},"LC":{"n":830,"media":604.8,"mediana":608.0,"dp":52.8,"min":335.1,"max":759.2,"p25":574.7,"p75":640.2,"p90":664.8,"pct_acima_500":96.9,"pct_acima_600":56.3,"pct_acima_700":2.4,"pct_acima_800":0.0},"MT":{"n":825,"media":690.0,"mediana":698.9,"dp":121.4,"min":341.5,"max":967.7,"p25":622.9,"p75":774.9,"p90":835.1,"pct_acima_500":91.6,"pct_acima_600":78.4,"pct_acima_700":49.7,"pct_acima_800":17.6}},"redacao":{"n":823,"media":827.9,"mediana":860.0,"dp":107.6,"min":300.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":940.0,"pct_acima_500":98.9,"pct_acima_600":96.5,"pct_acima_700":89.2,"pct_acima_800":70.8,"comps":{"C1":148.7,"C2":170.7,"C3":156.6,"C4":173.2,"C5":178.6}},"nota_geral":{"n":817,"media":664.8,"mediana":673.4,"dp":67.0,"min":398.0,"max":817.9,"p25":622.1,"p75":713.8,"p90":744.5,"pct_acima_500":98.7,"pct_acima_600":82.9,"pct_acima_700":32.2,"pct_acima_800":0.6},"n_unidades":8},"AZ":{"n_inscritos":504,"n_presentes_2dias":486,"taxa_presenca_pct":96.4,"areas":{"CN":{"n":486,"media":582.2,"mediana":586.7,"dp":82.5,"min":327.7,"max":768.6,"p25":533.6,"p75":642.6,"p90":679.2,"pct_acima_500":83.5,"pct_acima_600":45.7,"pct_acima_700":6.8,"pct_acima_800":0.0},"CH":{"n":494,"media":596.9,"mediana":607.8,"dp":73.4,"min":327.6,"max":778.3,"p25":559.4,"p75":649.1,"p90":678.2,"pct_acima_500":89.7,"pct_acima_600":54.3,"pct_acima_700":4.0,"pct_acima_800":0.0},"LC":{"n":494,"media":599.2,"mediana":604.0,"dp":50.9,"min":391.1,"max":730.6,"p25":571.1,"p75":635.4,"p90":656.5,"pct_acima_500":96.0,"pct_acima_600":55.1,"pct_acima_700":1.8,"pct_acima_800":0.0},"MT":{"n":486,"media":694.6,"mediana":709.1,"dp":111.2,"min":334.3,"max":931.0,"p25":623.5,"p75":771.8,"p90":823.0,"pct_acima_500":94.4,"pct_acima_600":80.9,"pct_acima_700":53.5,"pct_acima_800":16.0}},"redacao":{"n":490,"media":798.0,"mediana":820.0,"dp":116.1,"min":300.0,"max":980.0,"p25":720.0,"p75":900.0,"p90":922.0,"pct_acima_500":98.8,"pct_acima_600":95.5,"pct_acima_700":80.8,"pct_acima_800":58.6,"comps":{"C1":146.0,"C2":166.9,"C3":150.0,"C4":165.7,"C5":169.5}},"nota_geral":{"n":484,"media":655.4,"mediana":663.9,"dp":68.5,"min":425.8,"max":809.1,"p25":610.4,"p75":707.1,"p90":736.6,"pct_acima_500":97.7,"pct_acima_600":79.1,"pct_acima_700":29.1,"pct_acima_800":0.2},"n_unidades":6}},"unidades":[{"co":33071721,"rede":"QI Bilíngue","nossa":true,"label":"QI - Metropolitano","municipio":"Rio de Janeiro","bairro":"MÉIER","n_inscritos":62,"n_presentes_2dias":61,"taxa_presenca_pct":98.4,"areas":{"CN":{"n":61,"media":567.1,"mediana":567.4,"dp":70.6,"min":392.7,"max":699.7,"p25":534.7,"p75":600.0,"p90":658.4,"pct_acima_500":83.6,"pct_acima_600":26.2,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":62,"media":590.8,"mediana":598.6,"dp":69.6,"min":382.7,"max":789.6,"p25":558.2,"p75":628.3,"p90":665.4,"pct_acima_500":90.3,"pct_acima_600":50.0,"pct_acima_700":3.2,"pct_acima_800":0.0},"LC":{"n":62,"media":588.3,"mediana":590.2,"dp":47.2,"min":396.6,"max":707.3,"p25":569.4,"p75":614.1,"p90":631.2,"pct_acima_500":96.8,"pct_acima_600":38.7,"pct_acima_700":1.6,"pct_acima_800":0.0},"MT":{"n":61,"media":653.4,"mediana":681.8,"dp":99.8,"min":390.1,"max":833.4,"p25":583.5,"p75":724.3,"p90":757.9,"pct_acima_500":91.8,"pct_acima_600":70.5,"pct_acima_700":34.4,"pct_acima_800":4.9}},"redacao":{"n":61,"media":815.7,"mediana":840.0,"dp":110.6,"min":380.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":940.0,"pct_acima_500":98.4,"pct_acima_600":96.7,"pct_acima_700":86.9,"pct_acima_800":65.6,"comps":{"C1":145.6,"C2":173.1,"C3":154.1,"C4":170.5,"C5":172.5}},"nota_geral":{"n":61,"media":643.2,"mediana":651.8,"dp":59.8,"min":433.8,"max":777.7,"p25":602.9,"p75":678.9,"p90":724.4,"pct_acima_500":98.4,"pct_acima_600":75.4,"pct_acima_700":14.8,"pct_acima_800":0.0}},{"co":33124418,"rede":"QI Bilíngue","nossa":true,"label":"QI - Tijuca","municipio":"Rio de Janeiro","bairro":"MARACANÃ","n_inscritos":57,"n_presentes_2dias":57,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":57,"media":571.7,"mediana":576.2,"dp":67.8,"min":388.9,"max":729.7,"p25":532.4,"p75":621.1,"p90":644.0,"pct_acima_500":87.7,"pct_acima_600":38.6,"pct_acima_700":1.8,"pct_acima_800":0.0},"CH":{"n":57,"media":608.9,"mediana":605.0,"dp":61.7,"min":461.5,"max":756.8,"p25":575.5,"p75":649.4,"p90":683.1,"pct_acima_500":93.0,"pct_acima_600":56.1,"pct_acima_700":5.3,"pct_acima_800":0.0},"LC":{"n":57,"media":604.5,"mediana":614.9,"dp":49.2,"min":419.9,"max":706.3,"p25":580.2,"p75":632.2,"p90":653.7,"pct_acima_500":96.5,"pct_acima_600":61.4,"pct_acima_700":3.5,"pct_acima_800":0.0},"MT":{"n":57,"media":672.4,"mediana":675.6,"dp":86.9,"min":390.6,"max":877.7,"p25":627.1,"p75":735.1,"p90":770.3,"pct_acima_500":98.2,"pct_acima_600":80.7,"pct_acima_700":38.6,"pct_acima_800":3.5}},"redacao":{"n":56,"media":816.4,"mediana":840.0,"dp":103.5,"min":520.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":920.0,"pct_acima_500":100.0,"pct_acima_600":98.2,"pct_acima_700":83.9,"pct_acima_800":66.1,"comps":{"C1":147.1,"C2":172.9,"C3":151.1,"C4":166.8,"C5":178.6}},"nota_geral":{"n":56,"media":654.8,"mediana":653.3,"dp":53.1,"min":549.6,"max":786.7,"p25":616.7,"p75":686.7,"p90":724.1,"pct_acima_500":100.0,"pct_acima_600":82.1,"pct_acima_700":21.4,"pct_acima_800":0.0}},{"co":33135924,"rede":"QI Bilíngue","nossa":true,"label":"QI - Freguesia","municipio":"Rio de Janeiro","bairro":"JACAREPAGUA","n_inscritos":37,"n_presentes_2dias":34,"taxa_presenca_pct":91.9,"areas":{"CN":{"n":34,"media":561.3,"mediana":563.8,"dp":80.4,"min":401.7,"max":699.6,"p25":514.8,"p75":618.8,"p90":674.5,"pct_acima_500":76.5,"pct_acima_600":32.4,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":35,"media":564.9,"mediana":567.0,"dp":78.3,"min":367.6,"max":702.3,"p25":527.8,"p75":610.5,"p90":658.1,"pct_acima_500":82.9,"pct_acima_600":28.6,"pct_acima_700":2.9,"pct_acima_800":0.0},"LC":{"n":35,"media":583.4,"mediana":578.5,"dp":40.2,"min":522.8,"max":697.4,"p25":553.2,"p75":605.2,"p90":639.1,"pct_acima_500":100.0,"pct_acima_600":28.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":34,"media":617.3,"mediana":634.7,"dp":101.8,"min":416.6,"max":804.9,"p25":539.4,"p75":685.4,"p90":739.7,"pct_acima_500":88.2,"pct_acima_600":58.8,"pct_acima_700":20.6,"pct_acima_800":2.9}},"redacao":{"n":35,"media":772.6,"mediana":800.0,"dp":121.4,"min":480.0,"max":940.0,"p25":700.0,"p75":860.0,"p90":912.0,"pct_acima_500":97.1,"pct_acima_600":91.4,"pct_acima_700":74.3,"pct_acima_800":54.3,"comps":{"C1":141.1,"C2":166.9,"C3":138.3,"C4":161.1,"C5":165.1}},"nota_geral":{"n":34,"media":620.9,"mediana":628.3,"dp":61.8,"min":491.3,"max":760.1,"p25":581.8,"p75":663.8,"p90":700.3,"pct_acima_500":97.1,"pct_acima_600":64.7,"pct_acima_700":11.8,"pct_acima_800":0.0}},{"co":33143331,"rede":"QI Bilíngue","nossa":true,"label":"QI Bilíngue - Botafogo","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":11,"n_presentes_2dias":10,"taxa_presenca_pct":90.9,"areas":{"CN":{"n":10,"media":531.0,"mediana":527.6,"dp":104.3,"min":397.1,"max":667.3,"p25":440.3,"p75":626.4,"p90":638.1,"pct_acima_500":50.0,"pct_acima_600":40.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":11,"media":550.6,"mediana":580.0,"dp":97.7,"min":404.5,"max":668.6,"p25":478.2,"p75":633.0,"p90":665.9,"pct_acima_500":63.6,"pct_acima_600":36.4,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":11,"media":581.7,"mediana":607.0,"dp":71.1,"min":450.4,"max":658.4,"p25":533.8,"p75":638.4,"p90":651.5,"pct_acima_500":81.8,"pct_acima_600":54.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":10,"media":599.9,"mediana":617.1,"dp":163.3,"min":387.9,"max":848.5,"p25":447.8,"p75":722.5,"p90":761.2,"pct_acima_500":70.0,"pct_acima_600":50.0,"pct_acima_700":30.0,"pct_acima_800":10.0}},"redacao":{"n":10,"media":800.0,"mediana":850.0,"dp":120.4,"min":620.0,"max":920.0,"p25":680.0,"p75":880.0,"p90":920.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":70.0,"pct_acima_800":70.0,"comps":{"C1":140.0,"C2":160.0,"C3":150.0,"C4":170.0,"C5":180.0}},"nota_geral":{"n":10,"media":612.7,"mediana":611.9,"dp":94.8,"min":456.3,"max":721.8,"p25":539.9,"p75":705.3,"p90":716.2,"pct_acima_500":90.0,"pct_acima_600":60.0,"pct_acima_700":30.0,"pct_acima_800":0.0}},{"co":33156026,"rede":"QI Bilíngue","nossa":true,"label":"QI - Recreio","municipio":"Rio de Janeiro","bairro":"RECREIO DOS BANDEIRANTES","n_inscritos":48,"n_presentes_2dias":44,"taxa_presenca_pct":91.7,"areas":{"CN":{"n":44,"media":579.3,"mediana":590.7,"dp":73.2,"min":402.3,"max":716.1,"p25":534.6,"p75":636.3,"p90":657.4,"pct_acima_500":86.4,"pct_acima_600":45.5,"pct_acima_700":2.3,"pct_acima_800":0.0},"CH":{"n":47,"media":587.0,"mediana":596.8,"dp":68.6,"min":405.9,"max":719.5,"p25":549.4,"p75":630.8,"p90":663.7,"pct_acima_500":87.2,"pct_acima_600":46.8,"pct_acima_700":2.1,"pct_acima_800":0.0},"LC":{"n":47,"media":592.8,"mediana":598.5,"dp":41.7,"min":493.3,"max":674.4,"p25":563.8,"p75":620.0,"p90":647.3,"pct_acima_500":97.9,"pct_acima_600":46.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":44,"media":625.5,"mediana":625.3,"dp":126.0,"min":359.5,"max":929.7,"p25":540.8,"p75":711.1,"p90":781.6,"pct_acima_500":81.8,"pct_acima_600":54.5,"pct_acima_700":31.8,"pct_acima_800":9.1}},"redacao":{"n":45,"media":796.4,"mediana":840.0,"dp":120.6,"min":440.0,"max":940.0,"p25":720.0,"p75":900.0,"p90":920.0,"pct_acima_500":97.8,"pct_acima_600":93.3,"pct_acima_700":82.2,"pct_acima_800":62.2,"comps":{"C1":141.8,"C2":168.0,"C3":147.6,"C4":165.8,"C5":173.3}},"nota_geral":{"n":42,"media":641.6,"mediana":638.4,"dp":67.6,"min":467.4,"max":756.0,"p25":609.1,"p75":690.0,"p90":721.7,"pct_acima_500":95.2,"pct_acima_600":78.6,"pct_acima_700":21.4,"pct_acima_800":0.0}},{"co":33187924,"rede":"QI Bilíngue","nossa":true,"label":"QI Bilíngue - Rio 2","municipio":"Rio de Janeiro","bairro":"BARRA OLIMPICA","n_inscritos":22,"n_presentes_2dias":19,"taxa_presenca_pct":86.4,"areas":{"CN":{"n":19,"media":561.6,"mediana":569.6,"dp":58.0,"min":456.9,"max":660.6,"p25":524.4,"p75":602.6,"p90":634.5,"pct_acima_500":78.9,"pct_acima_600":26.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":19,"media":585.9,"mediana":596.8,"dp":58.2,"min":416.6,"max":697.6,"p25":568.8,"p75":610.0,"p90":632.1,"pct_acima_500":94.7,"pct_acima_600":42.1,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":19,"media":602.1,"mediana":612.7,"dp":35.4,"min":525.9,"max":664.1,"p25":580.0,"p75":626.5,"p90":638.5,"pct_acima_500":100.0,"pct_acima_600":52.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":19,"media":644.9,"mediana":636.5,"dp":83.7,"min":538.4,"max":785.9,"p25":574.5,"p75":694.6,"p90":766.1,"pct_acima_500":100.0,"pct_acima_600":57.9,"pct_acima_700":26.3,"pct_acima_800":0.0}},"redacao":{"n":19,"media":843.2,"mediana":880.0,"dp":101.4,"min":680.0,"max":960.0,"p25":740.0,"p75":930.0,"p90":960.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":94.7,"pct_acima_800":63.2,"comps":{"C1":148.4,"C2":174.7,"C3":160.0,"C4":175.8,"C5":184.2}},"nota_geral":{"n":19,"media":647.5,"mediana":654.6,"dp":42.2,"min":568.0,"max":711.9,"p25":614.3,"p75":672.8,"p90":702.2,"pct_acima_500":100.0,"pct_acima_600":89.5,"pct_acima_700":15.8,"pct_acima_800":0.0}},{"co":33067813,"rede":"Pensi","nossa":false,"label":"Pensi - Martins Vila Isabel","municipio":"Rio de Janeiro","bairro":"VILA ISABEL","n_inscritos":68,"n_presentes_2dias":65,"taxa_presenca_pct":95.6,"areas":{"CN":{"n":65,"media":538.3,"mediana":540.5,"dp":63.5,"min":405.9,"max":665.2,"p25":485.4,"p75":584.7,"p90":625.8,"pct_acima_500":70.8,"pct_acima_600":16.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":68,"media":558.8,"mediana":580.2,"dp":82.9,"min":366.1,"max":705.7,"p25":505.6,"p75":623.7,"p90":648.1,"pct_acima_500":76.5,"pct_acima_600":29.4,"pct_acima_700":1.5,"pct_acima_800":0.0},"LC":{"n":68,"media":570.6,"mediana":580.3,"dp":63.1,"min":365.0,"max":689.6,"p25":540.2,"p75":610.8,"p90":641.3,"pct_acima_500":88.2,"pct_acima_600":35.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":65,"media":632.3,"mediana":644.3,"dp":107.9,"min":371.8,"max":851.2,"p25":563.0,"p75":715.2,"p90":739.1,"pct_acima_500":87.7,"pct_acima_600":67.7,"pct_acima_700":30.8,"pct_acima_800":3.1}},"redacao":{"n":65,"media":755.7,"mediana":780.0,"dp":140.3,"min":380.0,"max":960.0,"p25":660.0,"p75":880.0,"p90":900.0,"pct_acima_500":93.8,"pct_acima_600":87.7,"pct_acima_700":64.6,"pct_acima_800":49.2,"comps":{"C1":140.9,"C2":159.1,"C3":145.2,"C4":156.0,"C5":154.5}},"nota_geral":{"n":63,"media":617.9,"mediana":618.2,"dp":64.6,"min":460.8,"max":725.4,"p25":576.6,"p75":667.5,"p90":696.7,"pct_acima_500":95.2,"pct_acima_600":65.1,"pct_acima_700":6.3,"pct_acima_800":0.0}},{"co":33071683,"rede":"Pensi","nossa":false,"label":"Pensi - Martins Méier","municipio":"Rio de Janeiro","bairro":"MEIER","n_inscritos":77,"n_presentes_2dias":74,"taxa_presenca_pct":96.1,"areas":{"CN":{"n":74,"media":561.2,"mediana":566.0,"dp":62.9,"min":396.4,"max":699.7,"p25":519.5,"p75":603.8,"p90":636.8,"pct_acima_500":81.1,"pct_acima_600":31.1,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":75,"media":586.1,"mediana":585.4,"dp":59.2,"min":427.8,"max":712.1,"p25":546.8,"p75":638.0,"p90":652.3,"pct_acima_500":90.7,"pct_acima_600":42.7,"pct_acima_700":1.3,"pct_acima_800":0.0},"LC":{"n":75,"media":590.6,"mediana":598.7,"dp":48.3,"min":455.7,"max":739.3,"p25":563.2,"p75":617.2,"p90":637.7,"pct_acima_500":94.7,"pct_acima_600":48.0,"pct_acima_700":1.3,"pct_acima_800":0.0},"MT":{"n":74,"media":654.4,"mediana":658.0,"dp":102.0,"min":414.4,"max":855.4,"p25":586.3,"p75":731.3,"p90":770.5,"pct_acima_500":93.2,"pct_acima_600":70.3,"pct_acima_700":36.5,"pct_acima_800":6.8}},"redacao":{"n":75,"media":769.3,"mediana":760.0,"dp":112.7,"min":480.0,"max":960.0,"p25":700.0,"p75":860.0,"p90":900.0,"pct_acima_500":97.3,"pct_acima_600":92.0,"pct_acima_700":78.7,"pct_acima_800":44.0,"comps":{"C1":144.3,"C2":163.7,"C3":142.7,"C4":161.3,"C5":157.3}},"nota_geral":{"n":74,"media":632.9,"mediana":636.0,"dp":57.9,"min":489.4,"max":748.4,"p25":593.0,"p75":673.0,"p90":702.4,"pct_acima_500":98.6,"pct_acima_600":68.9,"pct_acima_700":12.2,"pct_acima_800":0.0}},{"co":33105405,"rede":"pH","nossa":false,"label":"pH - Tijuca","municipio":"Rio de Janeiro","bairro":"TIJUCA","n_inscritos":142,"n_presentes_2dias":140,"taxa_presenca_pct":98.6,"areas":{"CN":{"n":140,"media":582.2,"mediana":596.9,"dp":73.2,"min":334.3,"max":725.6,"p25":547.4,"p75":629.9,"p90":657.1,"pct_acima_500":87.1,"pct_acima_600":48.6,"pct_acima_700":1.4,"pct_acima_800":0.0},"CH":{"n":141,"media":597.6,"mediana":609.7,"dp":67.2,"min":379.2,"max":754.9,"p25":569.1,"p75":645.4,"p90":665.6,"pct_acima_500":91.5,"pct_acima_600":54.6,"pct_acima_700":3.5,"pct_acima_800":0.0},"LC":{"n":141,"media":600.1,"mediana":603.3,"dp":44.9,"min":440.3,"max":704.9,"p25":574.5,"p75":629.3,"p90":652.4,"pct_acima_500":97.2,"pct_acima_600":53.2,"pct_acima_700":1.4,"pct_acima_800":0.0},"MT":{"n":140,"media":669.9,"mediana":676.7,"dp":119.4,"min":349.1,"max":922.7,"p25":597.2,"p75":763.0,"p90":806.2,"pct_acima_500":91.4,"pct_acima_600":74.3,"pct_acima_700":41.4,"pct_acima_800":10.7}},"redacao":{"n":140,"media":826.3,"mediana":860.0,"dp":112.4,"min":300.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":940.0,"pct_acima_500":99.3,"pct_acima_600":95.7,"pct_acima_700":89.3,"pct_acima_800":71.4,"comps":{"C1":150.3,"C2":168.6,"C3":156.1,"C4":173.3,"C5":178.0}},"nota_geral":{"n":139,"media":655.9,"mediana":669.0,"dp":65.6,"min":479.0,"max":782.8,"p25":618.7,"p75":700.2,"p90":734.5,"pct_acima_500":97.1,"pct_acima_600":82.7,"pct_acima_700":25.2,"pct_acima_800":0.0}},{"co":33110328,"rede":"pH","nossa":false,"label":"pH - Botafogo 1","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":152,"n_presentes_2dias":148,"taxa_presenca_pct":97.4,"areas":{"CN":{"n":148,"media":595.9,"mediana":608.8,"dp":78.1,"min":376.7,"max":748.0,"p25":553.7,"p75":652.2,"p90":688.2,"pct_acima_500":85.1,"pct_acima_600":54.1,"pct_acima_700":5.4,"pct_acima_800":0.0},"CH":{"n":149,"media":602.7,"mediana":606.1,"dp":77.3,"min":377.5,"max":786.3,"p25":555.7,"p75":655.9,"p90":694.4,"pct_acima_500":87.9,"pct_acima_600":54.4,"pct_acima_700":8.7,"pct_acima_800":0.0},"LC":{"n":149,"media":604.4,"mediana":607.4,"dp":57.1,"min":335.1,"max":725.0,"p25":568.7,"p75":641.1,"p90":671.4,"pct_acima_500":96.0,"pct_acima_600":55.7,"pct_acima_700":2.7,"pct_acima_800":0.0},"MT":{"n":148,"media":694.7,"mediana":698.8,"dp":131.7,"min":351.1,"max":942.8,"p25":621.3,"p75":803.5,"p90":853.8,"pct_acima_500":90.5,"pct_acima_600":77.7,"pct_acima_700":48.6,"pct_acima_800":26.4}},"redacao":{"n":148,"media":814.3,"mediana":840.0,"dp":113.5,"min":300.0,"max":960.0,"p25":755.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.6,"pct_acima_600":95.3,"pct_acima_700":86.5,"pct_acima_800":64.9,"comps":{"C1":145.5,"C2":169.7,"C3":152.0,"C4":170.3,"C5":176.8}},"nota_geral":{"n":147,"media":663.5,"mediana":670.1,"dp":73.5,"min":443.7,"max":808.0,"p25":614.7,"p75":726.4,"p90":750.0,"pct_acima_500":98.6,"pct_acima_600":78.9,"pct_acima_700":35.4,"pct_acima_800":0.7}},{"co":33120544,"rede":"Pensi","nossa":false,"label":"Pensi - Campos","municipio":"Campos dos Goytacazes","bairro":"CENTRO","n_inscritos":89,"n_presentes_2dias":87,"taxa_presenca_pct":97.8,"areas":{"CN":{"n":88,"media":568.8,"mediana":579.2,"dp":73.4,"min":407.5,"max":715.9,"p25":528.8,"p75":616.4,"p90":664.3,"pct_acima_500":81.8,"pct_acima_600":34.1,"pct_acima_700":1.1,"pct_acima_800":0.0},"CH":{"n":88,"media":582.6,"mediana":591.6,"dp":73.4,"min":365.5,"max":719.4,"p25":551.9,"p75":627.4,"p90":668.8,"pct_acima_500":86.4,"pct_acima_600":44.3,"pct_acima_700":3.4,"pct_acima_800":0.0},"LC":{"n":88,"media":590.6,"mediana":594.2,"dp":50.7,"min":397.2,"max":689.0,"p25":567.4,"p75":619.7,"p90":652.6,"pct_acima_500":95.5,"pct_acima_600":46.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":88,"media":666.2,"mediana":677.4,"dp":104.2,"min":399.2,"max":893.2,"p25":607.4,"p75":729.6,"p90":788.0,"pct_acima_500":90.9,"pct_acima_600":76.1,"pct_acima_700":39.8,"pct_acima_800":8.0}},"redacao":{"n":88,"media":758.0,"mediana":760.0,"dp":120.2,"min":500.0,"max":960.0,"p25":640.0,"p75":865.0,"p90":900.0,"pct_acima_500":100.0,"pct_acima_600":92.0,"pct_acima_700":64.8,"pct_acima_800":47.7,"comps":{"C1":140.5,"C2":164.3,"C3":143.6,"C4":157.5,"C5":152.0}},"nota_geral":{"n":87,"media":634.2,"mediana":637.8,"dp":69.9,"min":462.2,"max":768.7,"p25":595.3,"p75":685.0,"p90":713.4,"pct_acima_500":93.1,"pct_acima_600":70.1,"pct_acima_700":19.5,"pct_acima_800":0.0}},{"co":33135827,"rede":"Pensi","nossa":false,"label":"Pensi - Maracanã","municipio":"Rio de Janeiro","bairro":"MARACANA","n_inscritos":31,"n_presentes_2dias":31,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":31,"media":687.3,"mediana":685.9,"dp":47.5,"min":609.4,"max":840.4,"p25":663.4,"p75":701.2,"p90":742.7,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":29.0,"pct_acima_800":3.2},"CH":{"n":31,"media":673.0,"mediana":667.5,"dp":31.3,"min":599.9,"max":737.6,"p25":651.6,"p75":693.2,"p90":710.0,"pct_acima_500":100.0,"pct_acima_600":96.8,"pct_acima_700":22.6,"pct_acima_800":0.0},"LC":{"n":31,"media":655.6,"mediana":655.1,"dp":31.5,"min":585.4,"max":712.4,"p25":643.4,"p75":677.7,"p90":690.9,"pct_acima_500":100.0,"pct_acima_600":93.5,"pct_acima_700":3.2,"pct_acima_800":0.0},"MT":{"n":31,"media":819.8,"mediana":820.2,"dp":54.5,"min":729.0,"max":939.8,"p25":780.8,"p75":850.4,"p90":885.6,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":67.7}},"redacao":{"n":31,"media":867.7,"mediana":920.0,"dp":118.4,"min":380.0,"max":960.0,"p25":850.0,"p75":920.0,"p90":940.0,"pct_acima_500":96.8,"pct_acima_600":96.8,"pct_acima_700":93.5,"pct_acima_800":83.9,"comps":{"C1":154.8,"C2":181.3,"C3":168.4,"C4":181.9,"C5":181.3}},"nota_geral":{"n":31,"media":740.7,"mediana":745.6,"dp":35.0,"min":631.2,"max":795.9,"p25":725.4,"p75":759.8,"p90":780.1,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":83.9,"pct_acima_800":0.0}},{"co":33150931,"rede":"Pensi","nossa":false,"label":"Pensi - Icaraí 2","municipio":"Niterói","bairro":"ICARAI","n_inscritos":162,"n_presentes_2dias":162,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":162,"media":581.0,"mediana":586.6,"dp":71.0,"min":379.5,"max":781.7,"p25":546.2,"p75":623.8,"p90":657.9,"pct_acima_500":86.4,"pct_acima_600":38.9,"pct_acima_700":3.1,"pct_acima_800":0.0},"CH":{"n":162,"media":601.8,"mediana":617.8,"dp":70.2,"min":352.0,"max":730.9,"p25":560.4,"p75":650.0,"p90":676.4,"pct_acima_500":91.4,"pct_acima_600":59.9,"pct_acima_700":4.3,"pct_acima_800":0.0},"LC":{"n":162,"media":602.6,"mediana":605.0,"dp":47.9,"min":448.8,"max":732.5,"p25":576.1,"p75":638.6,"p90":656.0,"pct_acima_500":97.5,"pct_acima_600":56.2,"pct_acima_700":1.2,"pct_acima_800":0.0},"MT":{"n":162,"media":687.8,"mediana":699.1,"dp":101.5,"min":380.2,"max":967.7,"p25":634.8,"p75":748.9,"p90":809.1,"pct_acima_500":94.4,"pct_acima_600":82.1,"pct_acima_700":48.8,"pct_acima_800":11.7}},"redacao":{"n":162,"media":803.6,"mediana":840.0,"dp":121.3,"min":440.0,"max":980.0,"p25":725.0,"p75":900.0,"p90":920.0,"pct_acima_500":97.5,"pct_acima_600":92.6,"pct_acima_700":79.6,"pct_acima_800":66.7,"comps":{"C1":147.2,"C2":169.8,"C3":150.9,"C4":165.4,"C5":170.4}},"nota_geral":{"n":162,"media":655.3,"mediana":665.5,"dp":64.4,"min":418.5,"max":803.4,"p25":623.0,"p75":697.5,"p90":723.9,"pct_acima_500":96.9,"pct_acima_600":85.8,"pct_acima_700":22.8,"pct_acima_800":0.6}},{"co":33155852,"rede":"pH","nossa":false,"label":"pH - Barra da Tijuca","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":112,"n_presentes_2dias":106,"taxa_presenca_pct":94.6,"areas":{"CN":{"n":107,"media":572.0,"mediana":588.7,"dp":84.9,"min":346.5,"max":732.2,"p25":517.1,"p75":638.2,"p90":674.2,"pct_acima_500":78.5,"pct_acima_600":43.0,"pct_acima_700":1.9,"pct_acima_800":0.0},"CH":{"n":107,"media":583.4,"mediana":595.1,"dp":77.3,"min":402.1,"max":780.0,"p25":541.8,"p75":636.0,"p90":675.1,"pct_acima_500":84.1,"pct_acima_600":44.9,"pct_acima_700":2.8,"pct_acima_800":0.0},"LC":{"n":107,"media":588.5,"mediana":591.9,"dp":58.9,"min":340.3,"max":678.0,"p25":559.2,"p75":628.8,"p90":654.8,"pct_acima_500":92.5,"pct_acima_600":45.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":107,"media":670.2,"mediana":691.7,"dp":131.4,"min":360.1,"max":967.7,"p25":575.6,"p75":767.2,"p90":825.1,"pct_acima_500":87.9,"pct_acima_600":68.2,"pct_acima_700":48.6,"pct_acima_800":15.0}},"redacao":{"n":106,"media":820.0,"mediana":840.0,"dp":106.4,"min":380.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":930.0,"pct_acima_500":99.1,"pct_acima_600":97.2,"pct_acima_700":85.8,"pct_acima_800":65.1,"comps":{"C1":147.0,"C2":169.2,"C3":156.0,"C4":171.5,"C5":176.2}},"nota_geral":{"n":105,"media":648.7,"mediana":656.3,"dp":71.8,"min":428.7,"max":802.7,"p25":598.6,"p75":701.5,"p90":733.0,"pct_acima_500":98.1,"pct_acima_600":74.3,"pct_acima_700":27.6,"pct_acima_800":1.0}},{"co":33161011,"rede":"Pensi","nossa":false,"label":"Pensi - Freguesia","municipio":"Rio de Janeiro","bairro":"FREGUESIA","n_inscritos":104,"n_presentes_2dias":102,"taxa_presenca_pct":98.1,"areas":{"CN":{"n":102,"media":555.5,"mediana":572.6,"dp":73.9,"min":374.0,"max":684.4,"p25":504.0,"p75":615.2,"p90":639.9,"pct_acima_500":77.5,"pct_acima_600":33.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":103,"media":579.0,"mediana":596.3,"dp":82.6,"min":343.8,"max":746.1,"p25":535.0,"p75":628.0,"p90":674.1,"pct_acima_500":85.4,"pct_acima_600":48.5,"pct_acima_700":2.9,"pct_acima_800":0.0},"LC":{"n":103,"media":579.3,"mediana":585.5,"dp":53.0,"min":384.2,"max":677.3,"p25":551.4,"p75":616.2,"p90":641.9,"pct_acima_500":94.2,"pct_acima_600":35.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":102,"media":655.6,"mediana":669.0,"dp":111.7,"min":339.1,"max":874.3,"p25":593.8,"p75":737.9,"p90":794.1,"pct_acima_500":90.2,"pct_acima_600":72.5,"pct_acima_700":36.3,"pct_acima_800":7.8}},"redacao":{"n":102,"media":741.8,"mediana":760.0,"dp":122.2,"min":440.0,"max":960.0,"p25":660.0,"p75":840.0,"p90":880.0,"pct_acima_500":98.0,"pct_acima_600":87.3,"pct_acima_700":67.6,"pct_acima_800":42.2,"comps":{"C1":137.3,"C2":159.0,"C3":140.2,"C4":152.2,"C5":153.1}},"nota_geral":{"n":101,"media":624.1,"mediana":623.6,"dp":66.0,"min":442.7,"max":755.3,"p25":586.9,"p75":670.3,"p90":702.1,"pct_acima_500":96.0,"pct_acima_600":71.3,"pct_acima_700":11.9,"pct_acima_800":0.0}},{"co":33161402,"rede":"Pensi","nossa":false,"label":"Pensi - Recreio 2","municipio":"Rio de Janeiro","bairro":"RECREIO","n_inscritos":98,"n_presentes_2dias":97,"taxa_presenca_pct":99.0,"areas":{"CN":{"n":97,"media":561.1,"mediana":549.5,"dp":78.0,"min":388.1,"max":785.7,"p25":506.2,"p75":616.7,"p90":665.9,"pct_acima_500":78.4,"pct_acima_600":28.9,"pct_acima_700":4.1,"pct_acima_800":0.0},"CH":{"n":97,"media":574.2,"mediana":590.6,"dp":89.8,"min":354.9,"max":756.6,"p25":521.8,"p75":623.4,"p90":673.4,"pct_acima_500":81.4,"pct_acima_600":46.4,"pct_acima_700":9.3,"pct_acima_800":0.0},"LC":{"n":97,"media":585.7,"mediana":589.4,"dp":58.6,"min":329.4,"max":703.6,"p25":544.7,"p75":622.8,"p90":655.2,"pct_acima_500":93.8,"pct_acima_600":38.1,"pct_acima_700":2.1,"pct_acima_800":0.0},"MT":{"n":97,"media":642.4,"mediana":651.4,"dp":127.7,"min":352.1,"max":959.3,"p25":548.1,"p75":724.5,"p90":784.6,"pct_acima_500":83.5,"pct_acima_600":67.0,"pct_acima_700":37.1,"pct_acima_800":8.2}},"redacao":{"n":96,"media":744.8,"mediana":760.0,"dp":143.6,"min":360.0,"max":960.0,"p25":640.0,"p75":860.0,"p90":910.0,"pct_acima_500":93.8,"pct_acima_600":86.5,"pct_acima_700":66.7,"pct_acima_800":43.8,"comps":{"C1":136.5,"C2":159.6,"C3":140.8,"C4":157.1,"C5":150.8}},"nota_geral":{"n":96,"media":623.0,"mediana":621.6,"dp":79.2,"min":465.9,"max":815.7,"p25":561.0,"p75":674.6,"p90":729.5,"pct_acima_500":93.8,"pct_acima_600":60.4,"pct_acima_700":18.8,"pct_acima_800":1.0}},{"co":33161429,"rede":"Pensi","nossa":false,"label":"Pensi - Itaipu","municipio":"Niterói","bairro":"ITAIPU","n_inscritos":74,"n_presentes_2dias":73,"taxa_presenca_pct":98.6,"areas":{"CN":{"n":73,"media":579.6,"mediana":590.3,"dp":77.4,"min":425.7,"max":798.7,"p25":530.1,"p75":632.9,"p90":659.4,"pct_acima_500":82.2,"pct_acima_600":47.9,"pct_acima_700":4.1,"pct_acima_800":0.0},"CH":{"n":74,"media":579.0,"mediana":602.1,"dp":100.3,"min":0.0,"max":722.9,"p25":548.0,"p75":636.6,"p90":660.9,"pct_acima_500":85.1,"pct_acima_600":51.4,"pct_acima_700":4.1,"pct_acima_800":0.0},"LC":{"n":74,"media":587.1,"mediana":588.5,"dp":56.6,"min":328.2,"max":711.7,"p25":556.7,"p75":625.9,"p90":645.7,"pct_acima_500":94.6,"pct_acima_600":37.8,"pct_acima_700":2.7,"pct_acima_800":0.0},"MT":{"n":73,"media":681.2,"mediana":677.8,"dp":112.2,"min":414.5,"max":889.9,"p25":619.7,"p75":765.1,"p90":808.6,"pct_acima_500":91.8,"pct_acima_600":76.7,"pct_acima_700":45.2,"pct_acima_800":15.1}},"redacao":{"n":74,"media":805.1,"mediana":830.0,"dp":114.7,"min":480.0,"max":960.0,"p25":745.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.6,"pct_acima_600":93.2,"pct_acima_700":81.1,"pct_acima_800":67.6,"comps":{"C1":143.5,"C2":174.3,"C3":151.6,"C4":165.1,"C5":170.5}},"nota_geral":{"n":73,"media":647.7,"mediana":652.0,"dp":67.4,"min":492.6,"max":788.2,"p25":606.4,"p75":695.0,"p90":729.9,"pct_acima_500":98.6,"pct_acima_600":78.1,"pct_acima_700":24.7,"pct_acima_800":0.0}},{"co":33165920,"rede":"Pensi","nossa":false,"label":"Pensi - Icaraí 3","municipio":"Niterói","bairro":"ICARAI","n_inscritos":29,"n_presentes_2dias":29,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":29,"media":698.9,"mediana":709.3,"dp":46.0,"min":548.4,"max":779.5,"p25":669.6,"p75":729.3,"p90":741.1,"pct_acima_500":100.0,"pct_acima_600":96.6,"pct_acima_700":58.6,"pct_acima_800":0.0},"CH":{"n":29,"media":688.5,"mediana":689.3,"dp":39.8,"min":594.7,"max":750.4,"p25":663.6,"p75":714.6,"p90":743.1,"pct_acima_500":100.0,"pct_acima_600":96.6,"pct_acima_700":41.4,"pct_acima_800":0.0},"LC":{"n":29,"media":665.2,"mediana":665.2,"dp":31.5,"min":589.7,"max":725.6,"p25":654.7,"p75":681.6,"p90":701.6,"pct_acima_500":100.0,"pct_acima_600":96.6,"pct_acima_700":13.8,"pct_acima_800":0.0},"MT":{"n":29,"media":833.4,"mediana":842.0,"dp":55.7,"min":708.8,"max":925.5,"p25":806.7,"p75":867.8,"p90":894.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":75.9}},"redacao":{"n":29,"media":908.3,"mediana":920.0,"dp":42.3,"min":780.0,"max":960.0,"p25":880.0,"p75":940.0,"p90":944.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":96.6,"comps":{"C1":159.3,"C2":191.7,"C3":172.4,"C4":189.7,"C5":195.2}},"nota_geral":{"n":29,"media":758.9,"mediana":767.7,"dp":28.6,"min":678.6,"max":798.4,"p25":745.9,"p75":776.3,"p90":785.3,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":96.6,"pct_acima_800":0.0}},{"co":33165998,"rede":"pH","nossa":false,"label":"pH - Piratininga","municipio":"Niterói","bairro":"PIRATININGA","n_inscritos":28,"n_presentes_2dias":28,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":28,"media":610.7,"mediana":624.6,"dp":46.1,"min":514.3,"max":685.8,"p25":575.2,"p75":642.6,"p90":662.2,"pct_acima_500":100.0,"pct_acima_600":64.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":28,"media":621.4,"mediana":621.0,"dp":51.3,"min":487.4,"max":725.2,"p25":599.6,"p75":653.9,"p90":682.4,"pct_acima_500":96.4,"pct_acima_600":75.0,"pct_acima_700":3.6,"pct_acima_800":0.0},"LC":{"n":28,"media":620.3,"mediana":621.4,"dp":35.0,"min":552.3,"max":685.3,"p25":592.9,"p75":646.9,"p90":662.5,"pct_acima_500":100.0,"pct_acima_600":71.4,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":28,"media":697.8,"mediana":697.8,"dp":69.4,"min":544.2,"max":828.7,"p25":650.8,"p75":750.6,"p90":773.8,"pct_acima_500":100.0,"pct_acima_600":92.9,"pct_acima_700":50.0,"pct_acima_800":3.6}},"redacao":{"n":28,"media":882.1,"mediana":890.0,"dp":67.2,"min":620.0,"max":960.0,"p25":880.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":96.4,"pct_acima_800":92.9,"comps":{"C1":155.0,"C2":180.7,"C3":172.1,"C4":185.7,"C5":188.6}},"nota_geral":{"n":28,"media":686.4,"mediana":689.2,"dp":43.2,"min":568.9,"max":765.9,"p25":650.5,"p75":715.2,"p90":732.9,"pct_acima_500":100.0,"pct_acima_600":96.4,"pct_acima_700":42.9,"pct_acima_800":0.0}},{"co":33166820,"rede":"Pensi","nossa":false,"label":"Pensi - Tijuca","municipio":"Rio de Janeiro","bairro":"TIJUCA","n_inscritos":235,"n_presentes_2dias":229,"taxa_presenca_pct":97.4,"areas":{"CN":{"n":229,"media":583.5,"mediana":596.4,"dp":81.4,"min":336.6,"max":743.7,"p25":529.6,"p75":642.6,"p90":683.4,"pct_acima_500":84.3,"pct_acima_600":48.9,"pct_acima_700":6.6,"pct_acima_800":0.0},"CH":{"n":232,"media":596.7,"mediana":608.0,"dp":80.5,"min":0.0,"max":774.5,"p25":567.1,"p75":648.0,"p90":679.5,"pct_acima_500":89.7,"pct_acima_600":56.9,"pct_acima_700":4.3,"pct_acima_800":0.0},"LC":{"n":232,"media":603.0,"mediana":607.0,"dp":53.3,"min":384.4,"max":725.6,"p25":575.6,"p75":640.6,"p90":663.9,"pct_acima_500":96.1,"pct_acima_600":56.5,"pct_acima_700":2.2,"pct_acima_800":0.0},"MT":{"n":229,"media":708.2,"mediana":719.1,"dp":109.4,"min":377.6,"max":967.7,"p25":643.4,"p75":785.4,"p90":839.7,"pct_acima_500":96.1,"pct_acima_600":82.5,"pct_acima_700":56.8,"pct_acima_800":19.2}},"redacao":{"n":230,"media":785.3,"mediana":800.0,"dp":117.6,"min":400.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":920.0,"pct_acima_500":98.7,"pct_acima_600":95.7,"pct_acima_700":76.5,"pct_acima_800":54.8,"comps":{"C1":144.3,"C2":168.1,"C3":147.8,"C4":163.0,"C5":162.1}},"nota_geral":{"n":228,"media":656.1,"mediana":663.2,"dp":67.7,"min":463.7,"max":774.1,"p25":615.4,"p75":708.7,"p90":738.7,"pct_acima_500":99.1,"pct_acima_600":78.5,"pct_acima_700":31.1,"pct_acima_800":0.0}},{"co":33166935,"rede":"Pensi","nossa":false,"label":"Pensi - Jardim Carioca","municipio":"Rio de Janeiro","bairro":"JARDIM CARIOCA","n_inscritos":37,"n_presentes_2dias":37,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":37,"media":569.4,"mediana":582.1,"dp":85.4,"min":378.1,"max":798.1,"p25":536.1,"p75":616.3,"p90":648.4,"pct_acima_500":83.8,"pct_acima_600":45.9,"pct_acima_700":2.7,"pct_acima_800":0.0},"CH":{"n":37,"media":574.0,"mediana":590.1,"dp":72.3,"min":403.3,"max":735.3,"p25":532.6,"p75":610.0,"p90":643.0,"pct_acima_500":75.7,"pct_acima_600":45.9,"pct_acima_700":2.7,"pct_acima_800":0.0},"LC":{"n":37,"media":589.0,"mediana":597.5,"dp":48.1,"min":442.9,"max":710.0,"p25":561.5,"p75":614.9,"p90":628.6,"pct_acima_500":97.3,"pct_acima_600":45.9,"pct_acima_700":2.7,"pct_acima_800":0.0},"MT":{"n":37,"media":625.5,"mediana":645.8,"dp":122.6,"min":351.3,"max":897.8,"p25":560.0,"p75":695.0,"p90":750.3,"pct_acima_500":86.5,"pct_acima_600":64.9,"pct_acima_700":24.3,"pct_acima_800":5.4}},"redacao":{"n":37,"media":771.4,"mediana":820.0,"dp":143.1,"min":380.0,"max":940.0,"p25":660.0,"p75":900.0,"p90":908.0,"pct_acima_500":94.6,"pct_acima_600":86.5,"pct_acima_700":70.3,"pct_acima_800":54.1,"comps":{"C1":145.9,"C2":166.5,"C3":141.1,"C4":158.4,"C5":159.5}},"nota_geral":{"n":37,"media":625.9,"mediana":634.0,"dp":77.1,"min":423.4,"max":799.2,"p25":598.4,"p75":675.4,"p90":706.2,"pct_acima_500":91.9,"pct_acima_600":73.0,"pct_acima_700":16.2,"pct_acima_800":0.0}},{"co":33166943,"rede":"Pensi","nossa":false,"label":"Pensi - Madureira","municipio":"Rio de Janeiro","bairro":"MADUREIRA","n_inscritos":79,"n_presentes_2dias":78,"taxa_presenca_pct":98.7,"areas":{"CN":{"n":78,"media":538.6,"mediana":543.8,"dp":69.7,"min":356.8,"max":667.9,"p25":488.9,"p75":593.0,"p90":619.9,"pct_acima_500":70.5,"pct_acima_600":20.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":79,"media":567.6,"mediana":579.4,"dp":68.3,"min":374.2,"max":678.3,"p25":534.0,"p75":617.0,"p90":637.5,"pct_acima_500":81.0,"pct_acima_600":38.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":79,"media":569.1,"mediana":585.5,"dp":63.2,"min":339.2,"max":667.1,"p25":534.1,"p75":612.4,"p90":635.0,"pct_acima_500":84.8,"pct_acima_600":40.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":78,"media":607.0,"mediana":590.7,"dp":114.0,"min":325.8,"max":839.8,"p25":525.8,"p75":697.3,"p90":762.5,"pct_acima_500":87.2,"pct_acima_600":46.2,"pct_acima_700":24.4,"pct_acima_800":3.8}},"redacao":{"n":79,"media":681.3,"mediana":680.0,"dp":140.8,"min":360.0,"max":960.0,"p25":580.0,"p75":800.0,"p90":864.0,"pct_acima_500":91.1,"pct_acima_600":70.9,"pct_acima_700":45.6,"pct_acima_800":26.6,"comps":{"C1":132.4,"C2":148.4,"C3":133.2,"C4":141.0,"C5":126.3}},"nota_geral":{"n":78,"media":592.6,"mediana":596.6,"dp":70.0,"min":402.2,"max":726.3,"p25":542.9,"p75":642.3,"p90":681.1,"pct_acima_500":91.0,"pct_acima_600":46.2,"pct_acima_700":6.4,"pct_acima_800":0.0}},{"co":33173990,"rede":"AZ","nossa":false,"label":"AZ - Tijuca","municipio":"Rio de Janeiro","bairro":"TIJUCA","n_inscritos":88,"n_presentes_2dias":86,"taxa_presenca_pct":97.7,"areas":{"CN":{"n":86,"media":608.1,"mediana":612.2,"dp":73.4,"min":433.5,"max":768.6,"p25":560.7,"p75":653.8,"p90":707.1,"pct_acima_500":93.0,"pct_acima_600":55.8,"pct_acima_700":10.5,"pct_acima_800":0.0},"CH":{"n":87,"media":615.6,"mediana":626.6,"dp":71.2,"min":366.9,"max":743.2,"p25":576.7,"p75":660.0,"p90":696.9,"pct_acima_500":94.3,"pct_acima_600":64.4,"pct_acima_700":9.2,"pct_acima_800":0.0},"LC":{"n":87,"media":605.5,"mediana":604.3,"dp":52.5,"min":444.5,"max":730.6,"p25":578.1,"p75":644.2,"p90":661.6,"pct_acima_500":96.6,"pct_acima_600":60.9,"pct_acima_700":3.4,"pct_acima_800":0.0},"MT":{"n":86,"media":725.6,"mediana":728.6,"dp":97.7,"min":477.3,"max":931.0,"p25":660.6,"p75":791.6,"p90":853.1,"pct_acima_500":98.8,"pct_acima_600":89.5,"pct_acima_700":59.3,"pct_acima_800":22.1}},"redacao":{"n":86,"media":837.9,"mediana":840.0,"dp":91.5,"min":580.0,"max":980.0,"p25":800.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":98.8,"pct_acima_700":93.0,"pct_acima_800":75.6,"comps":{"C1":150.9,"C2":175.6,"C3":161.4,"C4":170.9,"C5":179.1}},"nota_geral":{"n":86,"media":679.5,"mediana":688.2,"dp":58.8,"min":523.8,"max":809.1,"p25":642.3,"p75":720.4,"p90":747.1,"pct_acima_500":100.0,"pct_acima_600":89.5,"pct_acima_700":40.7,"pct_acima_800":1.2}},{"co":33175195,"rede":"AZ","nossa":false,"label":"AZ - Ilha","municipio":"Rio de Janeiro","bairro":"JARDIM GUANABARA","n_inscritos":24,"n_presentes_2dias":23,"taxa_presenca_pct":95.8,"areas":{"CN":{"n":23,"media":582.5,"mediana":570.1,"dp":84.0,"min":377.7,"max":702.5,"p25":532.4,"p75":655.8,"p90":671.1,"pct_acima_500":87.0,"pct_acima_600":47.8,"pct_acima_700":4.3,"pct_acima_800":0.0},"CH":{"n":23,"media":617.5,"mediana":623.5,"dp":73.8,"min":416.7,"max":706.6,"p25":583.0,"p75":675.8,"p90":683.3,"pct_acima_500":91.3,"pct_acima_600":65.2,"pct_acima_700":4.3,"pct_acima_800":0.0},"LC":{"n":23,"media":614.6,"mediana":619.6,"dp":33.7,"min":522.9,"max":662.4,"p25":603.4,"p75":640.0,"p90":648.3,"pct_acima_500":100.0,"pct_acima_600":78.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":23,"media":720.6,"mediana":710.1,"dp":93.1,"min":546.5,"max":923.5,"p25":663.0,"p75":771.4,"p90":830.0,"pct_acima_500":100.0,"pct_acima_600":91.3,"pct_acima_700":56.5,"pct_acima_800":21.7}},"redacao":{"n":23,"media":875.7,"mediana":900.0,"dp":65.5,"min":740.0,"max":960.0,"p25":830.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":87.0,"comps":{"C1":153.9,"C2":187.0,"C3":169.6,"C4":182.6,"C5":182.6}},"nota_geral":{"n":23,"media":682.2,"mediana":685.9,"dp":55.9,"min":545.9,"max":761.6,"p25":643.6,"p75":727.3,"p90":752.5,"pct_acima_500":100.0,"pct_acima_600":95.7,"pct_acima_700":43.5,"pct_acima_800":0.0}},{"co":33177627,"rede":"pH","nossa":false,"label":"pH - Recreio","municipio":"Rio de Janeiro","bairro":"RECREIO","n_inscritos":79,"n_presentes_2dias":78,"taxa_presenca_pct":98.7,"areas":{"CN":{"n":78,"media":582.6,"mediana":588.3,"dp":68.2,"min":390.2,"max":745.2,"p25":552.1,"p75":634.0,"p90":654.3,"pct_acima_500":88.5,"pct_acima_600":38.5,"pct_acima_700":2.6,"pct_acima_800":0.0},"CH":{"n":79,"media":604.0,"mediana":607.1,"dp":61.2,"min":413.7,"max":769.2,"p25":573.0,"p75":632.8,"p90":682.4,"pct_acima_500":94.9,"pct_acima_600":55.7,"pct_acima_700":3.8,"pct_acima_800":0.0},"LC":{"n":79,"media":593.8,"mediana":598.0,"dp":47.5,"min":458.4,"max":729.3,"p25":566.6,"p75":621.2,"p90":649.3,"pct_acima_500":97.5,"pct_acima_600":45.6,"pct_acima_700":1.3,"pct_acima_800":0.0},"MT":{"n":78,"media":674.4,"mediana":680.4,"dp":100.9,"min":392.3,"max":959.3,"p25":601.1,"p75":745.3,"p90":778.3,"pct_acima_500":94.9,"pct_acima_600":75.6,"pct_acima_700":39.7,"pct_acima_800":7.7}},"redacao":{"n":79,"media":840.5,"mediana":860.0,"dp":78.6,"min":580.0,"max":960.0,"p25":790.0,"p75":900.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":98.7,"pct_acima_700":96.2,"pct_acima_800":74.7,"comps":{"C1":152.4,"C2":172.9,"C3":159.0,"C4":175.4,"C5":180.8}},"nota_geral":{"n":78,"media":659.1,"mediana":657.2,"dp":52.4,"min":557.1,"max":817.9,"p25":622.2,"p75":697.1,"p90":722.2,"pct_acima_500":100.0,"pct_acima_600":85.9,"pct_acima_700":21.8,"pct_acima_800":1.3}},{"co":33178879,"rede":"Alfa CEM","nossa":false,"label":"Alfa CEM - Anil","municipio":"Rio de Janeiro","bairro":"ANIL","n_inscritos":27,"n_presentes_2dias":27,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":27,"media":616.1,"mediana":629.0,"dp":57.4,"min":494.2,"max":753.6,"p25":590.4,"p75":639.6,"p90":673.7,"pct_acima_500":96.3,"pct_acima_600":66.7,"pct_acima_700":7.4,"pct_acima_800":0.0},"CH":{"n":27,"media":625.5,"mediana":626.3,"dp":52.2,"min":493.8,"max":711.5,"p25":591.2,"p75":658.6,"p90":690.5,"pct_acima_500":96.3,"pct_acima_600":74.1,"pct_acima_700":3.7,"pct_acima_800":0.0},"LC":{"n":27,"media":616.9,"mediana":613.0,"dp":37.3,"min":552.4,"max":704.6,"p25":588.0,"p75":647.1,"p90":652.8,"pct_acima_500":100.0,"pct_acima_600":66.7,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":27,"media":742.8,"mediana":736.1,"dp":72.9,"min":628.0,"max":876.2,"p25":691.6,"p75":791.6,"p90":851.5,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":59.3,"pct_acima_800":22.2}},"redacao":{"n":27,"media":880.0,"mediana":900.0,"dp":72.1,"min":680.0,"max":960.0,"p25":840.0,"p75":930.0,"p90":948.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":96.3,"pct_acima_800":88.9,"comps":{"C1":159.3,"C2":183.0,"C3":167.4,"C4":186.7,"C5":183.7}},"nota_geral":{"n":27,"media":696.3,"mediana":693.3,"dp":34.9,"min":640.7,"max":750.8,"p25":665.5,"p75":725.8,"p90":733.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":48.1,"pct_acima_800":0.0}},{"co":33178909,"rede":"Pensi","nossa":false,"label":"Pensi - Petrópolis","municipio":"Petrópolis","bairro":"CENTRO","n_inscritos":35,"n_presentes_2dias":35,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":35,"media":546.3,"mediana":550.8,"dp":66.3,"min":402.7,"max":657.8,"p25":491.0,"p75":585.8,"p90":642.4,"pct_acima_500":71.4,"pct_acima_600":20.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":35,"media":570.6,"mediana":588.2,"dp":63.0,"min":380.0,"max":656.2,"p25":537.6,"p75":614.0,"p90":633.5,"pct_acima_500":88.6,"pct_acima_600":45.7,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":35,"media":580.3,"mediana":588.8,"dp":52.3,"min":407.2,"max":661.2,"p25":553.6,"p75":617.4,"p90":635.0,"pct_acima_500":94.3,"pct_acima_600":40.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":35,"media":616.3,"mediana":639.1,"dp":118.3,"min":339.5,"max":824.2,"p25":564.7,"p75":683.0,"p90":742.9,"pct_acima_500":80.0,"pct_acima_600":65.7,"pct_acima_700":17.1,"pct_acima_800":8.6}},"redacao":{"n":35,"media":768.6,"mediana":760.0,"dp":119.8,"min":480.0,"max":960.0,"p25":670.0,"p75":880.0,"p90":912.0,"pct_acima_500":97.1,"pct_acima_600":94.3,"pct_acima_700":71.4,"pct_acima_800":42.9,"comps":{"C1":138.3,"C2":164.0,"C3":145.7,"C4":154.3,"C5":166.3}},"nota_geral":{"n":35,"media":616.4,"mediana":624.5,"dp":63.4,"min":502.4,"max":714.9,"p25":574.2,"p75":663.0,"p90":703.4,"pct_acima_500":100.0,"pct_acima_600":62.9,"pct_acima_700":11.4,"pct_acima_800":0.0}},{"co":33178976,"rede":"Pensi","nossa":false,"label":"Pensi - Cabo Frio 3","municipio":"Cabo Frio","bairro":"CENTRO","n_inscritos":68,"n_presentes_2dias":64,"taxa_presenca_pct":94.1,"areas":{"CN":{"n":65,"media":546.2,"mediana":552.4,"dp":81.2,"min":394.6,"max":734.0,"p25":484.0,"p75":604.8,"p90":641.5,"pct_acima_500":70.8,"pct_acima_600":29.2,"pct_acima_700":1.5,"pct_acima_800":0.0},"CH":{"n":64,"media":569.6,"mediana":601.2,"dp":105.1,"min":0.0,"max":692.4,"p25":522.8,"p75":637.2,"p90":661.3,"pct_acima_500":79.7,"pct_acima_600":51.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":64,"media":568.8,"mediana":593.0,"dp":92.1,"min":0.0,"max":702.3,"p25":530.1,"p75":611.8,"p90":642.4,"pct_acima_500":89.1,"pct_acima_600":39.1,"pct_acima_700":1.6,"pct_acima_800":0.0},"MT":{"n":65,"media":637.0,"mediana":658.4,"dp":134.4,"min":330.5,"max":884.8,"p25":550.1,"p75":735.1,"p90":779.6,"pct_acima_500":81.5,"pct_acima_600":70.8,"pct_acima_700":35.4,"pct_acima_800":7.7}},"redacao":{"n":64,"media":777.2,"mediana":800.0,"dp":126.6,"min":420.0,"max":940.0,"p25":695.0,"p75":880.0,"p90":920.0,"pct_acima_500":95.3,"pct_acima_600":92.2,"pct_acima_700":75.0,"pct_acima_800":54.7,"comps":{"C1":140.0,"C2":161.9,"C3":145.6,"C4":161.6,"C5":168.1}},"nota_geral":{"n":64,"media":620.9,"mediana":635.1,"dp":77.0,"min":454.0,"max":732.8,"p25":581.8,"p75":678.1,"p90":711.7,"pct_acima_500":89.1,"pct_acima_600":67.2,"pct_acima_700":17.2,"pct_acima_800":0.0}},{"co":33180385,"rede":"pH","nossa":false,"label":"pH - Icaraí 3","municipio":"Niterói","bairro":"ICARAI","n_inscritos":139,"n_presentes_2dias":138,"taxa_presenca_pct":99.3,"areas":{"CN":{"n":138,"media":621.8,"mediana":630.3,"dp":66.9,"min":401.2,"max":752.8,"p25":587.7,"p75":669.5,"p90":697.0,"pct_acima_500":94.2,"pct_acima_600":69.6,"pct_acima_700":8.0,"pct_acima_800":0.0},"CH":{"n":138,"media":635.6,"mediana":638.4,"dp":64.6,"min":425.5,"max":758.6,"p25":602.4,"p75":678.2,"p90":711.0,"pct_acima_500":95.7,"pct_acima_600":75.4,"pct_acima_700":15.2,"pct_acima_800":0.0},"LC":{"n":138,"media":630.3,"mediana":628.6,"dp":53.0,"min":478.1,"max":759.2,"p25":600.3,"p75":661.7,"p90":692.2,"pct_acima_500":98.6,"pct_acima_600":75.4,"pct_acima_700":8.7,"pct_acima_800":0.0},"MT":{"n":138,"media":740.2,"mediana":746.8,"dp":108.9,"min":341.5,"max":959.3,"p25":687.6,"p75":807.7,"p90":859.9,"pct_acima_500":96.4,"pct_acima_600":92.0,"pct_acima_700":70.3,"pct_acima_800":28.3}},"redacao":{"n":136,"media":857.5,"mediana":880.0,"dp":86.5,"min":400.0,"max":960.0,"p25":815.0,"p75":920.0,"p90":940.0,"pct_acima_500":99.3,"pct_acima_600":99.3,"pct_acima_700":95.6,"pct_acima_800":80.1,"comps":{"C1":152.2,"C2":176.8,"C3":163.4,"C4":178.4,"C5":186.8}},"nota_geral":{"n":136,"media":698.3,"mediana":704.0,"dp":57.2,"min":505.3,"max":815.6,"p25":672.7,"p75":738.6,"p90":766.1,"pct_acima_500":100.0,"pct_acima_600":94.1,"pct_acima_700":51.5,"pct_acima_800":1.5}},{"co":33180539,"rede":"pH","nossa":false,"label":"pH - Freguesia","municipio":"Rio de Janeiro","bairro":"FREGUESIA","n_inscritos":94,"n_presentes_2dias":94,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":94,"media":589.6,"mediana":597.6,"dp":74.7,"min":402.0,"max":712.5,"p25":546.9,"p75":646.2,"p90":679.5,"pct_acima_500":86.2,"pct_acima_600":46.8,"pct_acima_700":3.2,"pct_acima_800":0.0},"CH":{"n":94,"media":605.6,"mediana":605.2,"dp":62.9,"min":442.1,"max":736.6,"p25":573.9,"p75":646.7,"p90":681.9,"pct_acima_500":93.6,"pct_acima_600":53.2,"pct_acima_700":6.4,"pct_acima_800":0.0},"LC":{"n":94,"media":604.0,"mediana":606.2,"dp":42.1,"min":517.7,"max":698.4,"p25":570.0,"p75":638.2,"p90":654.5,"pct_acima_500":100.0,"pct_acima_600":54.3,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":94,"media":682.4,"mediana":697.8,"dp":121.7,"min":366.6,"max":937.7,"p25":595.7,"p75":768.6,"p90":816.4,"pct_acima_500":89.4,"pct_acima_600":74.5,"pct_acima_700":47.9,"pct_acima_800":16.0}},"redacao":{"n":93,"media":812.7,"mediana":840.0,"dp":123.7,"min":360.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":940.0,"pct_acima_500":97.8,"pct_acima_600":93.5,"pct_acima_700":86.0,"pct_acima_800":65.6,"comps":{"C1":146.0,"C2":167.3,"C3":151.4,"C4":170.8,"C5":177.2}},"nota_geral":{"n":93,"media":658.8,"mediana":670.4,"dp":64.9,"min":521.1,"max":785.5,"p25":605.8,"p75":709.8,"p90":737.0,"pct_acima_500":100.0,"pct_acima_600":77.4,"pct_acima_700":29.0,"pct_acima_800":0.0}},{"co":33182094,"rede":"Pensi","nossa":false,"label":"Pensi - Teresópolis","municipio":"Teresópolis","bairro":"ALTO","n_inscritos":37,"n_presentes_2dias":35,"taxa_presenca_pct":94.6,"areas":{"CN":{"n":35,"media":579.0,"mediana":572.0,"dp":55.3,"min":427.0,"max":674.5,"p25":545.4,"p75":632.2,"p90":646.7,"pct_acima_500":91.4,"pct_acima_600":37.1,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":35,"media":598.2,"mediana":601.3,"dp":55.6,"min":443.4,"max":690.5,"p25":561.6,"p75":639.3,"p90":660.5,"pct_acima_500":94.3,"pct_acima_600":51.4,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":35,"media":600.5,"mediana":601.9,"dp":45.2,"min":433.4,"max":716.9,"p25":586.2,"p75":626.8,"p90":639.4,"pct_acima_500":97.1,"pct_acima_600":54.3,"pct_acima_700":2.9,"pct_acima_800":0.0},"MT":{"n":35,"media":656.0,"mediana":676.0,"dp":117.6,"min":413.7,"max":858.5,"p25":588.0,"p75":743.4,"p90":794.1,"pct_acima_500":85.7,"pct_acima_600":74.3,"pct_acima_700":42.9,"pct_acima_800":8.6}},"redacao":{"n":35,"media":795.4,"mediana":820.0,"dp":124.6,"min":460.0,"max":960.0,"p25":730.0,"p75":910.0,"p90":932.0,"pct_acima_500":97.1,"pct_acima_600":91.4,"pct_acima_700":85.7,"pct_acima_800":60.0,"comps":{"C1":142.3,"C2":173.7,"C3":149.1,"C4":166.3,"C5":164.0}},"nota_geral":{"n":35,"media":645.8,"mediana":646.7,"dp":53.9,"min":536.2,"max":735.8,"p25":613.6,"p75":686.1,"p90":707.4,"pct_acima_500":100.0,"pct_acima_600":80.0,"pct_acima_700":17.1,"pct_acima_800":0.0}},{"co":33184720,"rede":"Alfa CEM","nossa":false,"label":"Alfa CEM - Barra Olímpica","municipio":"Rio de Janeiro","bairro":"BARRA OLIMPICA","n_inscritos":16,"n_presentes_2dias":16,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":16,"media":619.1,"mediana":620.4,"dp":59.1,"min":447.5,"max":706.5,"p25":611.6,"p75":650.7,"p90":667.2,"pct_acima_500":93.8,"pct_acima_600":81.2,"pct_acima_700":6.2,"pct_acima_800":0.0},"CH":{"n":16,"media":652.6,"mediana":664.3,"dp":37.7,"min":562.3,"max":705.8,"p25":630.6,"p75":676.7,"p90":685.6,"pct_acima_500":100.0,"pct_acima_600":93.8,"pct_acima_700":6.2,"pct_acima_800":0.0},"LC":{"n":16,"media":648.8,"mediana":657.6,"dp":34.7,"min":557.0,"max":707.1,"p25":637.2,"p75":667.7,"p90":675.8,"pct_acima_500":100.0,"pct_acima_600":93.8,"pct_acima_700":6.2,"pct_acima_800":0.0},"MT":{"n":16,"media":777.2,"mediana":768.0,"dp":59.3,"min":701.9,"max":929.1,"p25":731.6,"p75":817.3,"p90":834.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":31.2}},"redacao":{"n":16,"media":871.2,"mediana":880.0,"dp":55.6,"min":760.0,"max":960.0,"p25":835.0,"p75":905.0,"p90":930.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":93.8,"comps":{"C1":152.5,"C2":178.8,"C3":168.8,"C4":181.2,"C5":190.0}},"nota_geral":{"n":16,"media":713.8,"mediana":716.7,"dp":28.3,"min":638.4,"max":754.8,"p25":700.2,"p75":731.3,"p90":743.1,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":75.0,"pct_acima_800":0.0}},{"co":33184739,"rede":"Alfa CEM","nossa":false,"label":"Alfa CEM - Barra da Tijuca 1","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":14,"n_presentes_2dias":14,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":14,"media":694.7,"mediana":684.2,"dp":45.2,"min":636.3,"max":777.8,"p25":666.2,"p75":728.2,"p90":756.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":35.7,"pct_acima_800":0.0},"CH":{"n":14,"media":679.4,"mediana":674.1,"dp":30.5,"min":629.4,"max":736.1,"p25":658.7,"p75":690.5,"p90":723.5,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":21.4,"pct_acima_800":0.0},"LC":{"n":14,"media":662.3,"mediana":660.4,"dp":28.5,"min":623.0,"max":726.2,"p25":642.3,"p75":678.3,"p90":691.7,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":7.1,"pct_acima_800":0.0},"MT":{"n":14,"media":875.9,"mediana":869.0,"dp":56.3,"min":783.4,"max":967.7,"p25":834.2,"p75":921.0,"p90":952.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9}},"redacao":{"n":14,"media":884.3,"mediana":900.0,"dp":67.1,"min":700.0,"max":960.0,"p25":865.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9,"comps":{"C1":160.0,"C2":185.7,"C3":161.4,"C4":180.0,"C5":197.1}},"nota_geral":{"n":14,"media":759.3,"mediana":757.9,"dp":26.3,"min":708.9,"max":805.9,"p25":742.2,"p75":770.7,"p90":796.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":14.3}},{"co":33188092,"rede":"Alfa CEM","nossa":false,"label":"Alfa CEM - Recreio 1","municipio":"Rio de Janeiro","bairro":"RECREIO","n_inscritos":25,"n_presentes_2dias":25,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":25,"media":617.4,"mediana":610.5,"dp":63.0,"min":419.5,"max":754.0,"p25":582.8,"p75":653.4,"p90":673.8,"pct_acima_500":96.0,"pct_acima_600":64.0,"pct_acima_700":8.0,"pct_acima_800":0.0},"CH":{"n":25,"media":645.9,"mediana":650.1,"dp":33.3,"min":581.5,"max":690.0,"p25":616.7,"p75":675.6,"p90":685.3,"pct_acima_500":100.0,"pct_acima_600":92.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":25,"media":636.0,"mediana":639.7,"dp":32.4,"min":581.9,"max":702.0,"p25":615.0,"p75":654.2,"p90":669.2,"pct_acima_500":100.0,"pct_acima_600":84.0,"pct_acima_700":8.0,"pct_acima_800":0.0},"MT":{"n":25,"media":798.1,"mediana":812.2,"dp":70.0,"min":593.0,"max":899.5,"p25":762.1,"p75":847.6,"p90":869.8,"pct_acima_500":100.0,"pct_acima_600":96.0,"pct_acima_700":92.0,"pct_acima_800":52.0}},"redacao":{"n":25,"media":879.2,"mediana":900.0,"dp":61.5,"min":720.0,"max":940.0,"p25":860.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":88.0,"comps":{"C1":154.4,"C2":184.0,"C3":168.8,"C4":182.4,"C5":189.6}},"nota_geral":{"n":25,"media":715.3,"mediana":722.4,"dp":33.6,"min":600.9,"max":758.7,"p25":703.3,"p75":736.7,"p90":748.6,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":76.0,"pct_acima_800":0.0}},{"co":33191824,"rede":"Pensi","nossa":false,"label":"Pensi - Vila da Penha","municipio":"Rio de Janeiro","bairro":"VILA DA PENHA","n_inscritos":104,"n_presentes_2dias":103,"taxa_presenca_pct":99.0,"areas":{"CN":{"n":103,"media":528.6,"mediana":535.9,"dp":77.2,"min":347.4,"max":692.5,"p25":470.6,"p75":582.5,"p90":620.5,"pct_acima_500":64.1,"pct_acima_600":16.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":104,"media":562.6,"mediana":576.6,"dp":71.7,"min":347.9,"max":716.5,"p25":527.3,"p75":611.1,"p90":631.2,"pct_acima_500":84.6,"pct_acima_600":32.7,"pct_acima_700":1.0,"pct_acima_800":0.0},"LC":{"n":104,"media":575.8,"mediana":578.0,"dp":56.6,"min":327.1,"max":718.6,"p25":548.2,"p75":605.9,"p90":637.1,"pct_acima_500":93.3,"pct_acima_600":32.7,"pct_acima_700":1.0,"pct_acima_800":0.0},"MT":{"n":103,"media":625.2,"mediana":645.3,"dp":110.7,"min":357.4,"max":832.4,"p25":547.6,"p75":703.7,"p90":759.9,"pct_acima_500":87.4,"pct_acima_600":60.2,"pct_acima_700":27.2,"pct_acima_800":2.9}},"redacao":{"n":104,"media":750.4,"mediana":760.0,"dp":127.1,"min":380.0,"max":980.0,"p25":660.0,"p75":860.0,"p90":920.0,"pct_acima_500":97.1,"pct_acima_600":89.4,"pct_acima_700":68.3,"pct_acima_800":40.4,"comps":{"C1":137.5,"C2":159.2,"C3":142.3,"C4":153.5,"C5":157.9}},"nota_geral":{"n":103,"media":608.8,"mediana":614.7,"dp":68.4,"min":419.8,"max":762.5,"p25":567.3,"p75":658.7,"p90":688.6,"pct_acima_500":94.2,"pct_acima_600":55.3,"pct_acima_700":7.8,"pct_acima_800":0.0}},{"co":33193118,"rede":"Pensi","nossa":false,"label":"Pensi - Flamengo","municipio":"Rio de Janeiro","bairro":"FLAMENGO","n_inscritos":42,"n_presentes_2dias":42,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":42,"media":549.4,"mediana":567.0,"dp":75.0,"min":356.1,"max":681.8,"p25":498.2,"p75":612.4,"p90":626.5,"pct_acima_500":73.8,"pct_acima_600":28.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":42,"media":545.8,"mediana":552.5,"dp":124.7,"min":0.0,"max":730.4,"p25":498.5,"p75":630.5,"p90":673.4,"pct_acima_500":73.8,"pct_acima_600":35.7,"pct_acima_700":4.8,"pct_acima_800":0.0},"LC":{"n":42,"media":581.0,"mediana":596.2,"dp":60.1,"min":437.6,"max":669.2,"p25":549.6,"p75":624.3,"p90":648.3,"pct_acima_500":88.1,"pct_acima_600":42.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":42,"media":632.7,"mediana":650.2,"dp":110.7,"min":390.4,"max":840.9,"p25":561.3,"p75":707.5,"p90":776.9,"pct_acima_500":83.3,"pct_acima_600":66.7,"pct_acima_700":26.2,"pct_acima_800":4.8}},"redacao":{"n":42,"media":800.5,"mediana":860.0,"dp":126.0,"min":520.0,"max":960.0,"p25":710.0,"p75":900.0,"p90":938.0,"pct_acima_500":100.0,"pct_acima_600":92.9,"pct_acima_700":76.2,"pct_acima_800":54.8,"comps":{"C1":144.8,"C2":170.0,"C3":153.3,"C4":162.4,"C5":170.0}},"nota_geral":{"n":42,"media":621.9,"mediana":634.7,"dp":81.8,"min":440.8,"max":761.0,"p25":576.7,"p75":693.1,"p90":715.0,"pct_acima_500":90.5,"pct_acima_600":69.0,"pct_acima_700":14.3,"pct_acima_800":0.0}},{"co":33203431,"rede":"AZ","nossa":false,"label":"AZ - Recreio","municipio":"Rio de Janeiro","bairro":"RECREIO","n_inscritos":80,"n_presentes_2dias":76,"taxa_presenca_pct":95.0,"areas":{"CN":{"n":76,"media":564.1,"mediana":555.0,"dp":86.9,"min":336.2,"max":751.3,"p25":518.0,"p75":631.9,"p90":673.2,"pct_acima_500":77.6,"pct_acima_600":35.5,"pct_acima_700":5.3,"pct_acima_800":0.0},"CH":{"n":79,"media":574.5,"mediana":588.7,"dp":80.6,"min":363.3,"max":727.7,"p25":524.7,"p75":627.4,"p90":666.1,"pct_acima_500":79.7,"pct_acima_600":40.5,"pct_acima_700":2.5,"pct_acima_800":0.0},"LC":{"n":79,"media":589.9,"mediana":596.9,"dp":55.8,"min":443.2,"max":713.7,"p25":552.2,"p75":636.9,"p90":651.3,"pct_acima_500":92.4,"pct_acima_600":49.4,"pct_acima_700":1.3,"pct_acima_800":0.0},"MT":{"n":76,"media":661.9,"mediana":674.0,"dp":110.1,"min":350.4,"max":842.1,"p25":578.6,"p75":744.6,"p90":791.0,"pct_acima_500":90.8,"pct_acima_600":73.7,"pct_acima_700":44.7,"pct_acima_800":9.2}},"redacao":{"n":79,"media":791.6,"mediana":820.0,"dp":121.8,"min":460.0,"max":960.0,"p25":720.0,"p75":880.0,"p90":920.0,"pct_acima_500":97.5,"pct_acima_600":92.4,"pct_acima_700":79.7,"pct_acima_800":59.5,"comps":{"C1":145.6,"C2":165.1,"C3":148.6,"C4":165.3,"C5":167.1}},"nota_geral":{"n":76,"media":639.3,"mediana":644.9,"dp":73.6,"min":462.4,"max":752.8,"p25":603.8,"p75":694.3,"p90":725.7,"pct_acima_500":93.4,"pct_acima_600":76.3,"pct_acima_700":19.7,"pct_acima_800":0.0}},{"co":33223203,"rede":"AZ","nossa":false,"label":"AZ - Méier","municipio":"Rio de Janeiro","bairro":"MEIER","n_inscritos":34,"n_presentes_2dias":34,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":34,"media":549.3,"mediana":541.5,"dp":72.9,"min":394.1,"max":695.5,"p25":508.7,"p75":611.0,"p90":640.7,"pct_acima_500":79.4,"pct_acima_600":32.4,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":34,"media":570.8,"mediana":588.2,"dp":88.4,"min":381.2,"max":728.2,"p25":508.8,"p75":636.8,"p90":661.4,"pct_acima_500":76.5,"pct_acima_600":44.1,"pct_acima_700":2.9,"pct_acima_800":0.0},"LC":{"n":34,"media":580.9,"mediana":587.3,"dp":64.8,"min":403.4,"max":706.2,"p25":540.0,"p75":631.7,"p90":656.2,"pct_acima_500":91.2,"pct_acima_600":44.1,"pct_acima_700":2.9,"pct_acima_800":0.0},"MT":{"n":34,"media":607.6,"mediana":597.3,"dp":133.0,"min":367.0,"max":860.6,"p25":522.8,"p75":708.9,"p90":781.0,"pct_acima_500":79.4,"pct_acima_600":50.0,"pct_acima_700":29.4,"pct_acima_800":5.9}},"redacao":{"n":33,"media":774.5,"mediana":780.0,"dp":97.9,"min":600.0,"max":940.0,"p25":700.0,"p75":880.0,"p90":880.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":78.8,"pct_acima_800":45.5,"comps":{"C1":141.2,"C2":158.2,"C3":144.2,"C4":164.2,"C5":166.7}},"nota_geral":{"n":33,"media":619.4,"mediana":614.2,"dp":72.7,"min":486.0,"max":769.6,"p25":576.3,"p75":671.1,"p90":720.5,"pct_acima_500":93.9,"pct_acima_600":57.6,"pct_acima_700":18.2,"pct_acima_800":0.0}},{"co":33228604,"rede":"AZ","nossa":false,"label":"AZ - Botafogo","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":94,"n_presentes_2dias":92,"taxa_presenca_pct":97.9,"areas":{"CN":{"n":92,"media":583.2,"mediana":585.2,"dp":83.1,"min":364.5,"max":738.9,"p25":531.4,"p75":649.7,"p90":684.1,"pct_acima_500":81.5,"pct_acima_600":47.8,"pct_acima_700":7.6,"pct_acima_800":0.0},"CH":{"n":94,"media":605.4,"mediana":609.2,"dp":69.1,"min":438.3,"max":778.3,"p25":551.2,"p75":655.5,"p90":686.5,"pct_acima_500":93.6,"pct_acima_600":56.4,"pct_acima_700":5.3,"pct_acima_800":0.0},"LC":{"n":94,"media":603.7,"mediana":607.5,"dp":48.8,"min":440.8,"max":720.9,"p25":576.1,"p75":632.8,"p90":660.8,"pct_acima_500":97.9,"pct_acima_600":57.4,"pct_acima_700":3.2,"pct_acima_800":0.0},"MT":{"n":92,"media":686.7,"mediana":688.4,"dp":112.4,"min":334.3,"max":904.0,"p25":609.8,"p75":763.4,"p90":826.0,"pct_acima_500":94.6,"pct_acima_600":80.4,"pct_acima_700":47.8,"pct_acima_800":17.4}},"redacao":{"n":93,"media":784.5,"mediana":800.0,"dp":115.8,"min":420.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":920.0,"pct_acima_500":98.9,"pct_acima_600":92.5,"pct_acima_700":75.3,"pct_acima_800":51.6,"comps":{"C1":143.9,"C2":164.7,"C3":146.2,"C4":161.9,"C5":167.7}},"nota_geral":{"n":92,"media":653.4,"mediana":664.6,"dp":69.1,"min":466.3,"max":790.9,"p25":598.8,"p75":704.0,"p90":735.9,"pct_acima_500":98.9,"pct_acima_600":75.0,"pct_acima_700":29.3,"pct_acima_800":0.0}},{"co":33249202,"rede":"pH","nossa":false,"label":"pH - Leblon","municipio":"Rio de Janeiro","bairro":"LEBLON","n_inscritos":97,"n_presentes_2dias":92,"taxa_presenca_pct":94.8,"areas":{"CN":{"n":92,"media":584.8,"mediana":602.8,"dp":80.9,"min":331.3,"max":712.0,"p25":537.0,"p75":642.3,"p90":669.3,"pct_acima_500":85.9,"pct_acima_600":52.2,"pct_acima_700":4.3,"pct_acima_800":0.0},"CH":{"n":94,"media":596.6,"mediana":609.3,"dp":78.8,"min":354.7,"max":746.3,"p25":562.6,"p75":646.0,"p90":673.6,"pct_acima_500":89.4,"pct_acima_600":57.4,"pct_acima_700":5.3,"pct_acima_800":0.0},"LC":{"n":94,"media":599.4,"mediana":604.6,"dp":55.2,"min":370.5,"max":708.8,"p25":583.0,"p75":634.4,"p90":653.8,"pct_acima_500":95.7,"pct_acima_600":52.1,"pct_acima_700":1.1,"pct_acima_800":0.0},"MT":{"n":92,"media":679.1,"mediana":690.8,"dp":123.3,"min":363.8,"max":936.5,"p25":626.8,"p75":764.8,"p90":824.4,"pct_acima_500":88.0,"pct_acima_600":79.3,"pct_acima_700":44.6,"pct_acima_800":15.2}},"redacao":{"n":93,"media":806.0,"mediana":840.0,"dp":121.0,"min":320.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":920.0,"pct_acima_500":97.8,"pct_acima_600":94.6,"pct_acima_700":82.8,"pct_acima_800":67.7,"comps":{"C1":146.2,"C2":167.1,"C3":154.0,"C4":169.0,"C5":169.7}},"nota_geral":{"n":91,"media":653.8,"mediana":661.3,"dp":69.1,"min":398.0,"max":786.9,"p25":618.2,"p75":696.7,"p90":730.2,"pct_acima_500":96.7,"pct_acima_600":81.3,"pct_acima_700":23.1,"pct_acima_800":0.0}},{"co":33421226,"rede":"Pensi","nossa":false,"label":"Pensi - Copacabana","municipio":"Rio de Janeiro","bairro":"COPACABANA","n_inscritos":78,"n_presentes_2dias":75,"taxa_presenca_pct":96.2,"areas":{"CN":{"n":75,"media":569.6,"mediana":563.3,"dp":69.5,"min":390.4,"max":745.8,"p25":533.6,"p75":624.8,"p90":650.6,"pct_acima_500":84.0,"pct_acima_600":32.0,"pct_acima_700":2.7,"pct_acima_800":0.0},"CH":{"n":77,"media":597.4,"mediana":609.6,"dp":68.2,"min":430.1,"max":716.1,"p25":563.7,"p75":641.1,"p90":675.7,"pct_acima_500":88.3,"pct_acima_600":57.1,"pct_acima_700":2.6,"pct_acima_800":0.0},"LC":{"n":77,"media":597.3,"mediana":606.2,"dp":45.6,"min":496.2,"max":678.2,"p25":559.2,"p75":627.6,"p90":650.4,"pct_acima_500":96.1,"pct_acima_600":61.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":75,"media":665.3,"mediana":680.9,"dp":105.0,"min":395.9,"max":905.9,"p25":609.0,"p75":732.4,"p90":789.7,"pct_acima_500":94.7,"pct_acima_600":76.0,"pct_acima_700":38.7,"pct_acima_800":6.7}},"redacao":{"n":76,"media":788.4,"mediana":830.0,"dp":123.2,"min":420.0,"max":960.0,"p25":720.0,"p75":880.0,"p90":900.0,"pct_acima_500":97.4,"pct_acima_600":92.1,"pct_acima_700":77.6,"pct_acima_800":56.6,"comps":{"C1":145.3,"C2":171.8,"C3":147.1,"C4":162.9,"C5":161.3}},"nota_geral":{"n":75,"media":644.7,"mediana":647.1,"dp":60.7,"min":512.6,"max":784.8,"p25":611.3,"p75":686.3,"p90":716.4,"pct_acima_500":100.0,"pct_acima_600":77.3,"pct_acima_700":17.3,"pct_acima_800":0.0}},{"co":33447225,"rede":"AZ","nossa":false,"label":"AZ - Barra da Tijuca","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":184,"n_presentes_2dias":175,"taxa_presenca_pct":95.1,"areas":{"CN":{"n":175,"media":583.0,"mediana":594.1,"dp":82.9,"min":327.7,"max":732.9,"p25":542.4,"p75":636.3,"p90":675.4,"pct_acima_500":82.9,"pct_acima_600":46.3,"pct_acima_700":6.9,"pct_acima_800":0.0},"CH":{"n":177,"media":595.5,"mediana":607.1,"dp":66.5,"min":327.6,"max":710.6,"p25":564.4,"p75":639.6,"p90":668.6,"pct_acima_500":92.1,"pct_acima_600":54.8,"pct_acima_700":1.7,"pct_acima_800":0.0},"LC":{"n":177,"media":599.3,"mediana":601.8,"dp":46.7,"min":391.1,"max":713.5,"p25":574.5,"p75":631.9,"p90":648.1,"pct_acima_500":96.6,"pct_acima_600":52.5,"pct_acima_700":0.6,"pct_acima_800":0.0},"MT":{"n":175,"media":711.2,"mediana":736.1,"dp":103.5,"min":360.5,"max":915.8,"p25":659.8,"p75":781.0,"p90":821.8,"pct_acima_500":96.0,"pct_acima_600":84.6,"pct_acima_700":61.7,"pct_acima_800":16.6}},"redacao":{"n":176,"media":782.8,"mediana":800.0,"dp":125.1,"min":300.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":940.0,"pct_acima_500":98.3,"pct_acima_600":95.5,"pct_acima_700":76.1,"pct_acima_800":52.3,"comps":{"C1":144.7,"C2":163.6,"C3":145.6,"C4":163.3,"C5":165.7}},"nota_geral":{"n":174,"media":654.7,"mediana":662.6,"dp":66.5,"min":425.8,"max":787.1,"p25":611.6,"p75":706.1,"p90":733.7,"pct_acima_500":98.3,"pct_acima_600":79.3,"pct_acima_700":27.6,"pct_acima_800":0.0}}],"bench_municipal":{"Juiz de Fora (MG)":{"municipio":"Juiz de Fora","uf":"MG","n_escolas":22,"n_alunos":1237,"areas":{"CN":{"n":1202,"media":572.4,"mediana":574.4,"dp":79.6,"p25":517.7,"p75":629.0,"pct_500":81.6,"pct_600":38.9,"pct_700":4.7,"pct_800":0.1},"CH":{"n":1214,"media":589.6,"mediana":598.9,"dp":74.3,"p25":550.9,"p75":641.8,"pct_500":88.2,"pct_600":49.6,"pct_700":3.5,"pct_800":0.0},"LC":{"n":1214,"media":593.3,"mediana":599.0,"dp":60.5,"p25":559.8,"p75":633.5,"pct_500":93.8,"pct_600":48.9,"pct_700":2.0,"pct_800":0.0},"MT":{"n":1202,"media":655.7,"mediana":669.6,"dp":122.2,"p25":576.9,"p75":740.8,"pct_500":88.2,"pct_600":69.6,"pct_700":39.4,"pct_800":10.4}},"redacao":{"n":1209,"media":798.9,"mediana":840.0,"dp":127.9,"p25":720.0,"p75":900.0,"pct_500":97.8,"pct_600":91.8,"pct_700":80.0,"pct_800":61.4}},"Rio de Janeiro (RJ)":{"municipio":"Rio de Janeiro","uf":"RJ","n_escolas":417,"n_alunos":14466,"areas":{"CN":{"n":13789,"media":548.6,"mediana":552.2,"dp":82.8,"p25":490.7,"p75":607.9,"pct_500":71.8,"pct_600":28.1,"pct_700":2.6,"pct_800":0.1},"CH":{"n":13982,"media":568.8,"mediana":579.5,"dp":82.7,"p25":520.5,"p75":625.8,"pct_500":80.8,"pct_600":38.9,"pct_700":3.0,"pct_800":0.0},"LC":{"n":13982,"media":580.6,"mediana":586.1,"dp":60.2,"p25":547.0,"p75":620.7,"pct_500":91.0,"pct_600":39.7,"pct_700":1.1,"pct_800":0.0},"MT":{"n":13789,"media":623.5,"mediana":631.1,"dp":133.8,"p25":525.4,"p75":720.7,"pct_500":79.7,"pct_600":58.2,"pct_700":30.8,"pct_800":9.2}},"redacao":{"n":13811,"media":735.5,"mediana":760.0,"dp":148.1,"p25":620.0,"p75":860.0,"pct_500":93.4,"pct_600":82.2,"pct_700":62.7,"pct_800":42.4}},"Duque de Caxias (RJ)":{"municipio":"Duque de Caxias","uf":"RJ","n_escolas":24,"n_alunos":946,"areas":{"CN":{"n":874,"media":519.4,"mediana":523.5,"dp":74.6,"p25":472.1,"p75":569.9,"pct_500":62.5,"pct_600":12.4,"pct_700":0.1,"pct_800":0.0},"CH":{"n":898,"media":537.2,"mediana":548.5,"dp":78.4,"p25":484.4,"p75":594.5,"pct_500":70.5,"pct_600":22.0,"pct_700":0.1,"pct_800":0.0},"LC":{"n":898,"media":559.8,"mediana":564.2,"dp":57.6,"p25":524.3,"p75":599.5,"pct_500":87.3,"pct_600":24.6,"pct_700":0.0,"pct_800":0.0},"MT":{"n":874,"media":562.4,"mediana":567.7,"dp":119.9,"p25":474.4,"p75":649.1,"pct_500":66.7,"pct_600":39.6,"pct_700":13.2,"pct_800":1.9}},"redacao":{"n":882,"media":691.8,"mediana":700.0,"dp":139.7,"p25":600.0,"p75":800.0,"pct_500":91.6,"pct_600":76.5,"pct_700":51.5,"pct_800":28.2}},"Nova Iguaçu (RJ)":{"municipio":"Nova Iguaçu","uf":"RJ","n_escolas":42,"n_alunos":1146,"areas":{"CN":{"n":1053,"media":517.9,"mediana":516.7,"dp":77.1,"p25":465.3,"p75":569.7,"pct_500":58.8,"pct_600":14.0,"pct_700":0.7,"pct_800":0.0},"CH":{"n":1095,"media":535.3,"mediana":543.9,"dp":79.9,"p25":480.2,"p75":595.6,"pct_500":68.0,"pct_600":22.0,"pct_700":0.5,"pct_800":0.0},"LC":{"n":1095,"media":555.7,"mediana":562.8,"dp":59.2,"p25":519.0,"p75":597.8,"pct_500":82.5,"pct_600":23.3,"pct_700":0.0,"pct_800":0.0},"MT":{"n":1053,"media":564.5,"mediana":563.2,"dp":119.8,"p25":472.4,"p75":648.3,"pct_500":68.2,"pct_600":37.6,"pct_700":15.2,"pct_800":2.0}},"redacao":{"n":1071,"media":673.6,"mediana":660.0,"dp":142.2,"p25":560.0,"p75":780.0,"pct_500":89.7,"pct_600":71.0,"pct_700":43.8,"pct_800":23.7}},"São João de Meriti (RJ)":{"municipio":"São João de Meriti","uf":"RJ","n_escolas":11,"n_alunos":454,"areas":{"CN":{"n":418,"media":510.7,"mediana":510.1,"dp":69.9,"p25":462.2,"p75":564.4,"pct_500":54.8,"pct_600":11.2,"pct_700":0.2,"pct_800":0.0},"CH":{"n":433,"media":529.5,"mediana":540.6,"dp":80.9,"p25":485.7,"p75":587.2,"pct_500":69.5,"pct_600":18.9,"pct_700":0.0,"pct_800":0.0},"LC":{"n":433,"media":552.4,"mediana":561.3,"dp":57.6,"p25":519.8,"p75":591.3,"pct_500":83.8,"pct_600":19.9,"pct_700":0.0,"pct_800":0.0},"MT":{"n":418,"media":548.8,"mediana":544.1,"dp":113.3,"p25":459.9,"p75":625.4,"pct_500":66.3,"pct_600":32.3,"pct_700":10.8,"pct_800":1.7}},"redacao":{"n":421,"media":675.2,"mediana":680.0,"dp":145.6,"p25":580.0,"p75":780.0,"pct_500":87.6,"pct_600":71.5,"pct_700":45.6,"pct_800":24.9}},"Porto Alegre (RS)":{"municipio":"Porto Alegre","uf":"RS","n_escolas":72,"n_alunos":3256,"areas":{"CN":{"n":2986,"media":561.1,"mediana":566.0,"dp":79.6,"p25":510.3,"p75":617.4,"pct_500":78.1,"pct_600":33.1,"pct_700":2.9,"pct_800":0.1},"CH":{"n":3061,"media":583.5,"mediana":595.0,"dp":78.2,"p25":545.9,"p75":633.7,"pct_500":86.6,"pct_600":46.7,"pct_700":3.2,"pct_800":0.0},"LC":{"n":3061,"media":598.2,"mediana":605.2,"dp":57.9,"p25":567.5,"p75":636.9,"pct_500":94.4,"pct_600":53.9,"pct_700":1.6,"pct_800":0.0},"MT":{"n":2986,"media":651.7,"mediana":668.4,"dp":126.1,"p25":570.5,"p75":739.9,"pct_500":86.2,"pct_600":69.1,"pct_700":38.9,"pct_800":10.4}},"redacao":{"n":3013,"media":747.0,"pct_600":87.7,"pct_700":67.4,"pct_800":43.2}}},"concorrentes_sem_dados_2025":["Pensi - Recreio 1","Pensi - Icaraí 1","Pensi - Cabo Frio 1","Pensi - Cabo Frio 2","Alfa CEM - Barra da Tijuca 2","Alfa CEM - Recreio 2","Alfa CEM - Recreio 3","pH - Botafogo 2","pH - Icaraí 1","pH - Icaraí 2","pH - São João da Barra"]};
+const PRACAS = [{"titulo":"Freguesia","municipio":"Rio de Janeiro","nossa":33135924,"diretos":[33161011,33180539],"adjacentes":[],"nota":""},{"titulo":"Méier (Metropolitano)","municipio":"Rio de Janeiro","nossa":33071721,"diretos":[33071683,33223203],"adjacentes":[33067813],"nota":""},{"titulo":"Recreio","municipio":"Rio de Janeiro","nossa":33156026,"diretos":[33138028,33161402,33177627,33203431,33188092,33193258,33202532],"adjacentes":[],"nota":""},{"titulo":"Rio 2 (Barra Olímpica)","municipio":"Rio de Janeiro","nossa":33199400,"diretos":[33184720],"adjacentes":[33155852,33447225,33184739,33196273],"nota":"Unidades da Barra da Tijuca exibidas como praças adjacentes."},{"titulo":"Rio 2 Bilíngue","municipio":"Rio de Janeiro","nossa":33187924,"diretos":[33184720],"adjacentes":[33155852,33447225,33184739,33196273],"nota":"A unidade QI - Rio 2 (regular) não registrou participantes no ENEM 2025; a praça é representada pela unidade bilíngue."},{"titulo":"Tijuca (Maracanã)","municipio":"Rio de Janeiro","nossa":33124418,"diretos":[33135827,33166820,33105405,33173990],"adjacentes":[],"nota":""},{"titulo":"Botafogo","municipio":"Rio de Janeiro","nossa":33143331,"diretos":[33110328,33158240,33228604],"adjacentes":[33193118],"nota":"A unidade QI Bilíngue Botafogo foi encerrada para 2026; dados referem-se a 2025."}];
+const REF2024 = {};
+const HIST = {"anos":["2024","2025"],"redes":{"QI Bilíngue":{"2024":{"n":256,"CN":565.1,"CH":601.6,"LC":575.5,"MT":654.9,"RD":828.4,"NG":645.5},"2025":{"n":237,"CN":567.7,"CH":588.2,"LC":593.3,"MT":644.2,"RD":807.0,"NG":641.4}},"Pensi":{"2024":{"n":1522,"CN":568.4,"CH":596.7,"LC":579.3,"MT":665.8,"RD":803.5,"NG":643.3},"2025":{"n":1447,"CN":568.6,"CH":585.9,"LC":591.4,"MT":667.3,"RD":774.4,"NG":638.5}},"Alfa CEM":{"2024":{"n":80,"CN":609.3,"CH":642.7,"LC":622.5,"MT":783.1,"RD":911.0,"NG":713.7},"2025":{"n":82,"CN":630.5,"CH":646.2,"LC":636.7,"MT":789.1,"RD":878.8,"NG":716.3}},"pH":{"2024":{"n":763,"CN":597.1,"CH":625.6,"LC":603.2,"MT":711.3,"RD":862.5,"NG":680.4},"2025":{"n":843,"CN":592.1,"CH":605.2,"LC":604.8,"MT":690.0,"RD":827.9,"NG":664.8}},"AZ":{"2024":{"n":378,"CN":579.4,"CH":611.5,"LC":594.8,"MT":688.5,"RD":842.7,"NG":664.5},"2025":{"n":504,"CN":582.2,"CH":596.9,"LC":599.2,"MT":694.6,"RD":798.0,"NG":655.4}}},"privada_municipal":{"Rio de Janeiro":{"2024":{"n":14800,"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7,"NG":617.2},"2025":{"n":14545,"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5,"NG":613.0}}},"privada_brasil":{"2024":{"NG":615.9,"n":243273,"CN":549.0,"CH":569.5,"LC":564.6,"MT":616.2,"RD":772.8},"2025":{"NG":612.7,"n":249577,"CN":551.9,"CH":566.2,"LC":577.6,"MT":620.3,"RD":738.9}},"top100":{"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7,"NG":715.2,"n_escolas":100},"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0,"NG":720.3,"n_escolas":100}}};
+const MARCA = "QI Bilíngue";
+const CURTO = "QI";
+const CORES = {"QI Bilíngue": "#6d28d9", "Pensi": "#1d4ed8", "Alfa CEM": "#0f766e", "pH": "#be123c", "AZ": "#b45309"};
+const CINZA = "#334155";
+const AREAS5 = ["CN","CH","LC","MT","RD"];
+const REDES = ["QI Bilíngue", "Pensi", "Alfa CEM", "pH", "AZ"];
+const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
+
+const fmt = v => (v==null || isNaN(v)) ? "-" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmtInt = v => v==null ? "-" : v.toLocaleString("pt-BR");
+const areaStat = (u,a) => a==="RD" ? (u.redacao||{}) : ((u.areas||{})[a]||{});
+const ngOf = u => (u.nota_geral||{}).media ?? null;
+const dot = rede => '<span class="rede-dot" style="background:'+CORES[rede]+'"></span>';
+const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
+  : '<span class="'+(d>=0?'delta-pos':'delta-neg')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+'</span>';
+
+// ---------- Cards do topo ----------
+(function(){
+  const r = DATA.redes;
+  const alunos = DATA.unidades.reduce((s,u)=>s+u.n_inscritos,0);
+  const nossas = DATA.unidades.filter(u=>u.nossa).length;
+  const cards = [
+    {t:"Unidades comparadas", v: fmtInt(DATA.unidades.length), s: nossas+" "+CURTO+" · "+(DATA.unidades.length-nossas)+" concorrentes"},
+    {t:"Alunos analisados", v: fmtInt(alunos), s: "inscritos no ENEM 2025"},
+  ];
+  REDES.forEach(rd => {
+    const x = r[rd];
+    cards.push({t: rd, v: fmt((x.nota_geral||{}).media), dot: CORES[rd],
+      s: x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+  });
+  document.getElementById("statsRow").innerHTML = cards.map(c =>
+    '<div class="stat"><small>'+(c.dot?'<span class="dot" style="background:'+c.dot+'"></span>':'')+c.t+
+    '</small><strong>'+c.v+'</strong><span>'+c.s+'</span></div>').join("");
+})();
+
+// ---------- Panorama ----------
+new Chart(document.getElementById("chartPanorama"), {
+  type: "bar",
+  data: { labels: AREAS5, datasets: REDES.map(rd => ({
+    label: rd, backgroundColor: CORES[rd]+"cc", borderColor: CORES[rd],
+    borderRadius: 6, borderSkipped: false,
+    data: AREAS5.map(a => a==="RD" ? DATA.redes[rd].redacao.media : DATA.redes[rd].areas[a].media)
+  })) },
+  options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+    scales: { x:{ grid:{ display:false } },
+      y:{ min:400, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+});
+(function(){
+  const rows = REDES.map(rd => {
+    const x = DATA.redes[rd];
+    return "<tr><td>"+dot(rd)+rd+"</td><td>"+x.n_unidades+"</td><td>"+fmtInt(x.n_inscritos)+"</td><td>"+
+      fmt(x.taxa_presenca_pct)+"%</td><td><strong>"+fmt((x.nota_geral||{}).media)+"</strong></td><td>"+
+      fmt(x.areas.MT.pct_acima_700)+"%</td><td>"+fmt(x.redacao.pct_acima_800)+"%</td></tr>";
+  }).join("");
+  document.getElementById("tblRedes").innerHTML =
+    "<thead><tr><th>Rede</th><th>Un.</th><th>Alunos</th><th>Presença</th><th>NG</th><th>MT ≥700</th><th>RD ≥800</th></tr></thead><tbody>"+rows+"</tbody>";
+  const ngRede = r => (DATA.redes[r].nota_geral||{}).media||0;
+  const rel = d => d>=0 ? fmt(d)+" acima" : fmt(-d)+" abaixo";
+  const lider = REDES.reduce((a,b)=> ngRede(b)>ngRede(a) ? b : a);
+  const maiores = REDES.slice(1).sort((a,b)=>DATA.redes[b].n_inscritos-DATA.redes[a].n_inscritos).slice(0,2);
+  document.getElementById("obsPanorama").textContent =
+    "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
+    rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
+    (lider===MARCA ? CURTO : lider) + " lidera o grupo.";
+})();
+
+// ---------- Preenchimentos dos cards laterais ----------
+(function(){
+  const melhor = rede => DATA.unidades
+    .filter(u => u.rede===rede && u.n_inscritos>=30 && ngOf(u)!=null)
+    .sort((a,b)=>ngOf(b)-ngOf(a))[0];
+  const labelMun = u => u.label + (u.label.includes(u.municipio) ? "" : " · "+u.municipio);
+  document.getElementById("fillRedes").innerHTML =
+    '<div class="mini-head">Melhor unidade de cada rede · 30+ alunos</div>' +
+    REDES.map(rd => { const u = melhor(rd); return u ?
+      '<div class="mini-row"><span>'+dot(rd)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
+      '</span><strong>'+fmt(ngOf(u))+'</strong></div>' : ''; }).join("");
+
+  const comRD = DATA.unidades.filter(u => u.n_inscritos>=30 && (u.redacao||{}).media!=null)
+    .sort((a,b)=>b.redacao.media-a.redacao.media);
+  const top3 = comRD.slice(0,3);
+  const melhorNossa = comRD.find(u=>u.nossa);
+  const pos = comRD.indexOf(melhorNossa)+1;
+  document.getElementById("fillRedacao").innerHTML =
+    '<div class="mini-head">Referências em redação · 30+ alunos</div>' +
+    top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
+      '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
+    (melhorNossa && !top3.includes(melhorNossa) ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
+      melhorNossa.label+' · melhor do '+CURTO+' ('+pos+'ª de '+comRD.length+')</span><strong>'+
+      fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
+})();
+
+// ---------- Ranking unificado ----------
+let fRede = "*", fMun = "*", fN30 = false, sortKey = "ng", sortDir = -1;
+const colDefs = [
+  {k:"label", t:"Unidade"}, {k:"municipio", t:"Município"}, {k:"n", t:"Alunos"},
+  {k:"CN", t:"CN"}, {k:"CH", t:"CH"}, {k:"LC", t:"LC"}, {k:"MT", t:"MT"}, {k:"RD", t:"RD"}, {k:"ng", t:"NG"}
+];
+const valOf = (u,k) => k==="label" ? u.label : k==="municipio" ? u.municipio : k==="n" ? u.n_inscritos
+  : k==="ng" ? ngOf(u) : (areaStat(u,k).media ?? null);
+
+function renderRanking(){
+  let lista = DATA.unidades.filter(u =>
+    (fRede==="*" || u.rede===fRede) && (fMun==="*" || u.municipio===fMun) && (!fN30 || u.n_inscritos>=30));
+  lista.sort((a,b)=>{
+    const va = valOf(a,sortKey), vb = valOf(b,sortKey);
+    if (va==null && vb==null) return 0; if (va==null) return 1; if (vb==null) return -1;
+    return (typeof va==="string" ? va.localeCompare(vb,"pt-BR") : va-vb) * sortDir;
+  });
+  const head = "<thead><tr>"+colDefs.map(c =>
+    '<th class="sortable'+(sortKey===c.k ? (sortDir<0?' sorted-desc':' sorted-asc') : '')+'" data-k="'+c.k+'">'+c.t+"</th>").join("")+"<th>Pos.</th></tr></thead>";
+  const rows = lista.map((u,i) => {
+    const peq = ((u.nota_geral||{}).n ?? 0) < 30 ? " †" : "";
+    return '<tr class="'+(u.nossa?'nossa-row':'')+'"><td>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+
+      u.label+peq+"</td><td>"+u.municipio+"</td><td>"+fmtInt(u.n_inscritos)+"</td>"+
+      ["CN","CH","LC","MT","RD"].map(a=>"<td>"+fmt(areaStat(u,a).media)+"</td>").join("")+
+      "<td><strong>"+fmt(ngOf(u))+"</strong></td><td>"+(i+1)+"º</td></tr>";
+  }).join("");
+  document.getElementById("tblRanking").innerHTML = head+"<tbody>"+rows+"</tbody>";
+  document.querySelectorAll("#tblRanking th.sortable").forEach(th => th.onclick = () => {
+    const k = th.dataset.k;
+    if (sortKey===k) sortDir *= -1; else { sortKey = k; sortDir = (k==="label"||k==="municipio") ? 1 : -1; }
+    renderRanking();
+  });
+}
+document.querySelectorAll("#filtrosRanking .chip").forEach(ch => ch.onclick = () => {
+  fRede = ch.dataset.rede;
+  document.querySelectorAll("#filtrosRanking .chip").forEach(c => { c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? (CORES[c.dataset.rede]||"#334155") : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155"; });
+  renderRanking();
+});
+(function(){
+  const muns = [...new Set(DATA.unidades.map(u=>u.municipio))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const sel = document.getElementById("filtroMun");
+  muns.forEach(m => sel.insertAdjacentHTML("beforeend", '<option value="'+m+'">'+m+"</option>"));
+  sel.onchange = () => { fMun = sel.value; renderRanking(); };
+  const chk = document.getElementById("filtroN30");
+  chk.onchange = () => { fN30 = chk.checked; renderRanking(); };
+  // o browser pode restaurar estado do formulário no reload; sincroniza antes do 1º render
+  fMun = sel.value; fN30 = chk.checked;
+  document.querySelector('#filtrosRanking .chip[data-rede="*"]').click();
+})();
+
+// ---------- Confronto direto ----------
+let chConfAreas = null, chConfComps = null;
+const benchByMun = {};
+Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
+
+(function(){
+  const selA = document.getElementById("selA"), selB = document.getElementById("selB");
+  DATA.unidades.filter(u=>u.nossa).forEach(u =>
+    selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+u.label+" · "+u.municipio+"</option>"));
+  REDES.forEach(rd => {
+    const grupo = DATA.unidades.filter(u=>u.rede===rd);
+    if (!grupo.length) return;
+    const og = document.createElement("optgroup"); og.label = rd;
+    grupo.sort((a,b)=>(ngOf(b)||0)-(ngOf(a)||0)).forEach(u => {
+      const o = document.createElement("option"); o.value = u.co;
+      o.textContent = u.label+" · "+u.municipio+" (NG "+fmt(ngOf(u))+")";
+      og.appendChild(o);
+    });
+    selB.appendChild(og);
+  });
+  selA.value = "33135924";
+  if (!byCo[selA.value]) selA.selectedIndex = 0;
+  selB.value = "33161011";
+  if (!byCo[selB.value]) { const o = selB.querySelector("optgroup option"); if (o) selB.value = o.value; }
+  selA.onchange = selB.onchange = renderConfronto;
+  renderConfronto();
+})();
+
+function renderConfronto(){
+  const A = byCo[document.getElementById("selA").value];
+  const B = byCo[document.getElementById("selB").value];
+  const ngA = ngOf(A), ngB = ngOf(B), d = (ngA!=null && ngB!=null) ? ngA-ngB : null;
+  document.getElementById("placar").innerHTML =
+    '<div><div class="num" style="color:'+CORES[A.rede]+'">'+fmt(ngA)+'</div><span class="who">'+A.label+"</span></div>"+
+    '<div class="vs">NG<br><span class="badge-delta" style="background:'+(d>=0?"#15803d":"#b91c1c")+'">'+
+      (d==null?"-":(d>=0?"+":"−")+fmt(Math.abs(d)))+"</span></div>"+
+    '<div><div class="num" style="color:'+CORES[B.rede]+'">'+fmt(ngB)+'</div><span class="who">'+B.label+"</span></div>";
+
+  const bench = benchByMun[A.municipio];
+  document.getElementById("subConfArea").textContent =
+    bench ? "Linha cinza = rede privada de "+A.municipio+" ("+fmtInt(bench.n_alunos)+" alunos)" : "Média entre presentes";
+
+  const dsets = [
+    { label: A.label+" ★", backgroundColor: CORES[A.rede]+"cc", borderColor: CORES[A.rede],
+      borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(A,a).media ?? null) },
+    { label: B.label, backgroundColor: CORES[B.rede]+"cc", borderColor: CORES[B.rede],
+      borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(B,a).media ?? null) },
+  ];
+  if (bench) dsets.push({ label:"Privada "+A.municipio, type:"line", borderColor:CINZA, borderWidth:2,
+    borderDash:[6,4], pointRadius:3, pointBackgroundColor:CINZA, fill:false,
+    data: AREAS5.map(a => a==="RD" ? bench.redacao.media : bench.areas[a].media) });
+  if (chConfAreas) chConfAreas.destroy();
+  chConfAreas = new Chart(document.getElementById("chartConfAreas"), {
+    type:"bar", data:{ labels:AREAS5, datasets:dsets },
+    options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ min:400, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+
+  const compsA = (A.redacao||{}).comps||{}, compsB = (B.redacao||{}).comps||{};
+  if (chConfComps) chConfComps.destroy();
+  chConfComps = new Chart(document.getElementById("chartConfComps"), {
+    type:"bar", data:{ labels:["C1","C2","C3","C4","C5"], datasets:[
+      { label:A.label+" ★", backgroundColor:CORES[A.rede]+"cc", borderColor:CORES[A.rede], borderRadius:6, borderSkipped:false,
+        data:["C1","C2","C3","C4","C5"].map(c=>compsA[c] ?? null) },
+      { label:B.label, backgroundColor:CORES[B.rede]+"cc", borderColor:CORES[B.rede], borderRadius:6, borderSkipped:false,
+        data:["C1","C2","C3","C4","C5"].map(c=>compsB[c] ?? null) } ] },
+    options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+
+  const corA = h => '<span style="color:'+CORES[A.rede]+';font-weight:600">'+h+"</span>";
+  const corB = h => '<span style="color:'+CORES[B.rede]+';font-weight:600">'+h+"</span>";
+  const par = (va, vb, suf) => corA(fmt(va)+(va!=null?suf:"")) + " × " + corB(fmt(vb)+(vb!=null?suf:""));
+  const linhas = [["NG", u=>u.nota_geral||{}]].concat(AREAS5.map(a => [a, u=>areaStat(u,a)]));
+  const rows = linhas.map(([nome, get]) => {
+    const sa = get(A), sb = get(B);
+    const dd = (sa.media!=null && sb.media!=null) ? sa.media-sb.media : null;
+    return "<tr><td><strong>"+nome+"</strong></td><td>"+par(sa.media, sb.media, "")+"</td><td>"+deltaHtml(dd)+
+      "</td><td>"+par(sa.mediana, sb.mediana, "")+"</td><td>"+par(sa.p90, sb.p90, "")+
+      "</td><td>"+par(sa.pct_acima_600, sb.pct_acima_600, "%")+"</td><td>"+
+      par(sa.pct_acima_700, sb.pct_acima_700, "%")+"</td></tr>";
+  }).join("");
+  document.getElementById("tblConfronto").innerHTML =
+    "<thead><tr><th></th><th>Média</th><th>Δ</th><th>Mediana</th>"+
+    "<th>P90</th><th>≥600</th><th>≥700</th></tr></thead><tbody>"+rows+
+    '</tbody><tfoot><tr><td colspan="7" style="text-align:left;color:#64748b;font-size:12px;border:0;padding-top:10px">'+
+    "Cada par: "+corA("★ "+A.label)+" × "+corB(B.label)+" · Δ = média da unidade ★ menos o concorrente · Alunos: "+
+    corA(fmtInt(A.n_inscritos))+" ("+fmt(A.taxa_presenca_pct)+"% presença) × "+
+    corB(fmtInt(B.n_inscritos))+" ("+fmt(B.taxa_presenca_pct)+"% presença)<br>"+
+    "Mediana = nota que divide a turma ao meio · P90 = nota superada apenas pelos 10% melhores alunos "+
+    "· ≥600 e ≥700 = % dos alunos que atingem esse patamar</td></tr></tfoot>";
+}
+
+// ---------- Batalha territorial ----------
+(function(){
+  const grid = document.getElementById("pracasGrid");
+  grid.innerHTML = PRACAS.map(p => {
+    const nossa = byCo[p.nossa];
+    if (!nossa) return "";
+    const rivais = p.diretos.map(co=>({u:byCo[co],adj:false})).concat(p.adjacentes.map(co=>({u:byCo[co],adj:true})))
+      .filter(x=>x.u);
+    const refs = (p.ref2024||[]).map(co=>REF2024[co]).filter(Boolean);
+    const ngN = ngOf(nossa);
+    let corpo;
+    if (!rivais.length && !refs.length) {
+      corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
+    } else {
+      const linhas = [{u:nossa, nossa:true, adj:false}].concat(rivais.map(x=>({u:x.u, nossa:false, adj:x.adj})));
+      const val = (u,m) => m==="NG" ? ngOf(u) : areaStat(u,m).media;
+      const best = {};
+      ["NG","MT","RD"].forEach(m => best[m] = Math.max(...linhas.map(l=>val(l.u,m)).filter(v=>v!=null)));
+      const cel = (u,m) => { const v = val(u,m);
+        return "<td"+(v!=null && v===best[m] ? ' style="font-weight:800"' : "")+">"+fmt(v)+"</td>"; };
+      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th></tr></thead><tbody>'+
+        linhas.map(l => '<tr class="'+(l.nossa?'nossa-row':'')+'"><td>'+dot(l.u.rede)+(l.nossa?'<span class="star">★ </span>':'')+
+          l.u.label+(l.u.n_inscritos<30?' †':'')+(l.adj?'<span class="tag-adj">ADJACENTE</span>':'')+"</td><td>"+
+          fmtInt(l.u.n_inscritos)+"</td>"+cel(l.u,"NG")+cel(l.u,"MT")+cel(l.u,"RD")+"</tr>").join("")+
+        refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.label.split(" - ")[0])+r.label+
+          '<span class="tag-adj">ENEM 2024</span></td><td>'+fmtInt(r.n_inscritos)+"</td><td>"+fmt(r.ng)+
+          "</td><td>"+fmt(r.mt)+"</td><td>"+fmt(r.rd)+"</td></tr>").join("")+
+        "</tbody></table></div>";
+      if (rivais.length) {
+        const ord = linhas.filter(l=>val(l.u,"NG")!=null).sort((a,b)=>val(b.u,"NG")-val(a.u,"NG"));
+        const lider = ord[0];
+        const peq = u => u.n_inscritos<30 ? " †" : "";
+        if (lider.nossa) {
+          const vice = ord[1];
+          corpo += '<p class="verdict" style="color:var(--pos)">O '+CURTO+' lidera a praça em NG, '+
+            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente do '+vice.u.label+peq(vice.u)+'.</p>';
+        } else {
+          corpo += '<p class="verdict" style="color:var(--neg)">O '+lider.u.label+peq(lider.u)+
+            ' lidera a praça em NG; o '+CURTO+' está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
+        }
+      }
+    }
+    return '<div class="card praca"><h4>'+p.titulo+'</h4><div class="mun">'+p.municipio+
+      " · médias ENEM 2025 · melhor valor da praça em negrito · † menos de 30 alunos</div>"+corpo+
+      (p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
+  }).join("");
+
+  // Consolidado por praça (tabela expansível)
+  const peqTag = u => u.n_inscritos<30 ? " †" : "";
+  const consol = PRACAS.filter(p=>byCo[p.nossa]).map(p => {
+    const nossa = byCo[p.nossa];
+    const rivaisU = p.diretos.concat(p.adjacentes).map(co=>byCo[co]).filter(u=>u && ngOf(u)!=null);
+    const ngN = ngOf(nossa);
+    if (!rivaisU.length) return {p, nossa, ngN, melhor:null, diff:null};
+    const melhor = [...rivaisU].sort((a,b)=>ngOf(b)-ngOf(a))[0];
+    return {p, nossa, ngN, melhor, diff: ngN-ngOf(melhor)};
+  }).sort((a,b) => (b.diff==null?-1e9:b.diff) - (a.diff==null?-1e9:a.diff));
+  document.getElementById("tblConsol").innerHTML =
+    "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th><th>Melhor concorrente</th><th>NG conc.</th><th>Situação</th></tr></thead><tbody>"+
+    consol.map(c => {
+      let sit, conc, ngc;
+      if (c.melhor==null) {
+        sit = '<span class="delta-neutro">única com dados 2025 na praça</span>'; conc = "-"; ngc = "-";
+      } else {
+        conc = dot(c.melhor.rede)+c.melhor.label+peqTag(c.melhor);
+        ngc = fmt(ngOf(c.melhor));
+        sit = c.diff>=0
+          ? '<span class="delta-pos">à frente por '+fmt(c.diff)+'</span>'
+          : '<span class="delta-neg">atrás por '+fmt(-c.diff)+'</span>';
+      }
+      return "<tr><td><strong>"+c.p.titulo+"</strong></td><td>"+c.p.municipio+"</td><td>"+
+        fmtInt(c.nossa.n_inscritos)+"</td><td><strong>"+fmt(c.ngN)+"</strong></td><td>"+conc+
+        "</td><td>"+ngc+"</td><td>"+sit+"</td></tr>";
+    }).join("")+"</tbody>";
+})();
+
+// ---------- Evolução histórica ----------
+let histMetric = "NG", chartHist = null;
+function renderHist(){
+  const anos = ["2024", "2025"];
+  const munSel = document.getElementById("histMun");
+  const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
+    data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
+  if (histMetric === "NG") {
+    // NG é leitura de rede: régua nacional, sem recorte municipal
+    munSel.style.display = "none";
+    series.push({label: "Privada Brasil", cor: CINZA, dash: [],
+      data: anos.map(a => ((HIST.privada_brasil||{})[a]||{}).NG ?? null)});
+  } else {
+    munSel.style.display = "";
+    const mun = munSel.value;
+    series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+      data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  }
+  series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
+    data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
+  if (chartHist) chartHist.destroy();
+  chartHist = new Chart(document.getElementById("chartHist"), {
+    type: "line",
+    data: { labels: anos, datasets: series.map(s => ({label: s.label, data: s.data,
+      borderColor: s.cor, backgroundColor: s.cor, borderDash: s.dash, borderWidth: 2.5,
+      pointRadius: 3.5, pointBackgroundColor: s.cor, spanGaps: false, fill: false, tension: .15})) },
+    options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+  document.getElementById("tblHist").innerHTML =
+    "<thead><tr><th>Série</th>"+anos.map(a=>"<th>"+a+"</th>").join("")+
+    "<th>Variação 24→25</th><th>%</th></tr></thead><tbody>"+
+    series.map(s => {
+      const v24 = s.data[0], v25 = s.data[1];
+      const dv = (v24!=null && v25!=null) ? v25-v24 : null;
+      const pc = (dv!=null && v24) ? dv/v24*100 : null;
+      const cls = dv==null ? "delta-neutro" : (dv>=0 ? "delta-pos" : "delta-neg");
+      return '<tr><td><span class="rede-dot" style="background:'+s.cor+'"></span>'+s.label+"</td>"+
+        s.data.map(v=>"<td>"+fmt(v)+"</td>").join("")+
+        '<td><span class="'+cls+'">'+(dv==null?"-":(dv>=0?"+":"−")+fmt(Math.abs(dv)))+"</span></td>"+
+        '<td><span class="'+cls+'">'+(pc==null?"-":(pc>=0?"+":"−")+fmt(Math.abs(pc))+"%")+"</span></td></tr>";
+    }).join("")+"</tbody>";
+}
+document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
+  histMetric = ch.dataset.m;
+  document.querySelectorAll(".hm-chip").forEach(c => {
+    c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? CORES[MARCA] : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155";
+  });
+  renderHist();
+});
+document.getElementById("histMun").onchange = renderHist;
+document.querySelector('.hm-chip[data-m="NG"]').click();
+
+// ---------- Redação por rede ----------
+new Chart(document.getElementById("chartRedacaoRedes"), {
+  type:"bar",
+  data:{ labels:["C1","C2","C3","C4","C5"], datasets: REDES.map(rd => ({
+    label: rd, backgroundColor: CORES[rd]+"cc", borderColor: CORES[rd], borderRadius:6, borderSkipped:false,
+    data: ["C1","C2","C3","C4","C5"].map(c => DATA.redes[rd].redacao.comps[c])
+  })) },
+  options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+    scales:{ x:{ grid:{ display:false } },
+      y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+});
+</script>
+</body>
+</html>
