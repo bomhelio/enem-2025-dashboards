@@ -107,6 +107,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   .duo { display:grid; grid-template-columns:1.25fr 1fr; gap:14px; align-items:stretch; }
   @media (max-width:900px){ .duo { grid-template-columns:1fr; } }
   .duo > .card { display:flex; flex-direction:column; }
+  .duo > .card .chart-wrap { flex:1 1 auto; height:auto; min-height:300px; }
   .card-fill { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); }
   .mini-head { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; margin-bottom:6px; }
   .mini-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid #eef2f6; }
