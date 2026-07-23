@@ -1,28 +1,27 @@
 """
-12_analise_concorrencia.py
+12_analise_concorrencia.py [marca]
 Consolida estatísticas unidade a unidade para a tela de inteligência
-competitiva (piloto Matriz Educação vs Elite e Santa Mônica).
+competitiva da marca (concorrencia_config.py).
 
 Usa a MESMA estatisticas_area do 02_quantitativo.py → números idênticos
 aos dos dashboards de marca.
 
-Entradas (output/): Matriz_Educação_resultados.csv, Concorrentes_resultados.csv,
-concorrentes_unidades.json, mapa_escola_bairro.json, benchmark_municipal.json
-Saída: output/concorrencia_matriz.json
+Uso: python 12_analise_concorrencia.py "QI Bilíngue"   (default: Matriz Educação)
+Saída: output/concorrencia_{slug}.json
 """
 
 import importlib
 import json
 import os
+import sys
 import pandas as pd
 
 from config import OUTPUT_DIR
+from concorrencia_config import get_marca
 
 quant = importlib.import_module("02_quantitativo")
 estatisticas_area = quant.estatisticas_area
 AREAS = list(quant.AREAS)  # ["CN", "CH", "LC", "MT"]
-
-MARCA = "Matriz Educação"
 
 
 def stats_df(df: pd.DataFrame) -> dict:
@@ -59,13 +58,15 @@ def stats_df(df: pd.DataFrame) -> dict:
     return r
 
 
-def main():
+def main(marca: str, cfg: dict):
+    slug = cfg["slug"]
     mapa = json.load(open(os.path.join(OUTPUT_DIR, "mapa_escola_bairro.json"), encoding="utf-8"))
-    conc_meta = json.load(open(os.path.join(OUTPUT_DIR, "concorrentes_unidades.json"), encoding="utf-8"))
+    conc_meta = json.load(open(os.path.join(OUTPUT_DIR, f"concorrentes_unidades_{slug}.json"),
+                               encoding="utf-8"))
 
-    df_nossa = pd.read_csv(os.path.join(OUTPUT_DIR, f"{MARCA.replace(' ', '_')}_resultados.csv"),
+    df_nossa = pd.read_csv(os.path.join(OUTPUT_DIR, f"{marca.replace(' ', '_')}_resultados.csv"),
                            dtype={"CO_ESCOLA": "Int64"})
-    df_conc = pd.read_csv(os.path.join(OUTPUT_DIR, "Concorrentes_resultados.csv"),
+    df_conc = pd.read_csv(os.path.join(OUTPUT_DIR, f"Concorrentes_{slug}_resultados.csv"),
                           dtype={"CO_ESCOLA": "Int64"})
 
     unidades = []
@@ -75,7 +76,7 @@ def main():
         info = mapa.get(str(co), {})
         unidades.append({
             "co": int(co),
-            "rede": MARCA,
+            "rede": marca,
             "nossa": True,
             "label": info.get("label", f"Escola {co}").replace("—", "-"),
             "municipio": info.get("municipio", ""),
@@ -98,12 +99,12 @@ def main():
             **stats_df(grupo),
         })
 
-    redes = {MARCA: stats_df(df_nossa)}
-    for rede in sorted({m["rede"] for m in conc_meta.values()}):
+    redes = {marca: stats_df(df_nossa)}
+    for rede in cfg["concorrentes"]:
         codigos = [int(co) for co, m in conc_meta.items() if m["rede"] == rede]
         redes[rede] = stats_df(df_conc[df_conc["CO_ESCOLA"].isin(codigos)])
         redes[rede]["n_unidades"] = int(df_conc[df_conc["CO_ESCOLA"].isin(codigos)]["CO_ESCOLA"].nunique())
-    redes[MARCA]["n_unidades"] = int(df_nossa["CO_ESCOLA"].nunique())
+    redes[marca]["n_unidades"] = int(df_nossa["CO_ESCOLA"].nunique())
 
     bench_path = os.path.join(OUTPUT_DIR, "benchmark_municipal.json")
     bench_raw = json.load(open(bench_path, encoding="utf-8")) if os.path.exists(bench_path) else {}
@@ -114,13 +115,13 @@ def main():
     sem_dados = [m["label"].replace("—", "-") for m in conc_meta.values() if not m["tem_dados_2025"]]
 
     saida = {
-        "marca": MARCA,
+        "marca": marca,
         "redes": redes,
         "unidades": unidades,
         "bench_municipal": bench,
         "concorrentes_sem_dados_2025": sem_dados,
     }
-    destino = os.path.join(OUTPUT_DIR, "concorrencia_matriz.json")
+    destino = os.path.join(OUTPUT_DIR, f"concorrencia_{slug}.json")
     with open(destino, "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
     print(f"{len(unidades)} unidades ({sum(1 for u in unidades if u['nossa'])} nossas) -> {destino}")
@@ -130,4 +131,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    marca, cfg = get_marca(sys.argv)
+    main(marca, cfg)
