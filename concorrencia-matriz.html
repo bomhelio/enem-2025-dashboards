@@ -173,7 +173,6 @@ const fmt = v => (v==null || isNaN(v)) ? "—" : v.toLocaleString("pt-BR",{minim
 const fmtInt = v => v==null ? "—" : v.toLocaleString("pt-BR");
 const areaStat = (u,a) => a==="RD" ? (u.redacao||{}) : ((u.areas||{})[a]||{});
 const ngOf = u => (u.nota_geral||{}).media ?? null;
-const nomeCurto = u => u.label.replace("Matriz — ","").replace("Elite — ","").replace("Santa Mônica — ","");
 const dot = rede => '<span class="rede-dot" style="background:'+CORES[rede]+'"></span>';
 const deltaHtml = d => d==null ? '<span class="delta-neutro">—</span>'
   : '<span class="'+(d>=0?'delta-pos':'delta-neg')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+'</span>';
@@ -280,14 +279,14 @@ Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
 (function(){
   const selA = document.getElementById("selA"), selB = document.getElementById("selB");
   DATA.unidades.filter(u=>u.nossa).forEach(u =>
-    selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+nomeCurto(u)+" · "+u.municipio+"</option>"));
+    selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+u.label+" · "+u.municipio+"</option>"));
   REDES.forEach(rd => {
     const grupo = DATA.unidades.filter(u=>u.rede===rd);
     if (!grupo.length) return;
     const og = document.createElement("optgroup"); og.label = rd;
     grupo.sort((a,b)=>(ngOf(b)||0)-(ngOf(a)||0)).forEach(u => {
       const o = document.createElement("option"); o.value = u.co;
-      o.textContent = nomeCurto(u)+" · "+u.municipio+" (NG "+fmt(ngOf(u))+")";
+      o.textContent = u.label+" · "+u.municipio+" (NG "+fmt(ngOf(u))+")";
       og.appendChild(o);
     });
     selB.appendChild(og);
