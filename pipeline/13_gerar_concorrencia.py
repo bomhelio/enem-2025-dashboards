@@ -102,6 +102,12 @@ TEMPLATE = r"""<!DOCTYPE html>
   .card .sub { margin:0 0 12px; color:var(--muted); font-size:12.5px; }
   .duo { display:grid; grid-template-columns:1.25fr 1fr; gap:14px; align-items:stretch; }
   @media (max-width:900px){ .duo { grid-template-columns:1fr; } }
+  .duo > .card { display:flex; flex-direction:column; }
+  .card-fill { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); }
+  .mini-head { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; margin-bottom:6px; }
+  .mini-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid #eef2f6; }
+  .mini-row:last-child { border-bottom:0; }
+  .mini-row strong { font-variant-numeric:tabular-nums; }
   .chart-wrap { position:relative; height:300px; }
   table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
   th, td { padding:7px 9px; text-align:right; border-bottom:1px solid #eef2f6; white-space:nowrap; }
@@ -168,6 +174,7 @@ TEMPLATE = r"""<!DOCTYPE html>
       <p class="sub">Rede completa · NG = média das 5 áreas (presença completa + redação válida)</p>
       <div class="tbl-scroll"><table id="tblRedes"></table></div>
       <p class="obs" id="obsPanorama"></p>
+      <div class="card-fill" id="fillRedes"></div>
     </div>
   </div>
 
@@ -221,6 +228,7 @@ TEMPLATE = r"""<!DOCTYPE html>
       <h3>Leitura estratégica</h3>
       <p class="sub">Síntese automática dos microdados</p>
       <p style="font-size:13.5px;line-height:1.65;margin:0">__INSIGHT_RED__</p>
+      <div class="card-fill" id="fillRedacao"></div>
     </div>
   </div>
 </main>
@@ -293,6 +301,32 @@ new Chart(document.getElementById("chartPanorama"), {
   document.getElementById("obsPanorama").textContent =
     "A Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
     " do Elite na nota geral de rede; o Santa Mônica lidera entre os três, puxado pela Redação.";
+})();
+
+// ---------- Preenchimentos dos cards laterais ----------
+(function(){
+  const melhor = rede => DATA.unidades
+    .filter(u => u.rede===rede && u.n_inscritos>=30 && ngOf(u)!=null)
+    .sort((a,b)=>ngOf(b)-ngOf(a))[0];
+  const labelMun = u => u.label + (u.label.includes(u.municipio) ? "" : " · "+u.municipio);
+  document.getElementById("fillRedes").innerHTML =
+    '<div class="mini-head">Melhor unidade de cada rede · 30+ alunos</div>' +
+    REDES.map(rd => { const u = melhor(rd); return u ?
+      '<div class="mini-row"><span>'+dot(rd)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
+      '</span><strong>'+fmt(ngOf(u))+'</strong></div>' : ''; }).join("");
+
+  const comRD = DATA.unidades.filter(u => u.n_inscritos>=30 && (u.redacao||{}).media!=null)
+    .sort((a,b)=>b.redacao.media-a.redacao.media);
+  const top3 = comRD.slice(0,3);
+  const melhorNossa = comRD.find(u=>u.nossa);
+  const pos = comRD.indexOf(melhorNossa)+1;
+  document.getElementById("fillRedacao").innerHTML =
+    '<div class="mini-head">Referências em redação · 30+ alunos</div>' +
+    top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+labelMun(u)+
+      '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
+    (melhorNossa ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
+      melhorNossa.label+' · melhor Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
+      fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
 })();
 
 // ---------- Ranking unificado ----------
