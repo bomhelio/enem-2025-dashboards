@@ -61,10 +61,10 @@ def _insight_redacao(data: dict) -> str:
     baixas = sorted(m, key=lambda c: m[c] or 0)[:2]
     baixas_txt = " e ".join(f"{c} ({nomes[c]}: {_pt(m[c])})" for c in baixas)
     return (
-        f"O Santa Mônica lidera a redação com folga (média {_pt(med_s)}, contra {_pt(med_m)} da Matriz "
-        f"e {_pt(med_e)} do Elite) e vence nas cinco competências. A maior distância da Matriz para o "
+        f"O Santa Mônica lidera a redação com folga (média {_pt(med_s)}, contra {_pt(med_m)} do Matriz "
+        f"e {_pt(med_e)} do Elite) e vence nas cinco competências. A maior distância do Matriz para o "
         f"Santa Mônica está em {pior} ({nomes[pior]}): {_pt(m[pior])} × {_pt(s[pior])}. Internamente, "
-        f"as competências mais baixas da Matriz seguem sendo {baixas_txt}."
+        f"as competências mais baixas do Matriz seguem sendo {baixas_txt}."
     )
 
 
@@ -301,7 +301,7 @@ new Chart(document.getElementById("chartPanorama"), {
   const m = DATA.redes["Matriz Educação"], e = DATA.redes["Elite"];
   const d = ((m.nota_geral||{}).media||0) - ((e.nota_geral||{}).media||0);
   document.getElementById("obsPanorama").textContent =
-    "A Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
+    "O Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
     " do Elite na nota geral de rede; o Santa Mônica lidera entre os três, puxado pela Redação.";
 })();
 
@@ -327,7 +327,7 @@ new Chart(document.getElementById("chartPanorama"), {
     top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+labelMun(u)+
       '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
     (melhorNossa ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
-      melhorNossa.label+' · melhor Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
+      melhorNossa.label+' · melhor do Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
       fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
 })();
 
@@ -502,11 +502,11 @@ function renderConfronto(){
         const peq = u => u.n_inscritos<30 ? " †" : "";
         if (lider.nossa) {
           const vice = ord[1];
-          corpo += '<p class="verdict" style="color:var(--pos)">A Matriz lidera a praça em NG, '+
-            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente de '+vice.u.label+peq(vice.u)+'.</p>';
+          corpo += '<p class="verdict" style="color:var(--pos)">O Matriz lidera a praça em NG, '+
+            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente do '+vice.u.label+peq(vice.u)+'.</p>';
         } else {
-          corpo += '<p class="verdict" style="color:var(--neg)">'+lider.u.label+peq(lider.u)+
-            ' lidera a praça em NG; a Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
+          corpo += '<p class="verdict" style="color:var(--neg)">O '+lider.u.label+peq(lider.u)+
+            ' lidera a praça em NG; o Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
         }
       }
     }

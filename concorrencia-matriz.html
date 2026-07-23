@@ -158,7 +158,7 @@
     <div class="card">
       <h3>Leitura estratégica</h3>
       <p class="sub">Síntese automática dos microdados</p>
-      <p style="font-size:13.5px;line-height:1.65;margin:0">O Santa Mônica lidera a redação com folga (média 744,6, contra 674,9 da Matriz e 656,0 do Elite) e vence nas cinco competências. A maior distância da Matriz para o Santa Mônica está em C5 (proposta de intervenção): 127,8 × 152,2. Internamente, as competências mais baixas da Matriz seguem sendo C5 (proposta de intervenção: 127,8) e C3 (seleção de argumentos: 129,0).</p>
+      <p style="font-size:13.5px;line-height:1.65;margin:0">O Santa Mônica lidera a redação com folga (média 744,6, contra 674,9 do Matriz e 656,0 do Elite) e vence nas cinco competências. A maior distância do Matriz para o Santa Mônica está em C5 (proposta de intervenção): 127,8 × 152,2. Internamente, as competências mais baixas do Matriz seguem sendo C5 (proposta de intervenção: 127,8) e C3 (seleção de argumentos: 129,0).</p>
       <div class="card-fill" id="fillRedacao"></div>
     </div>
   </div>
@@ -231,7 +231,7 @@ new Chart(document.getElementById("chartPanorama"), {
   const m = DATA.redes["Matriz Educação"], e = DATA.redes["Elite"];
   const d = ((m.nota_geral||{}).media||0) - ((e.nota_geral||{}).media||0);
   document.getElementById("obsPanorama").textContent =
-    "A Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
+    "O Matriz está " + (d>=0 ? fmt(d)+" pontos acima" : fmt(-d)+" pontos abaixo") +
     " do Elite na nota geral de rede; o Santa Mônica lidera entre os três, puxado pela Redação.";
 })();
 
@@ -257,7 +257,7 @@ new Chart(document.getElementById("chartPanorama"), {
     top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+labelMun(u)+
       '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
     (melhorNossa ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
-      melhorNossa.label+' · melhor Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
+      melhorNossa.label+' · melhor do Matriz ('+pos+'ª de '+comRD.length+')</span><strong>'+
       fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
 })();
 
@@ -432,11 +432,11 @@ function renderConfronto(){
         const peq = u => u.n_inscritos<30 ? " †" : "";
         if (lider.nossa) {
           const vice = ord[1];
-          corpo += '<p class="verdict" style="color:var(--pos)">A Matriz lidera a praça em NG, '+
-            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente de '+vice.u.label+peq(vice.u)+'.</p>';
+          corpo += '<p class="verdict" style="color:var(--pos)">O Matriz lidera a praça em NG, '+
+            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente do '+vice.u.label+peq(vice.u)+'.</p>';
         } else {
-          corpo += '<p class="verdict" style="color:var(--neg)">'+lider.u.label+peq(lider.u)+
-            ' lidera a praça em NG; a Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
+          corpo += '<p class="verdict" style="color:var(--neg)">O '+lider.u.label+peq(lider.u)+
+            ' lidera a praça em NG; o Matriz está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
         }
       }
     }
