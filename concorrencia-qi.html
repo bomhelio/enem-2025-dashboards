@@ -31,9 +31,9 @@
   .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
   .card h3 { margin:0 0 4px; font-size:15px; color:#0f172a; }
   .card .sub { margin:0 0 12px; color:var(--muted); font-size:12.5px; }
-  .duo { display:grid; grid-template-columns:1.25fr 1fr; gap:14px; align-items:stretch; }
-  @media (max-width:900px){ .duo { grid-template-columns:1fr; } }
-  .duo > .card { display:flex; flex-direction:column; }
+  .duo { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:14px; align-items:stretch; }
+  @media (max-width:900px){ .duo { grid-template-columns:minmax(0,1fr); } }
+  .duo > .card { display:flex; flex-direction:column; min-width:0; }
   .duo > .card .chart-wrap { flex:1 1 auto; height:auto; min-height:300px; }
   .card-fill { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); }
   .mini-head { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; margin-bottom:6px; }
@@ -47,6 +47,7 @@
   th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
   th:first-child, td:first-child { text-align:left; }
   .tbl-scroll { overflow-x:auto; }
+  #tblRedes th, #tblRedes td { padding:6px 7px; }
   .rede-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
   .nossa-row { background:color-mix(in srgb, var(--marca) 5%, transparent); }
   .nossa-row td:first-child { box-shadow:inset 3px 0 0 var(--marca); }
