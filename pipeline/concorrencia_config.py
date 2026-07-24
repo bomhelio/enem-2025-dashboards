@@ -130,6 +130,50 @@ MARCAS: dict[str, dict] = {
         ],
     },
     # ──────────────────────────────────────────────────────────────────────
+    "Apogeu": {
+        "slug": "apogeu",
+        "curto": "Apogeu",
+        "cor": "#2563eb",
+        "tile": "#1a3a6e",
+        "logo": "Apogeu.imgtag",
+        "html_out": "Concorrencia_Apogeu.html",
+        "deploy_file": "apogeu.html",
+        "hero_sub": "Comparação unidade a unidade com Santa Catarina, CAVE, Conexão, Jesuítas e Academia · Microdados INEP · Uso interno",
+        "municipios_bench": {3136702: "Juiz de Fora"},
+        "confronto_default": [31317101, 31354910],
+        "cores_redes": {"Santa Catarina": "#be123c", "CAVE": "#0f766e", "Conexão": "#b45309",
+                        "Jesuítas": "#7c3aed", "Academia": "#ca8a04"},
+        "concorrentes": {
+            "Santa Catarina": {
+                31074373: {"label": "Morro da Glória",   "municipio": "Juiz de Fora", "bairro": "MORRO DA GLORIA"},
+            },
+            "CAVE": {
+                31354910: {"label": "Centro",            "municipio": "Juiz de Fora", "bairro": "CENTRO"},
+            },
+            "Conexão": {
+                31310735: {"label": "Centro",            "municipio": "Juiz de Fora", "bairro": "CENTRO"},
+                31233102: {"label": "São Mateus",        "municipio": "Juiz de Fora", "bairro": "SAO MATEUS"},
+                31306266: {"label": "Nova Era",          "municipio": "Juiz de Fora", "bairro": "NOVA ERA"},
+            },
+            "Jesuítas": {
+                31074098: {"label": "Centro",            "municipio": "Juiz de Fora", "bairro": "CENTRO"},
+            },
+            "Academia": {
+                31074101: {"label": "Centro",            "municipio": "Juiz de Fora", "bairro": "CENTRO"},
+            },
+        },
+        "pracas": [
+            {"titulo": "Santo Antônio I", "municipio": "Juiz de Fora", "nossa": 31317101,
+             "diretos": [31354910, 31310735, 31074098, 31074101], "adjacentes": [31074373],
+             "nota": "Colégio Santa Catarina (Morro da Glória) exibido como praça adjacente ao Centro."},
+            {"titulo": "Santo Antônio II", "municipio": "Juiz de Fora", "nossa": 31356816,
+             "diretos": [31354910, 31310735, 31074098, 31074101], "adjacentes": [31074373],
+             "nota": "Mesma praça do Santo Antônio I (Centro)."},
+            {"titulo": "Zona Norte", "municipio": "Juiz de Fora", "nossa": 31256285,
+             "diretos": [31306266], "adjacentes": [], "nota": ""},
+        ],
+    },
+    # ──────────────────────────────────────────────────────────────────────
     "QI Bilíngue": {
         "slug": "qi",
         "curto": "QI",
