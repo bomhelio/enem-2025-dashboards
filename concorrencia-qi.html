@@ -13,7 +13,7 @@
   body { margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI", system-ui, Arial, sans-serif; }
   header { background:linear-gradient(135deg,#1e293b 0%,#0a1940 100%); box-shadow:0 4px 12px rgba(0,0,0,.25); }
   .hero { max-width:1180px; margin:0 auto; min-height:96px; padding:0 24px; display:flex; align-items:center; gap:18px; }
-  .hero .wordmark { color:#fff; font-size:20px; font-weight:800; letter-spacing:.02em; white-space:nowrap; }
+  .hero .wordmark { color:#fff; font-size:20px; font-weight:800; letter-spacing:.02em; white-space:nowrap; text-decoration:none; }
   .hero-divider { width:1px; height:44px; background:rgba(255,255,255,.35); flex-shrink:0; }
   .hero h1 { margin:0; color:#fff; font-size:22px; font-weight:800; letter-spacing:-.01em; }
   .hero p { margin:2px 0 0; color:rgba(255,255,255,.75); font-size:13px; }
@@ -90,7 +90,7 @@
 <body>
 <header>
   <div class="hero">
-    <div class="wordmark">ENEM 2025</div>
+    <a class="wordmark" href="./" title="Todas as marcas">ENEM 2025</a>
     <div class="hero-divider"></div>
     <div>
       <h1>Inteligência Competitiva - QI Bilíngue</h1>
@@ -212,7 +212,7 @@ const REF2024 = {};
 const HIST = {"anos":["2024","2025"],"redes":{"QI Bilíngue":{"2024":{"n":256,"CN":565.1,"CH":601.6,"LC":575.5,"MT":654.9,"RD":828.4,"NG":645.5},"2025":{"n":237,"CN":567.7,"CH":588.2,"LC":593.3,"MT":644.2,"RD":807.0,"NG":641.4}},"Pensi":{"2024":{"n":1522,"CN":568.4,"CH":596.7,"LC":579.3,"MT":665.8,"RD":803.5,"NG":643.3},"2025":{"n":1447,"CN":568.6,"CH":585.9,"LC":591.4,"MT":667.3,"RD":774.4,"NG":638.5}},"Alfa CEM":{"2024":{"n":80,"CN":609.3,"CH":642.7,"LC":622.5,"MT":783.1,"RD":911.0,"NG":713.7},"2025":{"n":82,"CN":630.5,"CH":646.2,"LC":636.7,"MT":789.1,"RD":878.8,"NG":716.3}},"pH":{"2024":{"n":763,"CN":597.1,"CH":625.6,"LC":603.2,"MT":711.3,"RD":862.5,"NG":680.4},"2025":{"n":843,"CN":592.1,"CH":605.2,"LC":604.8,"MT":690.0,"RD":827.9,"NG":664.8}},"AZ":{"2024":{"n":378,"CN":579.4,"CH":611.5,"LC":594.8,"MT":688.5,"RD":842.7,"NG":664.5},"2025":{"n":504,"CN":582.2,"CH":596.9,"LC":599.2,"MT":694.6,"RD":798.0,"NG":655.4}}},"privada_municipal":{"Rio de Janeiro":{"2024":{"n":14800,"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7,"NG":617.2},"2025":{"n":14545,"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5,"NG":613.0}}},"privada_brasil":{"2024":{"NG":615.9,"n":243273,"CN":549.0,"CH":569.5,"LC":564.6,"MT":616.2,"RD":772.8},"2025":{"NG":612.7,"n":249577,"CN":551.9,"CH":566.2,"LC":577.6,"MT":620.3,"RD":738.9}},"top100":{"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7,"NG":715.2,"n_escolas":100},"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0,"NG":720.3,"n_escolas":100}}};
 const MARCA = "QI Bilíngue";
 const CURTO = "QI";
-const CORES = {"QI Bilíngue": "#6d28d9", "Pensi": "#1d4ed8", "Alfa CEM": "#0f766e", "pH": "#be123c", "AZ": "#b45309"};
+const CORES = {"QI Bilíngue": "#6d28d9", "Pensi": "#ca8a04", "Alfa CEM": "#0f766e", "pH": "#be123c", "AZ": "#1d4ed8"};
 const CINZA = "#334155";
 const AREAS5 = ["CN","CH","LC","MT","RD"];
 const REDES = ["QI Bilíngue", "Pensi", "Alfa CEM", "pH", "AZ"];
