@@ -97,7 +97,8 @@ TEMPLATE = r"""<!DOCTYPE html>
   .mini-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid #eef2f6; }
   .mini-row:last-child { border-bottom:0; }
   .mini-row strong { font-variant-numeric:tabular-nums; }
-  .chart-wrap { position:relative; height:300px; }
+  .chart-wrap { position:relative; height:300px; overflow:hidden; }
+  main { overflow-x:clip; }
   table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
   th, td { padding:7px 9px; text-align:right; border-bottom:1px solid #eef2f6; white-space:nowrap; }
   th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
@@ -648,6 +649,13 @@ new Chart(document.getElementById("chartRedacaoRedes"), {
   options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
     scales:{ x:{ grid:{ display:false } },
       y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+});
+
+// o Chart.js pode perder o último resize com a aba ocupada; força o ajuste
+let _rsz = null;
+window.addEventListener("resize", () => {
+  clearTimeout(_rsz);
+  _rsz = setTimeout(() => Object.values(Chart.instances).forEach(c => c.resize()), 150);
 });
 </script>
 </body>
