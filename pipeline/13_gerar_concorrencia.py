@@ -143,6 +143,11 @@ TEMPLATE = r"""<!DOCTYPE html>
   .consol .body { background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:14px 18px; }
   .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
   .obs { color:var(--muted); font-size:12px; margin-top:10px; }
+  .warn-n { color:#b45309; font-weight:800; cursor:help; margin-left:2px; }
+  .muted-cell { color:var(--muted); }
+  #tblPareado th, #tblPareado td { padding:6px 8px; }
+  #tblPareado thead tr:first-child th[colspan] { text-align:center; border-bottom:1px solid var(--line); }
+  #tblPareado td[title] { cursor:help; }
   footer { max-width:1180px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }
 </style>
 </head>
@@ -159,6 +164,14 @@ TEMPLATE = r"""<!DOCTYPE html>
 </header>
 <main>
   <div class="stats" id="statsRow"></div>
+
+  <div class="section-title">Confronto pareado - só onde disputamos</div>
+  <div class="card">
+    <h3>Nota geral nas praças em comum</h3>
+    <p class="sub">Cada linha compara __CURTO__ e o concorrente <strong>apenas nas praças em que as duas redes têm unidade com dados no ENEM 2025</strong>. O recorte é simétrico: as nossas unidades também entram só onde aquele concorrente está. Isso neutraliza o efeito de composição - redes com geografia e porte diferentes carregam praças que nós não disputamos, e essas praças distorcem a média da rede inteira.</p>
+    <div class="tbl-scroll"><table id="tblPareado"></table></div>
+    <p class="obs" id="obsPareado"></p>
+  </div>
 
   <div class="section-title">Evolução 2024-2025</div>
   <div class="card">
@@ -180,11 +193,11 @@ TEMPLATE = r"""<!DOCTYPE html>
     </details>
   </div>
 
-  <div class="section-title">Panorama das redes</div>
+  <div class="section-title">Panorama das redes completas - referência</div>
   <div class="duo">
     <div class="card">
       <h3>Média por área - redes completas</h3>
-      <p class="sub">Média entre presentes em cada prova · RD = Redação</p>
+      <p class="sub">Média entre presentes em cada prova · RD = Redação · <strong>inclui praças onde o __CURTO__ não está</strong>: para comparar posição competitiva, use o confronto pareado no topo</p>
       <div class="chart-wrap"><canvas id="chartPanorama"></canvas></div>
     </div>
     <div class="card">
@@ -259,6 +272,11 @@ TEMPLATE = r"""<!DOCTYPE html>
   <strong>Metodologia.</strong> Mesma métrica dos dashboards de marca: média por área entre presentes na prova
   (TP_PRESENCA = 1); Redação entre redações válidas (TP_STATUS_REDACAO = 1); Nota Geral = média de
   Ciências da Natureza, Ciências Humanas, Linguagens e Códigos, Matemática e Redação para alunos com presença completa e redação válida.
+  <strong>Confronto pareado.</strong> Para cada concorrente, entram na conta apenas as praças em que as duas
+  redes têm unidade com participantes válidos em 2025, dos dois lados (recorte simétrico). A praça é a
+  vizinhança competitiva curada no mapa de praças, não o bairro do cadastro: bairro do INEP e bairro do
+  concorrente nem sempre coincidem, e a concorrência real cruza fronteira de bairro. Unidade que serve a
+  mais de uma praça é contada uma vez só.
   Rede privada municipal = todas as escolas privadas do município nos microdados.
   Top 100 BR = média das 100 melhores escolas privadas do país (30 ou mais alunos válidos), por área e na Nota Geral.<br>
   <strong>Concorrentes sem dados no ENEM 2025:</strong> __NOTA_SEM_DADOS__.<br>
@@ -273,6 +291,7 @@ const MARCA = "__MARCA__";
 const CURTO = "__CURTO__";
 const CORES = __CORES__;
 const CINZA = "#334155";
+const N_MIN_PAREADO = 100;
 const AREAS5 = ["CN","CH","LC","MT","RD"];
 const REDES = __REDES__;
 const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
@@ -296,12 +315,65 @@ const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
   ];
   REDES.forEach(rd => {
     const x = r[rd];
-    cards.push({t: rd, v: fmt((x.nota_geral||{}).media), dot: CORES[rd],
-      s: x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+    if (rd === MARCA) {
+      cards.push({t: rd, v: fmt((x.nota_geral||{}).media), dot: CORES[rd],
+        s: "rede completa · "+x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+      return;
+    }
+    const p = (DATA.pareado||{})[rd];
+    if (!p || !p.deles) {
+      cards.push({t: rd, v: "-", dot: CORES[rd], s: "sem praça em comum em 2025"});
+      return;
+    }
+    const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
+    const fino = (a.n||0) < N_MIN_PAREADO || (b.n||0) < N_MIN_PAREADO;
+    cards.push({t: rd, dot: CORES[rd],
+      v: fmt(b.media) + (fino ? '<span class="warn-n" title="menos de '+N_MIN_PAREADO+' alunos válidos de um dos lados">†</span>' : ''),
+      s: p.pracas.length+" praças em comum · "+CURTO+" "+fmt(a.media)+" aqui"});
   });
   document.getElementById("statsRow").innerHTML = cards.map(c =>
     '<div class="stat"><small>'+(c.dot?'<span class="dot" style="background:'+c.dot+'"></span>':'')+c.t+
     '</small><strong>'+c.v+'</strong><span>'+c.s+'</span></div>').join("");
+})();
+
+// ---------- Confronto pareado por praça ----------
+(function(){
+  const P = DATA.pareado || {};
+  const ngFull = rd => ((DATA.redes[rd]||{}).nota_geral||{}).media ?? null;
+  const nosFull = ngFull(MARCA);
+  const flag = n => n < N_MIN_PAREADO
+    ? '<span class="warn-n" title="menos de '+N_MIN_PAREADO+' alunos válidos - diferença sujeita a ruído">†</span>' : '';
+  let invertidos = 0, comparaveis = 0;
+
+  const rows = REDES.slice(1).map(rd => {
+    const p = P[rd];
+    if (!p || !p.nossa || !p.deles)
+      return '<tr><td>'+dot(rd)+rd+'</td><td colspan="9" class="muted-cell">sem praça em comum com dados em 2025</td></tr>';
+    const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
+    const dif = (a.media!=null && b.media!=null) ? a.media-b.media : null;
+    const difFull = (nosFull!=null && ngFull(rd)!=null) ? nosFull-ngFull(rd) : null;
+    if (dif!=null && difFull!=null) { comparaveis++; if ((dif<0) !== (difFull<0)) invertidos++; }
+    return '<tr><td>'+dot(rd)+rd+'</td>'+
+      '<td title="'+p.pracas.join(" · ")+'">'+p.pracas.length+'</td>'+
+      '<td>'+p.nossa.n_unidades+'</td><td>'+fmtInt(a.n)+flag(a.n||0)+'</td><td><strong>'+fmt(a.media)+'</strong></td>'+
+      '<td>'+p.deles.n_unidades+'</td><td>'+fmtInt(b.n)+flag(b.n||0)+'</td><td><strong>'+fmt(b.media)+'</strong></td>'+
+      '<td>'+deltaHtml(dif)+'</td>'+
+      '<td class="muted-cell">'+(difFull==null ? "-" : (difFull>=0?"+":"−")+fmt(Math.abs(difFull)))+'</td></tr>';
+  }).join("");
+
+  document.getElementById("tblPareado").innerHTML =
+    '<thead><tr><th rowspan="2">Rede</th><th rowspan="2">Praças</th>'+
+    '<th colspan="3">'+CURTO+' nessas praças</th><th colspan="3">Concorrente nessas praças</th>'+
+    '<th rowspan="2">Diferença</th><th rowspan="2">Dif. rede inteira</th></tr>'+
+    '<tr><th>Un.</th><th>Alunos</th><th>NG</th><th>Un.</th><th>Alunos</th><th>NG</th></tr></thead><tbody>'+rows+'</tbody>';
+
+  document.getElementById("obsPareado").innerHTML =
+    (invertidos === 0
+      ? "Nenhum confronto muda de sinal em relação à leitura de rede inteira."
+      : "<strong>"+invertidos+" de "+comparaveis+" confrontos mudam de sinal</strong> em relação à leitura de rede inteira (última coluna), "+
+        "que mistura praças onde o "+CURTO+" não está.")+
+    " Praça = onde as duas redes têm unidade com dados, pelo mapa de praças (concorrentes diretos e adjacentes); passe o mouse sobre o número para ver os nomes."+
+    ' <span class="warn-n">†</span> menos de '+N_MIN_PAREADO+" alunos válidos: a diferença fica sujeita a ruído e deve ser lida como indicativa.";
 })();
 
 // ---------- Panorama ----------
@@ -332,7 +404,8 @@ new Chart(document.getElementById("chartPanorama"), {
   document.getElementById("obsPanorama").textContent =
     "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
     rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
-    (lider===MARCA ? CURTO : lider) + " lidera o grupo.";
+    (lider===MARCA ? CURTO : lider) + " lidera o grupo. Leitura de rede completa: cada concorrente "+
+    "carrega aqui praças que o "+CURTO+" não disputa, então esses números medem escala, não posição competitiva.";
 })();
 
 // ---------- Preenchimentos dos cards laterais ----------
