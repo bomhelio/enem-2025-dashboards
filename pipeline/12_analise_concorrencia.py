@@ -58,6 +58,50 @@ def stats_df(df: pd.DataFrame) -> dict:
     return r
 
 
+def pareado_por_rede(cfg: dict, unidades: list, df_nossa: pd.DataFrame,
+                     df_conc: pd.DataFrame, conc_meta: dict) -> dict:
+    """Confronto simétrico: só as praças onde AS DUAS redes têm unidade com dados.
+
+    A comparação rede-contra-rede inteira mistura praças onde não disputamos
+    (o ZeroHum em Nova Friburgo, o Pensi em Campos), o que vira um efeito de
+    composição: a média do concorrente é puxada por mercados que não são o
+    nosso jogo. Aqui o recorte é o par de redes, e é simétrico - nossas
+    unidades também entram só nas praças onde o concorrente está.
+
+    A unidade de recorte é a praça curada em concorrencia_config.py (diretos +
+    adjacentes), não a string de bairro: bairro do INEP e bairro do config não
+    batem ('MEIER' x 'MÉIER') e vizinhança real ignora fronteira de bairro
+    (Bangu x Realengo, Freguesia cadastrada em Jacarepaguá).
+    """
+    com_ng = {u["co"] for u in unidades if (u.get("nota_geral") or {}).get("n")}
+    rede_de = {int(co): m["rede"] for co, m in conc_meta.items()}
+    out = {}
+
+    for rede in cfg["concorrentes"]:
+        cos_rede = {co for co, r in rede_de.items() if r == rede}
+        nossos, deles, pracas = {}, {}, {}
+        for p in cfg["pracas"]:
+            alvo = [c for c in p.get("diretos", []) + p.get("adjacentes", [])
+                    if c in cos_rede and c in com_ng]
+            if not alvo or p["nossa"] not in com_ng:
+                continue
+            pracas[p["titulo"]] = None
+            nossos[p["nossa"]] = None
+            deles.update((c, None) for c in alvo)
+
+        if not nossos or not deles:
+            out[rede] = {"pracas": [], "nossa": None, "deles": None}
+            continue
+
+        lado_a = stats_df(df_nossa[df_nossa["CO_ESCOLA"].isin(nossos)])
+        lado_b = stats_df(df_conc[df_conc["CO_ESCOLA"].isin(deles)])
+        lado_a["n_unidades"], lado_a["cos"] = len(nossos), list(nossos)
+        lado_b["n_unidades"], lado_b["cos"] = len(deles), list(deles)
+        out[rede] = {"pracas": list(pracas), "nossa": lado_a, "deles": lado_b}
+
+    return out
+
+
 def main(marca: str, cfg: dict):
     slug = cfg["slug"]
     mapa = json.load(open(os.path.join(OUTPUT_DIR, "mapa_escola_bairro.json"), encoding="utf-8"))
@@ -117,6 +161,7 @@ def main(marca: str, cfg: dict):
     saida = {
         "marca": marca,
         "redes": redes,
+        "pareado": pareado_por_rede(cfg, unidades, df_nossa, df_conc, conc_meta),
         "unidades": unidades,
         "bench_municipal": bench,
         "concorrentes_sem_dados_2025": sem_dados,
@@ -128,6 +173,16 @@ def main(marca: str, cfg: dict):
     for rede, r in redes.items():
         ng = r.get("nota_geral", {}).get("media")
         print(f"  [{rede}] {r['n_unidades']} unidades, {r['n_inscritos']} inscritos, NG {ng}")
+
+    print("  --- confronto pareado (só praças em comum) ---")
+    for rede, p in saida["pareado"].items():
+        if not p["nossa"]:
+            print(f"  [{rede}] sem praça em comum com dados 2025")
+            continue
+        a, b = p["nossa"]["nota_geral"], p["deles"]["nota_geral"]
+        print(f"  [{rede}] {len(p['pracas'])} praças | {cfg['curto']} {a['media']} (n={a['n']}, "
+              f"{p['nossa']['n_unidades']}u) x {b['media']} (n={b['n']}, {p['deles']['n_unidades']}u) "
+              f"| dif {round(a['media'] - b['media'], 1):+}")
 
 
 if __name__ == "__main__":
