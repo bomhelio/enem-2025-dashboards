@@ -183,7 +183,7 @@ __AVISO__
   <div class="stats" id="statsRow"></div>
 
   <div class="section-title">Confronto pareado - só onde disputamos</div>
-  <div class="card">
+  <div class="card" id="cardPareado">
     <h3>Nota geral nas praças em comum</h3>
     <p class="sub">Cada linha compara __CURTO__ e o concorrente <strong>apenas nas praças em que as duas redes têm unidade com dados no ENEM 2025</strong>. O recorte é simétrico: as nossas unidades também entram só onde aquele concorrente está. Isso neutraliza o efeito de composição - redes com geografia e porte diferentes carregam praças que nós não disputamos, e essas praças distorcem a média da rede inteira.</p>
     <div class="tbl-scroll"><table id="tblPareado"></table></div>
@@ -401,6 +401,21 @@ const linhaVeredicto = (eixo, v) => {
   const ngFull = rd => ((DATA.redes[rd]||{}).nota_geral||{}).media ?? null;
   const nosFull = ngFull(MARCA);
   let invertidos = 0, comparaveis = 0;
+
+  // Marca sem base 2025 (referência 2024): nenhuma rede tem praça em comum —
+  // em vez de N linhas repetindo "sem praça", a seção vira um expansível fechado.
+  const comRede = REDES.slice(1).filter(rd => P[rd] && P[rd].nossa && P[rd].deles).length;
+  if (!comRede) {
+    document.getElementById("cardPareado").outerHTML =
+      '<details class="consol"><summary>Sem dados para mostrar' +
+      '<span class="hint">o '+CURTO+' não tem base no ENEM 2025 · clique para entender</span></summary>' +
+      '<div class="body"><p class="sub" style="margin:0">O confronto pareado compara o '+CURTO+
+      ' e cada concorrente <strong>apenas nas praças em que as duas redes têm unidade com dados no ENEM 2025</strong>. '+
+      'Como o '+CURTO+' não respondeu o Censo 2025, nenhum aluno ficou vinculado às nossas unidades nessa edição — '+
+      'não existe base 2025 para parear com '+REDES.slice(1).map(rd=>dot(rd)+rd).join(" · ")+'. '+
+      'A comparação possível está na <strong>Batalha territorial</strong> abaixo, com as nossas linhas em referência ENEM 2024.</p></div></details>';
+    return;
+  }
 
   const rows = REDES.slice(1).map(rd => {
     const p = P[rd];
