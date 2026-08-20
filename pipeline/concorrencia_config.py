@@ -377,22 +377,68 @@ MARCAS: dict[str, dict] = {
         ],
     },
     # ──────────────────────────────────────────────────────────────────────
-    "UAU": {
-        "slug": "uau",
-        "curto": "UAU",
+    # Unificado, Americano e União: marcas individuais (não são uma rede).
+    # Nenhuma respondeu o Censo 2025 → sem vínculo no ENEM 2025; as telas
+    # rodam em referência ENEM 2024 (nossa_ref2024).
+    "Unificado": {
+        "slug": "unificado",
+        "curto": "Unificado",
         "cor": "#dc2626",
         "tile": "#7f1d1d",
         "logo": "",
-        "html_out": "Concorrencia_UAU.html",
-        "deploy_file": "uau.html",
-        "hero_sub": "Unificado, Americano e União vs a concorrência de cada praça · Referência ENEM 2024 · Microdados INEP · Uso interno",
-        "aviso": "As escolas UAU não responderam o Censo Escolar 2025, e o ENEM só vincula aluno a escola pelo Censo do ano — por isso não existem números 2025 para as nossas unidades (as dos concorrentes são 2025 normais). As linhas marcadas ENEM 2024 são a última foto disponível. Ação: responder o Censo 2026 devolve o UAU ao ENEM por escola já na edição 2026. A âncora do grupo em POA com dados vivos é a tela LDV.",
+        "html_out": "Concorrencia_Unificado.html",
+        "deploy_file": "unificado.html",
+        "hero_sub": "Zona Sul e Ramiro vs a concorrência de cada praça · Referência ENEM 2024 · Microdados INEP · Uso interno",
+        "aviso": "O Unificado não respondeu o Censo Escolar 2025, e o ENEM só vincula aluno a escola pelo Censo do ano — por isso não existem números 2025 para as nossas unidades (as dos concorrentes são 2025 normais). As linhas marcadas ENEM 2024 são a última foto: Zona Sul NG 669,0 (8º de Porto Alegre) e Ramiro NG 662,5 (13º). Ação: responder o Censo 2026 devolve o Unificado ao ENEM por escola já na edição 2026. A âncora do grupo em POA com dados vivos é a tela LDV.",
         "selo_card": "Referência ENEM 2024 · Censo 2025 não respondido",
-        "municipios_bench": {4314902: "Porto Alegre", 4322400: "Uruguaiana"},
+        "municipios_bench": {4314902: "Porto Alegre"},
         "confronto_default": [43173330, 43108164],
+        "cores_redes": {"João Paulo I": "#b45309", "Marista": "#1d4ed8",
+                        "Farroupilha": "#db2777", "Tradicionais POA": "#7c3aed"},
+        "concorrentes": {
+            "João Paulo I": {
+                43173330: {"label": "Zona Sul",            "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+                43238203: {"label": "Higienópolis",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
+                43216684: {"label": "Praia de Belas",      "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
+            },
+            "Marista": {
+                43108164: {"label": "Rosário",             "municipio": "Porto Alegre", "bairro": "INDEPENDENCIA"},
+                43178740: {"label": "Ipanema",             "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+            },
+            "Farroupilha": {
+                43104975: {"label": "Três Figueiras",      "municipio": "Porto Alegre", "bairro": "TRES FIGUEIRAS"},
+            },
+            "Tradicionais POA": {
+                43107419: {"label": "Mãe de Deus",         "municipio": "Porto Alegre", "bairro": "TRISTEZA"},
+                43104983: {"label": "Israelita",           "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
+                43105017: {"label": "Bom Conselho",        "municipio": "Porto Alegre", "bairro": "FLORESTA"},
+            },
+        },
+        "pracas": [
+            {"titulo": "Tristeza / Zona Sul", "municipio": "Porto Alegre", "nossa": 43214754,
+             "diretos": [43173330, 43107419], "adjacentes": [43178740],
+             "nota": "Unificado Zona Sul foi o 8º de Porto Alegre no ENEM 2024 (NG 669,0)."},
+            {"titulo": "Moinhos de Vento (Ramiro)", "municipio": "Porto Alegre", "nossa": 43186700,
+             "diretos": [43108164, 43105017], "adjacentes": [43104983, 43104975],
+             "nota": "Unificado Ramiro foi o 13º de Porto Alegre no ENEM 2024 (NG 662,5)."},
+        ],
+    },
+    # ──────────────────────────────────────────────────────────────────────
+    "Americano": {
+        "slug": "americano",
+        "curto": "Americano",
+        "cor": "#0891b2",
+        "tile": "#155e75",
+        "logo": "",
+        "html_out": "Concorrencia_Americano.html",
+        "deploy_file": "americano.html",
+        "hero_sub": "Col. Metodista Americano vs a concorrência da Independência/Rio Branco · Referência ENEM 2024 · Microdados INEP · Uso interno",
+        "aviso": "O Americano não respondeu o Censo Escolar 2025, e o ENEM só vincula aluno a escola pelo Censo do ano — por isso não existem números 2025 para a nossa unidade (os concorrentes são 2025 normais). A linha marcada ENEM 2024 é a última foto: NG 624,4 com 19 inscritos. Ação: responder o Censo 2026 devolve o Americano ao ENEM por escola já na edição 2026. A âncora do grupo em POA com dados vivos é a tela LDV.",
+        "selo_card": "Referência ENEM 2024 · Censo 2025 não respondido",
+        "municipios_bench": {4314902: "Porto Alegre"},
+        "confronto_default": [43213995, 43108164],
         "cores_redes": {"João Paulo I": "#b45309", "Marista": "#1d4ed8", "Fleming": "#0f766e",
-                        "Bertoni": "#65a30d", "Farroupilha": "#db2777", "Tradicionais POA": "#7c3aed",
-                        "Uruguaiana": "#ca8a04"},
+                        "Bertoni": "#65a30d", "Tradicionais POA": "#7c3aed"},
         "concorrentes": {
             "João Paulo I": {
                 43173330: {"label": "Zona Sul",            "municipio": "Porto Alegre", "bairro": "IPANEMA"},
@@ -409,20 +455,33 @@ MARCAS: dict[str, dict] = {
             "Bertoni": {
                 43215050: {"label": "Auxiliadora",         "municipio": "Porto Alegre", "bairro": "AUXILIADORA"},
             },
-            "Farroupilha": {
-                43104975: {"label": "Três Figueiras",      "municipio": "Porto Alegre", "bairro": "TRES FIGUEIRAS"},
-            },
             "Tradicionais POA": {
-                43105009: {"label": "Colégio Militar",     "municipio": "Porto Alegre", "bairro": "FARROUPILHA"},
-                43107419: {"label": "Mãe de Deus",         "municipio": "Porto Alegre", "bairro": "TRISTEZA"},
-                43107494: {"label": "Pastor Dohms",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
                 43104983: {"label": "Israelita",           "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
-                43105017: {"label": "Bom Conselho",        "municipio": "Porto Alegre", "bairro": "FLORESTA"},
-                43105068: {"label": "Santa Inês",          "municipio": "Porto Alegre", "bairro": "PETROPOLIS"},
-                43104991: {"label": "Maria Imaculada",     "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
-                43105408: {"label": "Adventista Camaquã",  "municipio": "Porto Alegre", "bairro": "CAMAQUA"},
-                43105637: {"label": "Adventista M. Rondon", "municipio": "Porto Alegre", "bairro": "VILA IPIRANGA"},
+                43107494: {"label": "Pastor Dohms",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
             },
+        },
+        "pracas": [
+            {"titulo": "Independência / Rio Branco", "municipio": "Porto Alegre", "nossa": 43107524,
+             "diretos": [43213995, 43104983, 43215050, 43108164], "adjacentes": [43238203, 43107494],
+             "nota": "Marista Rosário fica no mesmo eixo da Independência — exibido como concorrente direto."},
+        ],
+    },
+    # ──────────────────────────────────────────────────────────────────────
+    "União": {
+        "slug": "uniao",
+        "curto": "União",
+        "cor": "#4338ca",
+        "tile": "#312e81",
+        "logo": "",
+        "html_out": "Concorrencia_Uniao.html",
+        "deploy_file": "uniao.html",
+        "hero_sub": "Col. Metodista União vs a concorrência de Uruguaiana · Referência ENEM 2024 · Microdados INEP · Uso interno",
+        "aviso": "O União não respondeu o Censo Escolar 2025, e o ENEM só vincula aluno a escola pelo Censo do ano — por isso não existem números 2025 para a nossa unidade (os concorrentes são 2025 normais). A linha marcada ENEM 2024 é a última foto: NG 573,5, 4º colégio de Uruguaiana, atrás de Laura Vicuña, Marista Sant'Ana e IF Farroupilha (federal). Ação: responder o Censo 2026 devolve o União ao ENEM por escola já na edição 2026.",
+        "selo_card": "Referência ENEM 2024 · Censo 2025 não respondido",
+        "municipios_bench": {4322400: "Uruguaiana"},
+        "confronto_default": [43162290, 43162690],
+        "cores_redes": {"Uruguaiana": "#ca8a04"},
+        "concorrentes": {
             "Uruguaiana": {
                 43162290: {"label": "Marista Sant'Ana",    "municipio": "Uruguaiana", "bairro": "CENTRO"},
                 43162690: {"label": "Laura Vicuña",        "municipio": "Uruguaiana", "bairro": "CENTRO"},
@@ -430,16 +489,7 @@ MARCAS: dict[str, dict] = {
             },
         },
         "pracas": [
-            {"titulo": "Tristeza / Zona Sul (Unificado)", "municipio": "Porto Alegre", "nossa": 43214754,
-             "diretos": [43173330, 43107419], "adjacentes": [43178740],
-             "nota": "Unificado Zona Sul foi o 8º de Porto Alegre no ENEM 2024 (NG 669,0)."},
-            {"titulo": "Moinhos de Vento (Unificado Ramiro)", "municipio": "Porto Alegre", "nossa": 43186700,
-             "diretos": [43108164, 43105017], "adjacentes": [43104983, 43104975],
-             "nota": "Unificado Ramiro foi o 13º de Porto Alegre no ENEM 2024 (NG 662,5)."},
-            {"titulo": "Independência / Rio Branco (Americano)", "municipio": "Porto Alegre", "nossa": 43107524,
-             "diretos": [43213995, 43104983, 43215050], "adjacentes": [43238203, 43107494],
-             "nota": ""},
-            {"titulo": "Uruguaiana (União)", "municipio": "Uruguaiana", "nossa": 43162703,
+            {"titulo": "Uruguaiana", "municipio": "Uruguaiana", "nossa": 43162703,
              "diretos": [43162290, 43162690], "adjacentes": [43050921],
              "nota": "IF Farroupilha é rede federal (gratuito). No ENEM 2024 o União foi o 4º da cidade, atrás de Laura Vicuña, Marista Sant'Ana e IF."},
         ],

@@ -16,10 +16,6 @@ ESCOLAS: dict[str, list[int]] = {
     "Unificado":                [43214754, 43186700],
     "Americano":                [43107524],
     "Colégio Leonardo da Vinci": [43172423, 43172440, 43213278],
-    # Marca agregada p/ a tela de concorrência RS: Unificado (ZS + Ramiro),
-    # Americano (POA) e União (Uruguaiana). Sem Censo 2025 → sem vínculo no
-    # ENEM 2025; a tela usa referência 2024 (nossa_ref2024).
-    "UAU":                      [43214754, 43186700, 43107524, 43162703],
     "Cubo Global":              [33178828, 33186260],
 }
 
