@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ENEM 2025 · Inteligência Competitiva - Cubo Global</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script>Chart.defaults.font.family="'Segoe UI', system-ui, sans-serif";Chart.defaults.color="#334155";Chart.defaults.locale='pt-BR';</script>
+<style>
+  :root { --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --pos:#15803d; --neg:#b91c1c; --marca:#0f9d96; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI", system-ui, Arial, sans-serif; }
+  header { background:linear-gradient(135deg,#1e293b 0%,#0a1940 100%); box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  .hero { max-width:1180px; margin:0 auto; min-height:96px; padding:0 24px; display:flex; align-items:center; gap:18px; }
+  .hero .wordmark { color:#fff; font-size:20px; font-weight:800; letter-spacing:.02em; white-space:nowrap; text-decoration:none; }
+  .hero-divider { width:1px; height:44px; background:rgba(255,255,255,.35); flex-shrink:0; }
+  .hero h1 { margin:0; color:#fff; font-size:22px; font-weight:800; letter-spacing:-.01em; }
+  .hero p { margin:2px 0 0; color:rgba(255,255,255,.75); font-size:13px; }
+  main { max-width:1180px; margin:0 auto; padding:28px 24px 40px; }
+  .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+  @media (max-width:1000px){ .stats { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:640px){ .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .stat small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
+  .stat strong { display:block; color:#0f172a; font-size:22px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .stat span { display:block; margin-top:5px; color:var(--muted); font-size:12px; }
+  .stat .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
+  .section-title { margin:30px 0 14px; color:#334155; font-size:14px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; display:flex; align-items:center; gap:12px; }
+  .section-title::after { content:""; flex:1; height:1px; background:var(--line); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .card h3 { margin:0 0 4px; font-size:15px; color:#0f172a; }
+  .card .sub { margin:0 0 12px; color:var(--muted); font-size:12.5px; }
+  .duo { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:14px; align-items:stretch; }
+  @media (max-width:900px){ .duo { grid-template-columns:minmax(0,1fr); } }
+  .duo > .card { display:flex; flex-direction:column; min-width:0; }
+  .duo > .card .chart-wrap { flex:1 1 auto; height:auto; min-height:300px; }
+  .card-fill { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); }
+  .mini-head { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; margin-bottom:6px; }
+  .mini-row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; padding:5px 0; border-bottom:1px solid #eef2f6; }
+  .mini-row:last-child { border-bottom:0; }
+  .mini-row strong { font-variant-numeric:tabular-nums; }
+  .chart-wrap { position:relative; height:300px; overflow:hidden; }
+  main { overflow-x:clip; }
+  table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
+  th, td { padding:7px 9px; text-align:right; border-bottom:1px solid #eef2f6; white-space:nowrap; }
+  th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+  th:first-child, td:first-child { text-align:left; }
+  .tbl-scroll { overflow-x:auto; }
+  #tblRedes th, #tblRedes td { padding:6px 7px; }
+  .rede-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
+  .nossa-row { background:color-mix(in srgb, var(--marca) 5%, transparent); }
+  .nossa-row td:first-child { box-shadow:inset 3px 0 0 var(--marca); }
+  .star { color:var(--marca); font-weight:800; }
+  .delta-pos { color:var(--pos); font-weight:700; }
+  .delta-neg { color:var(--neg); font-weight:700; }
+  .delta-neutro { color:var(--muted); }
+  .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+  .chip { border:1px solid var(--line); background:#fff; color:#334155; border-radius:999px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .chip.on { color:#fff; border-color:transparent; }
+  select, .filters label { font-size:12.5px; color:#334155; }
+  select { border:1px solid var(--line); border-radius:8px; padding:6px 10px; background:#fff; font-family:inherit; }
+  th.sortable { cursor:pointer; user-select:none; }
+  th.sorted-desc::after { content:" ↓"; } th.sorted-asc::after { content:" ↑"; }
+  .versus { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:14px; }
+  .versus .lado { flex:1; min-width:240px; }
+  .versus .lado small { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+  .versus select { width:100%; }
+  .placar { display:flex; gap:14px; align-items:center; justify-content:center; margin:6px 0 14px; }
+  .placar .num { font-size:30px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .placar .vs { color:var(--muted); font-size:13px; font-weight:700; }
+  .placar .who { font-size:12px; color:var(--muted); display:block; text-align:center; margin-top:2px; max-width:190px; }
+  .badge-delta { display:inline-block; border-radius:8px; padding:3px 10px; font-size:13px; font-weight:800; color:#fff; }
+  .pracas { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr)); gap:14px; }
+  .praca th, .praca td { padding:6px 7px; }
+  .praca th:first-child, .praca td:first-child { white-space:normal; }
+  .praca h4 { margin:0; font-size:14.5px; color:#0f172a; }
+  .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
+  .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+  .verdict { font-size:12.5px; font-weight:600; margin:9px 0 0; }
+  .verdict-eixo { font-size:12.5px; margin:8px 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:6px; line-height:1.5; }
+  .verdict-eixo .eixo { font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:#334155; border-radius:5px; padding:2px 7px; }
+  .verdict-eixo .ic { color:var(--muted); font-size:11.5px; font-weight:400; }
+  .tag-seleta { font-size:9.5px; font-weight:800; letter-spacing:.05em; color:#92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:1px 6px; margin-left:5px; vertical-align:middle; white-space:nowrap; }
+  .obs-inline { color:var(--muted); font-size:11.5px; font-weight:400; }
+  .consol { margin-top:14px; }
+  .consol summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; font-size:13.5px; font-weight:700; color:#334155; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .consol summary::-webkit-details-marker { display:none; }
+  .consol summary .hint { color:var(--muted); font-weight:400; font-size:12.5px; }
+  .consol[open] summary { border-radius:14px 14px 0 0; }
+  .consol .body { background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:14px 18px; }
+  .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
+  .obs { color:var(--muted); font-size:12px; margin-top:10px; }
+  .warn-n { color:#b45309; font-weight:800; cursor:help; margin-left:2px; }
+  .muted-cell { color:var(--muted); }
+  #tblPareado th, #tblPareado td { padding:6px 8px; }
+  #tblPareado thead tr:first-child th[colspan] { text-align:center; border-bottom:1px solid var(--line); }
+  #tblPareado td[title] { cursor:help; }
+  footer { max-width:1180px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }
+</style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <a class="wordmark" href="./" title="Todas as marcas">ENEM 2025</a>
+    <div class="hero-divider"></div>
+    <div>
+      <h1>Inteligência Competitiva - Cubo Global</h1>
+      <p>Comparação unidade a unidade com AZ, Pensi, pH, Alfa CEM e CEL · Microdados INEP · Uso interno</p>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="stats" id="statsRow"></div>
+
+  <div class="section-title">Confronto pareado - só onde disputamos</div>
+  <div class="card">
+    <h3>Nota geral nas praças em comum</h3>
+    <p class="sub">Cada linha compara Cubo e o concorrente <strong>apenas nas praças em que as duas redes têm unidade com dados no ENEM 2025</strong>. O recorte é simétrico: as nossas unidades também entram só onde aquele concorrente está. Isso neutraliza o efeito de composição - redes com geografia e porte diferentes carregam praças que nós não disputamos, e essas praças distorcem a média da rede inteira.</p>
+    <div class="tbl-scroll"><table id="tblPareado"></table></div>
+    <p class="obs" id="obsPareado"></p>
+  </div>
+
+  <div class="section-title">Evolução 2024-2025</div>
+  <div class="card">
+    <h3>Redes, mercado e Top 100 BR</h3>
+    <p class="sub">Média entre presentes por prova · anos em que o INEP identifica a escola nos microdados (2021-2023 não têm essa informação) · na NG a régua é a rede privada do Brasil; nas áreas, a rede privada do município selecionado</p>
+    <div class="filters">
+      <button class="chip hm-chip" data-m="NG">NG</button>
+      <button class="chip hm-chip" data-m="CN">CN</button>
+      <button class="chip hm-chip" data-m="CH">CH</button>
+      <button class="chip hm-chip" data-m="LC">LC</button>
+      <button class="chip hm-chip" data-m="MT">MT</button>
+      <button class="chip hm-chip" data-m="RD">RD</button>
+      <select id="histMun" autocomplete="off"><option>Rio de Janeiro</option></select>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartHist"></canvas></div>
+    <details class="consol" style="margin-top:12px">
+      <summary>Ver dados<span class="hint">série × ano · variação 2024→2025 · clique para abrir</span></summary>
+      <div class="body"><div class="tbl-scroll"><table id="tblHist"></table></div></div>
+    </details>
+  </div>
+
+  <div class="section-title">Panorama das redes completas - referência</div>
+  <div class="duo">
+    <div class="card">
+      <h3>Média por área - redes completas</h3>
+      <p class="sub">Média entre presentes em cada prova · RD = Redação · <strong>inclui praças onde o Cubo não está</strong>: para comparar posição competitiva, use o confronto pareado no topo</p>
+      <div class="chart-wrap"><canvas id="chartPanorama"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Escala e funil de excelência</h3>
+      <p class="sub">Rede completa · NG = média das 5 áreas (presença completa + redação válida)</p>
+      <div class="tbl-scroll"><table id="tblRedes"></table></div>
+      <p class="obs" id="obsPanorama"></p>
+      <div class="card-fill" id="fillRedes"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Ranking unificado das unidades</div>
+  <div class="card">
+    <div class="filters" id="filtrosRanking">
+      <button class="chip" data-rede="*">Todas as redes</button>
+      <button class="chip" data-rede="Cubo Global">Cubo</button><button class="chip" data-rede="AZ">AZ</button><button class="chip" data-rede="Pensi">Pensi</button><button class="chip" data-rede="pH">pH</button><button class="chip" data-rede="Alfa CEM">Alfa CEM</button><button class="chip" data-rede="CEL">CEL</button>
+      <select id="filtroMun" autocomplete="off"><option value="*">Todos os municípios</option></select>
+      <label><input type="checkbox" id="filtroN30" autocomplete="off"> ocultar unidades com menos de 30 alunos</label>
+    </div>
+    <div class="tbl-scroll"><table id="tblRanking"></table></div>
+    <p class="obs">★ unidade Cubo · † nota geral com menos de 30 alunos válidos · médias entre presentes por prova · clique nos cabeçalhos para ordenar</p>
+  </div>
+
+  <div class="section-title">Confronto direto</div>
+  <div class="card">
+    <div class="versus">
+      <div class="lado"><small>Nossa unidade</small><select id="selA"></select></div>
+      <div class="lado"><small>Concorrente (ou outra unidade)</small><select id="selB"></select></div>
+    </div>
+    <div class="placar" id="placar"></div>
+    <div class="duo">
+      <div>
+        <h3 style="font-size:14px;margin:0 0 2px">Médias por área</h3>
+        <p class="sub" id="subConfArea"></p>
+        <div class="chart-wrap"><canvas id="chartConfAreas"></canvas></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px;margin:0 0 2px">Redação por competência</h3>
+        <p class="sub">Média de C1 a C5 entre redações válidas (0 a 200)</p>
+        <div class="chart-wrap"><canvas id="chartConfComps"></canvas></div>
+      </div>
+    </div>
+    <div class="tbl-scroll" style="margin-top:14px"><table id="tblConfronto"></table></div>
+  </div>
+
+  <div class="section-title">Batalha territorial - praça a praça</div>
+  <p class="obs" style="margin:-6px 0 12px">Cada praça tem <strong>dois donos</strong>: o concorrente
+  de <strong>massa</strong> (mais alunos, disputa a mesma base) e o de <strong>topo</strong> (maior
+  nota, leva os melhores). São disputas de naturezas diferentes e as duas contam. Liderança só é
+  declarada quando a diferença supera a margem de erro (IC 95%); caso contrário é empate técnico.</p>
+  <div class="pracas" id="pracasGrid"></div>
+  <details class="consol">
+    <summary>Consolidado por praça<span class="hint">uma linha por bairro, da melhor para a pior situação de massa · clique para abrir</span></summary>
+    <div class="body">
+      <p class="obs" id="placarResumo" style="margin:0 0 8px"></p>
+      <div class="tbl-scroll"><table id="tblConsol"></table></div>
+      <p class="obs">Situação = diferença de NG contra cada um dos dois donos da praça, com veredicto
+      por IC 95% · <span class="tag-seleta">TURMA SELETA</span> = concorrente com menos de 30 alunos
+      válidos: lidera com base muito menor que a nossa, mas continua no jogo</p>
+    </div>
+  </details>
+
+  <div class="section-title">Redação em detalhe</div>
+  <div class="duo">
+    <div class="card">
+      <h3>Competências C1-C5 por rede</h3>
+      <p class="sub">Média de cada competência (0 a 200) entre redações válidas</p>
+      <div class="chart-wrap"><canvas id="chartRedacaoRedes"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Leitura estratégica</h3>
+      <p class="sub">Síntese automática dos microdados</p>
+      <p style="font-size:13.5px;line-height:1.65;margin:0">O Alfa CEM lidera a redação (média 884,3, contra 854,7 do CEL, 816,7 do pH, 783,4 do AZ, 771,2 do Pensi, 745,6 do Cubo), vencendo nas cinco competências. A maior distância do Cubo para o Alfa CEM está em C5 (proposta de intervenção): 156,3 × 197,1. Internamente, as competências mais baixas do Cubo seguem sendo C1 (norma culta: 134,4) e C3 (seleção de argumentos: 140,4).</p>
+      <div class="card-fill" id="fillRedacao"></div>
+    </div>
+  </div>
+</main>
+<footer>
+  <strong>Metodologia.</strong> Mesma métrica dos dashboards de marca: média por área entre presentes na prova
+  (TP_PRESENCA = 1); Redação entre redações válidas (TP_STATUS_REDACAO = 1); Nota Geral = média de
+  Ciências da Natureza, Ciências Humanas, Linguagens e Códigos, Matemática e Redação para alunos com presença completa e redação válida.
+  <strong>Confronto pareado.</strong> Para cada concorrente, entram na conta apenas as praças em que as duas
+  redes têm unidade com participantes válidos em 2025, dos dois lados (recorte simétrico). A praça é a
+  vizinhança competitiva curada no mapa de praças, não o bairro do cadastro: bairro do INEP e bairro do
+  concorrente nem sempre coincidem, e a concorrência real cruza fronteira de bairro. Unidade que serve a
+  mais de uma praça é contada uma vez só.
+  Rede privada municipal = todas as escolas privadas do município nos microdados.
+  Top 100 BR = média das 100 melhores escolas privadas do país (30 ou mais alunos válidos), por área e na Nota Geral.<br>
+  <strong>Concorrentes sem dados no ENEM 2025:</strong> pH - Botafogo 2; Alfa CEM - Barra da Tijuca 2.<br>
+  Fonte: Microdados ENEM 2025 e Censo Escolar 2025 (INEP) · Gerado em 17/08/2026 · Uso interno - não distribuir.
+</footer>
+<script>
+const DATA = {"marca":"Cubo Global","redes":{"Cubo Global":{"n_inscritos":57,"n_presentes_2dias":53,"taxa_presenca_pct":93.0,"areas":{"CN":{"n":53,"media":543.0,"mediana":539.7,"dp":87.7,"min":360.3,"max":757.0,"p25":469.9,"p75":598.7,"p90":647.5,"pct_acima_500":67.9,"pct_acima_600":24.5,"pct_acima_700":3.8,"pct_acima_800":0.0},"CH":{"n":54,"media":579.4,"mediana":594.1,"dp":73.6,"min":378.5,"max":742.4,"p25":532.2,"p75":622.5,"p90":664.9,"pct_acima_500":87.0,"pct_acima_600":40.7,"pct_acima_700":5.6,"pct_acima_800":0.0},"LC":{"n":54,"media":585.7,"mediana":590.4,"dp":70.9,"min":363.4,"max":759.2,"p25":547.4,"p75":624.8,"p90":663.6,"pct_acima_500":88.9,"pct_acima_600":44.4,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":53,"media":630.4,"mediana":636.5,"dp":131.5,"min":366.5,"max":857.1,"p25":551.5,"p75":734.7,"p90":786.4,"pct_acima_500":79.2,"pct_acima_600":62.3,"pct_acima_700":32.1,"pct_acima_800":9.4}},"redacao":{"n":54,"media":745.6,"mediana":740.0,"dp":135.4,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":90.7,"pct_acima_700":61.1,"pct_acima_800":37.0,"comps":{"C1":134.4,"C2":163.3,"C3":140.4,"C4":151.1,"C5":156.3}},"nota_geral":{"n":53,"media":617.1,"mediana":628.4,"dp":87.6,"min":396.3,"max":798.0,"p25":559.9,"p75":677.1,"p90":703.1,"pct_acima_500":86.8,"pct_acima_600":60.4,"pct_acima_700":11.3,"pct_acima_800":0.0},"n_unidades":2},"AZ":{"n_inscritos":278,"n_presentes_2dias":267,"taxa_presenca_pct":96.0,"areas":{"CN":{"n":267,"media":583.1,"mediana":592.6,"dp":82.8,"min":327.7,"max":738.9,"p25":535.6,"p75":639.2,"p90":679.6,"pct_acima_500":82.4,"pct_acima_600":46.8,"pct_acima_700":7.1,"pct_acima_800":0.0},"CH":{"n":271,"media":598.9,"mediana":607.3,"dp":67.4,"min":327.6,"max":778.3,"p25":563.0,"p75":646.2,"p90":674.3,"pct_acima_500":92.6,"pct_acima_600":55.4,"pct_acima_700":3.0,"pct_acima_800":0.0},"LC":{"n":271,"media":600.8,"mediana":603.9,"dp":47.4,"min":391.1,"max":720.9,"p25":574.4,"p75":632.6,"p90":651.0,"pct_acima_500":97.0,"pct_acima_600":54.2,"pct_acima_700":1.5,"pct_acima_800":0.0},"MT":{"n":267,"media":702.8,"mediana":718.9,"dp":107.1,"min":334.3,"max":915.8,"p25":647.7,"p75":774.6,"p90":823.9,"pct_acima_500":95.5,"pct_acima_600":83.1,"pct_acima_700":56.9,"pct_acima_800":16.9}},"redacao":{"n":269,"media":783.4,"mediana":800.0,"dp":121.7,"min":300.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":924.0,"pct_acima_500":98.5,"pct_acima_600":94.4,"pct_acima_700":75.8,"pct_acima_800":52.0,"comps":{"C1":144.4,"C2":164.0,"C3":145.8,"C4":162.8,"C5":166.4}},"nota_geral":{"n":266,"media":654.3,"mediana":663.4,"dp":67.3,"min":425.8,"max":790.9,"p25":607.4,"p75":705.4,"p90":734.2,"pct_acima_500":98.5,"pct_acima_600":77.8,"pct_acima_700":28.2,"pct_acima_800":0.0},"n_unidades":2},"Pensi":{"n_inscritos":218,"n_presentes_2dias":214,"taxa_presenca_pct":98.2,"areas":{"CN":{"n":214,"media":561.8,"mediana":560.6,"dp":74.5,"min":356.1,"max":785.7,"p25":510.4,"p75":613.7,"p90":657.2,"pct_acima_500":79.4,"pct_acima_600":29.9,"pct_acima_700":2.8,"pct_acima_800":0.0},"CH":{"n":216,"media":576.9,"mediana":596.8,"dp":92.5,"min":0.0,"max":756.6,"p25":530.5,"p75":632.0,"p90":674.7,"pct_acima_500":82.4,"pct_acima_600":48.1,"pct_acima_700":6.0,"pct_acima_800":0.0},"LC":{"n":216,"media":589.0,"mediana":598.5,"dp":54.8,"min":329.4,"max":703.6,"p25":551.2,"p75":626.2,"p90":652.0,"pct_acima_500":93.5,"pct_acima_600":47.2,"pct_acima_700":0.9,"pct_acima_800":0.0},"MT":{"n":214,"media":648.5,"mediana":663.2,"dp":117.0,"min":352.1,"max":959.3,"p25":570.0,"p75":724.0,"p90":785.9,"pct_acima_500":87.4,"pct_acima_600":70.1,"pct_acima_700":35.5,"pct_acima_800":7.0}},"redacao":{"n":214,"media":771.2,"mediana":800.0,"dp":134.8,"min":360.0,"max":960.0,"p25":680.0,"p75":880.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":89.7,"pct_acima_700":72.4,"pct_acima_800":50.5,"comps":{"C1":141.2,"C2":166.0,"C3":145.5,"C4":160.2,"C5":158.3}},"nota_geral":{"n":213,"media":630.4,"mediana":634.8,"dp":74.2,"min":440.8,"max":815.7,"p25":579.3,"p75":688.0,"p90":719.9,"pct_acima_500":95.3,"pct_acima_600":68.1,"pct_acima_700":17.4,"pct_acima_800":0.5},"n_unidades":3},"pH":{"n_inscritos":264,"n_presentes_2dias":254,"taxa_presenca_pct":96.2,"areas":{"CN":{"n":255,"media":585.9,"mediana":599.2,"dp":81.7,"min":346.5,"max":748.0,"p25":529.9,"p75":646.4,"p90":681.6,"pct_acima_500":82.4,"pct_acima_600":49.4,"pct_acima_700":3.9,"pct_acima_800":0.0},"CH":{"n":256,"media":594.6,"mediana":600.8,"dp":77.7,"min":377.5,"max":786.3,"p25":544.8,"p75":649.7,"p90":687.4,"pct_acima_500":86.3,"pct_acima_600":50.4,"pct_acima_700":6.2,"pct_acima_800":0.0},"LC":{"n":256,"media":597.7,"mediana":603.7,"dp":58.3,"min":335.1,"max":725.0,"p25":565.9,"p75":637.1,"p90":664.9,"pct_acima_500":94.5,"pct_acima_600":51.6,"pct_acima_700":1.6,"pct_acima_800":0.0},"MT":{"n":255,"media":684.4,"mediana":698.4,"dp":131.9,"min":351.1,"max":967.7,"p25":597.0,"p75":790.4,"p90":842.4,"pct_acima_500":89.4,"pct_acima_600":73.7,"pct_acima_700":48.6,"pct_acima_800":21.6}},"redacao":{"n":254,"media":816.7,"mediana":840.0,"dp":110.4,"min":300.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.8,"pct_acima_600":96.1,"pct_acima_700":86.2,"pct_acima_800":65.0,"comps":{"C1":146.1,"C2":169.5,"C3":153.7,"C4":170.8,"C5":176.5}},"nota_geral":{"n":252,"media":657.3,"mediana":666.5,"dp":73.0,"min":428.7,"max":808.0,"p25":603.1,"p75":714.1,"p90":745.6,"pct_acima_500":98.4,"pct_acima_600":77.0,"pct_acima_700":32.1,"pct_acima_800":0.8},"n_unidades":2},"Alfa CEM":{"n_inscritos":14,"n_presentes_2dias":14,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":14,"media":694.7,"mediana":684.2,"dp":45.2,"min":636.3,"max":777.8,"p25":666.2,"p75":728.2,"p90":756.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":35.7,"pct_acima_800":0.0},"CH":{"n":14,"media":679.4,"mediana":674.1,"dp":30.5,"min":629.4,"max":736.1,"p25":658.7,"p75":690.5,"p90":723.5,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":21.4,"pct_acima_800":0.0},"LC":{"n":14,"media":662.3,"mediana":660.4,"dp":28.5,"min":623.0,"max":726.2,"p25":642.3,"p75":678.3,"p90":691.7,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":7.1,"pct_acima_800":0.0},"MT":{"n":14,"media":875.9,"mediana":869.0,"dp":56.3,"min":783.4,"max":967.7,"p25":834.2,"p75":921.0,"p90":952.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9}},"redacao":{"n":14,"media":884.3,"mediana":900.0,"dp":67.1,"min":700.0,"max":960.0,"p25":865.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9,"comps":{"C1":160.0,"C2":185.7,"C3":161.4,"C4":180.0,"C5":197.1}},"nota_geral":{"n":14,"media":759.3,"mediana":757.9,"dp":26.3,"min":708.9,"max":805.9,"p25":742.2,"p75":770.7,"p90":796.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":14.3},"n_unidades":1},"CEL":{"n_inscritos":76,"n_presentes_2dias":76,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":76,"media":575.8,"mediana":577.3,"dp":61.9,"min":448.6,"max":785.0,"p25":528.2,"p75":617.1,"p90":641.0,"pct_acima_500":86.8,"pct_acima_600":32.9,"pct_acima_700":2.6,"pct_acima_800":0.0},"CH":{"n":76,"media":588.2,"mediana":595.6,"dp":58.9,"min":389.7,"max":688.9,"p25":561.1,"p75":632.2,"p90":656.6,"pct_acima_500":90.8,"pct_acima_600":44.7,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":76,"media":596.6,"mediana":599.4,"dp":44.5,"min":490.3,"max":672.8,"p25":565.6,"p75":636.2,"p90":648.8,"pct_acima_500":98.7,"pct_acima_600":48.7,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":76,"media":654.8,"mediana":662.0,"dp":103.3,"min":449.9,"max":948.8,"p25":577.9,"p75":723.4,"p90":769.8,"pct_acima_500":92.1,"pct_acima_600":67.1,"pct_acima_700":34.2,"pct_acima_800":6.6}},"redacao":{"n":76,"media":854.7,"mediana":880.0,"dp":88.7,"min":520.0,"max":960.0,"p25":815.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":98.7,"pct_acima_700":93.4,"pct_acima_800":80.3,"comps":{"C1":151.8,"C2":178.4,"C3":158.9,"C4":178.9,"C5":186.6}},"nota_geral":{"n":76,"media":654.0,"mediana":647.6,"dp":53.7,"min":501.5,"max":798.5,"p25":617.9,"p75":694.1,"p90":723.9,"pct_acima_500":100.0,"pct_acima_600":82.9,"pct_acima_700":19.7,"pct_acima_800":0.0},"n_unidades":3}},"pareado":{"AZ":{"pracas":["Botafogo","Barra da Tijuca (ABM)"],"nossa":{"n_inscritos":57,"n_presentes_2dias":53,"taxa_presenca_pct":93.0,"areas":{"CN":{"n":53,"media":543.0,"mediana":539.7,"dp":87.7,"min":360.3,"max":757.0,"p25":469.9,"p75":598.7,"p90":647.5,"pct_acima_500":67.9,"pct_acima_600":24.5,"pct_acima_700":3.8,"pct_acima_800":0.0},"CH":{"n":54,"media":579.4,"mediana":594.1,"dp":73.6,"min":378.5,"max":742.4,"p25":532.2,"p75":622.5,"p90":664.9,"pct_acima_500":87.0,"pct_acima_600":40.7,"pct_acima_700":5.6,"pct_acima_800":0.0},"LC":{"n":54,"media":585.7,"mediana":590.4,"dp":70.9,"min":363.4,"max":759.2,"p25":547.4,"p75":624.8,"p90":663.6,"pct_acima_500":88.9,"pct_acima_600":44.4,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":53,"media":630.4,"mediana":636.5,"dp":131.5,"min":366.5,"max":857.1,"p25":551.5,"p75":734.7,"p90":786.4,"pct_acima_500":79.2,"pct_acima_600":62.3,"pct_acima_700":32.1,"pct_acima_800":9.4}},"redacao":{"n":54,"media":745.6,"mediana":740.0,"dp":135.4,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":90.7,"pct_acima_700":61.1,"pct_acima_800":37.0,"comps":{"C1":134.4,"C2":163.3,"C3":140.4,"C4":151.1,"C5":156.3}},"nota_geral":{"n":53,"media":617.1,"mediana":628.4,"dp":87.6,"min":396.3,"max":798.0,"p25":559.9,"p75":677.1,"p90":703.1,"pct_acima_500":86.8,"pct_acima_600":60.4,"pct_acima_700":11.3,"pct_acima_800":0.0},"n_unidades":2,"cos":[33186260,33178828]},"deles":{"n_inscritos":278,"n_presentes_2dias":267,"taxa_presenca_pct":96.0,"areas":{"CN":{"n":267,"media":583.1,"mediana":592.6,"dp":82.8,"min":327.7,"max":738.9,"p25":535.6,"p75":639.2,"p90":679.6,"pct_acima_500":82.4,"pct_acima_600":46.8,"pct_acima_700":7.1,"pct_acima_800":0.0},"CH":{"n":271,"media":598.9,"mediana":607.3,"dp":67.4,"min":327.6,"max":778.3,"p25":563.0,"p75":646.2,"p90":674.3,"pct_acima_500":92.6,"pct_acima_600":55.4,"pct_acima_700":3.0,"pct_acima_800":0.0},"LC":{"n":271,"media":600.8,"mediana":603.9,"dp":47.4,"min":391.1,"max":720.9,"p25":574.4,"p75":632.6,"p90":651.0,"pct_acima_500":97.0,"pct_acima_600":54.2,"pct_acima_700":1.5,"pct_acima_800":0.0},"MT":{"n":267,"media":702.8,"mediana":718.9,"dp":107.1,"min":334.3,"max":915.8,"p25":647.7,"p75":774.6,"p90":823.9,"pct_acima_500":95.5,"pct_acima_600":83.1,"pct_acima_700":56.9,"pct_acima_800":16.9}},"redacao":{"n":269,"media":783.4,"mediana":800.0,"dp":121.7,"min":300.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":924.0,"pct_acima_500":98.5,"pct_acima_600":94.4,"pct_acima_700":75.8,"pct_acima_800":52.0,"comps":{"C1":144.4,"C2":164.0,"C3":145.8,"C4":162.8,"C5":166.4}},"nota_geral":{"n":266,"media":654.3,"mediana":663.4,"dp":67.3,"min":425.8,"max":790.9,"p25":607.4,"p75":705.4,"p90":734.2,"pct_acima_500":98.5,"pct_acima_600":77.8,"pct_acima_700":28.2,"pct_acima_800":0.0},"n_unidades":2,"cos":[33228604,33447225]},"veredicto":{"dif":-37.2,"ic95":24.9,"tipo":"derrota","txt":"derrota real"}},"Pensi":{"pracas":["Botafogo","Barra da Tijuca (ABM)"],"nossa":{"n_inscritos":57,"n_presentes_2dias":53,"taxa_presenca_pct":93.0,"areas":{"CN":{"n":53,"media":543.0,"mediana":539.7,"dp":87.7,"min":360.3,"max":757.0,"p25":469.9,"p75":598.7,"p90":647.5,"pct_acima_500":67.9,"pct_acima_600":24.5,"pct_acima_700":3.8,"pct_acima_800":0.0},"CH":{"n":54,"media":579.4,"mediana":594.1,"dp":73.6,"min":378.5,"max":742.4,"p25":532.2,"p75":622.5,"p90":664.9,"pct_acima_500":87.0,"pct_acima_600":40.7,"pct_acima_700":5.6,"pct_acima_800":0.0},"LC":{"n":54,"media":585.7,"mediana":590.4,"dp":70.9,"min":363.4,"max":759.2,"p25":547.4,"p75":624.8,"p90":663.6,"pct_acima_500":88.9,"pct_acima_600":44.4,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":53,"media":630.4,"mediana":636.5,"dp":131.5,"min":366.5,"max":857.1,"p25":551.5,"p75":734.7,"p90":786.4,"pct_acima_500":79.2,"pct_acima_600":62.3,"pct_acima_700":32.1,"pct_acima_800":9.4}},"redacao":{"n":54,"media":745.6,"mediana":740.0,"dp":135.4,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":90.7,"pct_acima_700":61.1,"pct_acima_800":37.0,"comps":{"C1":134.4,"C2":163.3,"C3":140.4,"C4":151.1,"C5":156.3}},"nota_geral":{"n":53,"media":617.1,"mediana":628.4,"dp":87.6,"min":396.3,"max":798.0,"p25":559.9,"p75":677.1,"p90":703.1,"pct_acima_500":86.8,"pct_acima_600":60.4,"pct_acima_700":11.3,"pct_acima_800":0.0},"n_unidades":2,"cos":[33186260,33178828]},"deles":{"n_inscritos":218,"n_presentes_2dias":214,"taxa_presenca_pct":98.2,"areas":{"CN":{"n":214,"media":561.8,"mediana":560.6,"dp":74.5,"min":356.1,"max":785.7,"p25":510.4,"p75":613.7,"p90":657.2,"pct_acima_500":79.4,"pct_acima_600":29.9,"pct_acima_700":2.8,"pct_acima_800":0.0},"CH":{"n":216,"media":576.9,"mediana":596.8,"dp":92.5,"min":0.0,"max":756.6,"p25":530.5,"p75":632.0,"p90":674.7,"pct_acima_500":82.4,"pct_acima_600":48.1,"pct_acima_700":6.0,"pct_acima_800":0.0},"LC":{"n":216,"media":589.0,"mediana":598.5,"dp":54.8,"min":329.4,"max":703.6,"p25":551.2,"p75":626.2,"p90":652.0,"pct_acima_500":93.5,"pct_acima_600":47.2,"pct_acima_700":0.9,"pct_acima_800":0.0},"MT":{"n":214,"media":648.5,"mediana":663.2,"dp":117.0,"min":352.1,"max":959.3,"p25":570.0,"p75":724.0,"p90":785.9,"pct_acima_500":87.4,"pct_acima_600":70.1,"pct_acima_700":35.5,"pct_acima_800":7.0}},"redacao":{"n":214,"media":771.2,"mediana":800.0,"dp":134.8,"min":360.0,"max":960.0,"p25":680.0,"p75":880.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":89.7,"pct_acima_700":72.4,"pct_acima_800":50.5,"comps":{"C1":141.2,"C2":166.0,"C3":145.5,"C4":160.2,"C5":158.3}},"nota_geral":{"n":213,"media":630.4,"mediana":634.8,"dp":74.2,"min":440.8,"max":815.7,"p25":579.3,"p75":688.0,"p90":719.9,"pct_acima_500":95.3,"pct_acima_600":68.1,"pct_acima_700":17.4,"pct_acima_800":0.5},"n_unidades":3,"cos":[33193118,33421226,33161402]},"veredicto":{"dif":-13.3,"ic95":25.6,"tipo":"empate","txt":"empate técnico"}},"pH":{"pracas":["Botafogo","Barra da Tijuca (ABM)"],"nossa":{"n_inscritos":57,"n_presentes_2dias":53,"taxa_presenca_pct":93.0,"areas":{"CN":{"n":53,"media":543.0,"mediana":539.7,"dp":87.7,"min":360.3,"max":757.0,"p25":469.9,"p75":598.7,"p90":647.5,"pct_acima_500":67.9,"pct_acima_600":24.5,"pct_acima_700":3.8,"pct_acima_800":0.0},"CH":{"n":54,"media":579.4,"mediana":594.1,"dp":73.6,"min":378.5,"max":742.4,"p25":532.2,"p75":622.5,"p90":664.9,"pct_acima_500":87.0,"pct_acima_600":40.7,"pct_acima_700":5.6,"pct_acima_800":0.0},"LC":{"n":54,"media":585.7,"mediana":590.4,"dp":70.9,"min":363.4,"max":759.2,"p25":547.4,"p75":624.8,"p90":663.6,"pct_acima_500":88.9,"pct_acima_600":44.4,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":53,"media":630.4,"mediana":636.5,"dp":131.5,"min":366.5,"max":857.1,"p25":551.5,"p75":734.7,"p90":786.4,"pct_acima_500":79.2,"pct_acima_600":62.3,"pct_acima_700":32.1,"pct_acima_800":9.4}},"redacao":{"n":54,"media":745.6,"mediana":740.0,"dp":135.4,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":90.7,"pct_acima_700":61.1,"pct_acima_800":37.0,"comps":{"C1":134.4,"C2":163.3,"C3":140.4,"C4":151.1,"C5":156.3}},"nota_geral":{"n":53,"media":617.1,"mediana":628.4,"dp":87.6,"min":396.3,"max":798.0,"p25":559.9,"p75":677.1,"p90":703.1,"pct_acima_500":86.8,"pct_acima_600":60.4,"pct_acima_700":11.3,"pct_acima_800":0.0},"n_unidades":2,"cos":[33186260,33178828]},"deles":{"n_inscritos":264,"n_presentes_2dias":254,"taxa_presenca_pct":96.2,"areas":{"CN":{"n":255,"media":585.9,"mediana":599.2,"dp":81.7,"min":346.5,"max":748.0,"p25":529.9,"p75":646.4,"p90":681.6,"pct_acima_500":82.4,"pct_acima_600":49.4,"pct_acima_700":3.9,"pct_acima_800":0.0},"CH":{"n":256,"media":594.6,"mediana":600.8,"dp":77.7,"min":377.5,"max":786.3,"p25":544.8,"p75":649.7,"p90":687.4,"pct_acima_500":86.3,"pct_acima_600":50.4,"pct_acima_700":6.2,"pct_acima_800":0.0},"LC":{"n":256,"media":597.7,"mediana":603.7,"dp":58.3,"min":335.1,"max":725.0,"p25":565.9,"p75":637.1,"p90":664.9,"pct_acima_500":94.5,"pct_acima_600":51.6,"pct_acima_700":1.6,"pct_acima_800":0.0},"MT":{"n":255,"media":684.4,"mediana":698.4,"dp":131.9,"min":351.1,"max":967.7,"p25":597.0,"p75":790.4,"p90":842.4,"pct_acima_500":89.4,"pct_acima_600":73.7,"pct_acima_700":48.6,"pct_acima_800":21.6}},"redacao":{"n":254,"media":816.7,"mediana":840.0,"dp":110.4,"min":300.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.8,"pct_acima_600":96.1,"pct_acima_700":86.2,"pct_acima_800":65.0,"comps":{"C1":146.1,"C2":169.5,"C3":153.7,"C4":170.8,"C5":176.5}},"nota_geral":{"n":252,"media":657.3,"mediana":666.5,"dp":73.0,"min":428.7,"max":808.0,"p25":603.1,"p75":714.1,"p90":745.6,"pct_acima_500":98.4,"pct_acima_600":77.0,"pct_acima_700":32.1,"pct_acima_800":0.8},"n_unidades":2,"cos":[33110328,33155852]},"veredicto":{"dif":-40.2,"ic95":25.2,"tipo":"derrota","txt":"derrota real"}},"Alfa CEM":{"pracas":["Barra da Tijuca (ABM)"],"nossa":{"n_inscritos":18,"n_presentes_2dias":16,"taxa_presenca_pct":88.9,"areas":{"CN":{"n":16,"media":568.2,"mediana":574.8,"dp":80.0,"min":422.2,"max":683.2,"p25":524.5,"p75":622.8,"p90":653.2,"pct_acima_500":81.2,"pct_acima_600":43.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":16,"media":598.9,"mediana":612.6,"dp":61.2,"min":442.9,"max":675.1,"p25":593.8,"p75":625.8,"p90":656.6,"pct_acima_500":87.5,"pct_acima_600":62.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":16,"media":604.6,"mediana":611.8,"dp":44.7,"min":530.0,"max":682.1,"p25":579.2,"p75":626.9,"p90":658.4,"pct_acima_500":100.0,"pct_acima_600":56.2,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":16,"media":622.9,"mediana":656.0,"dp":143.8,"min":366.5,"max":819.3,"p25":539.9,"p75":722.3,"p90":781.9,"pct_acima_500":81.2,"pct_acima_600":62.5,"pct_acima_700":31.2,"pct_acima_800":6.2}},"redacao":{"n":16,"media":732.5,"mediana":750.0,"dp":150.2,"min":380.0,"max":920.0,"p25":635.0,"p75":850.0,"p90":910.0,"pct_acima_500":93.8,"pct_acima_600":87.5,"pct_acima_700":56.2,"pct_acima_800":37.5,"comps":{"C1":130.0,"C2":161.2,"C3":140.0,"C4":145.0,"C5":156.2}},"nota_geral":{"n":16,"media":625.4,"mediana":653.1,"dp":81.1,"min":441.5,"max":728.3,"p25":590.7,"p75":679.0,"p90":701.6,"pct_acima_500":87.5,"pct_acima_600":68.8,"pct_acima_700":12.5,"pct_acima_800":0.0},"n_unidades":1,"cos":[33178828]},"deles":{"n_inscritos":14,"n_presentes_2dias":14,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":14,"media":694.7,"mediana":684.2,"dp":45.2,"min":636.3,"max":777.8,"p25":666.2,"p75":728.2,"p90":756.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":35.7,"pct_acima_800":0.0},"CH":{"n":14,"media":679.4,"mediana":674.1,"dp":30.5,"min":629.4,"max":736.1,"p25":658.7,"p75":690.5,"p90":723.5,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":21.4,"pct_acima_800":0.0},"LC":{"n":14,"media":662.3,"mediana":660.4,"dp":28.5,"min":623.0,"max":726.2,"p25":642.3,"p75":678.3,"p90":691.7,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":7.1,"pct_acima_800":0.0},"MT":{"n":14,"media":875.9,"mediana":869.0,"dp":56.3,"min":783.4,"max":967.7,"p25":834.2,"p75":921.0,"p90":952.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9}},"redacao":{"n":14,"media":884.3,"mediana":900.0,"dp":67.1,"min":700.0,"max":960.0,"p25":865.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9,"comps":{"C1":160.0,"C2":185.7,"C3":161.4,"C4":180.0,"C5":197.1}},"nota_geral":{"n":14,"media":759.3,"mediana":757.9,"dp":26.3,"min":708.9,"max":805.9,"p25":742.2,"p75":770.7,"p90":796.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":14.3},"n_unidades":1,"cos":[33184739]},"veredicto":{"dif":-133.9,"ic95":42.1,"tipo":"derrota","txt":"derrota real"}},"CEL":{"pracas":["Botafogo","Barra da Tijuca (ABM)"],"nossa":{"n_inscritos":57,"n_presentes_2dias":53,"taxa_presenca_pct":93.0,"areas":{"CN":{"n":53,"media":543.0,"mediana":539.7,"dp":87.7,"min":360.3,"max":757.0,"p25":469.9,"p75":598.7,"p90":647.5,"pct_acima_500":67.9,"pct_acima_600":24.5,"pct_acima_700":3.8,"pct_acima_800":0.0},"CH":{"n":54,"media":579.4,"mediana":594.1,"dp":73.6,"min":378.5,"max":742.4,"p25":532.2,"p75":622.5,"p90":664.9,"pct_acima_500":87.0,"pct_acima_600":40.7,"pct_acima_700":5.6,"pct_acima_800":0.0},"LC":{"n":54,"media":585.7,"mediana":590.4,"dp":70.9,"min":363.4,"max":759.2,"p25":547.4,"p75":624.8,"p90":663.6,"pct_acima_500":88.9,"pct_acima_600":44.4,"pct_acima_700":3.7,"pct_acima_800":0.0},"MT":{"n":53,"media":630.4,"mediana":636.5,"dp":131.5,"min":366.5,"max":857.1,"p25":551.5,"p75":734.7,"p90":786.4,"pct_acima_500":79.2,"pct_acima_600":62.3,"pct_acima_700":32.1,"pct_acima_800":9.4}},"redacao":{"n":54,"media":745.6,"mediana":740.0,"dp":135.4,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":96.3,"pct_acima_600":90.7,"pct_acima_700":61.1,"pct_acima_800":37.0,"comps":{"C1":134.4,"C2":163.3,"C3":140.4,"C4":151.1,"C5":156.3}},"nota_geral":{"n":53,"media":617.1,"mediana":628.4,"dp":87.6,"min":396.3,"max":798.0,"p25":559.9,"p75":677.1,"p90":703.1,"pct_acima_500":86.8,"pct_acima_600":60.4,"pct_acima_700":11.3,"pct_acima_800":0.0},"n_unidades":2,"cos":[33186260,33178828]},"deles":{"n_inscritos":76,"n_presentes_2dias":76,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":76,"media":575.8,"mediana":577.3,"dp":61.9,"min":448.6,"max":785.0,"p25":528.2,"p75":617.1,"p90":641.0,"pct_acima_500":86.8,"pct_acima_600":32.9,"pct_acima_700":2.6,"pct_acima_800":0.0},"CH":{"n":76,"media":588.2,"mediana":595.6,"dp":58.9,"min":389.7,"max":688.9,"p25":561.1,"p75":632.2,"p90":656.6,"pct_acima_500":90.8,"pct_acima_600":44.7,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":76,"media":596.6,"mediana":599.4,"dp":44.5,"min":490.3,"max":672.8,"p25":565.6,"p75":636.2,"p90":648.8,"pct_acima_500":98.7,"pct_acima_600":48.7,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":76,"media":654.8,"mediana":662.0,"dp":103.3,"min":449.9,"max":948.8,"p25":577.9,"p75":723.4,"p90":769.8,"pct_acima_500":92.1,"pct_acima_600":67.1,"pct_acima_700":34.2,"pct_acima_800":6.6}},"redacao":{"n":76,"media":854.7,"mediana":880.0,"dp":88.7,"min":520.0,"max":960.0,"p25":815.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":98.7,"pct_acima_700":93.4,"pct_acima_800":80.3,"comps":{"C1":151.8,"C2":178.4,"C3":158.9,"C4":178.9,"C5":186.6}},"nota_geral":{"n":76,"media":654.0,"mediana":647.6,"dp":53.7,"min":501.5,"max":798.5,"p25":617.9,"p75":694.1,"p90":723.9,"pct_acima_500":100.0,"pct_acima_600":82.9,"pct_acima_700":19.7,"pct_acima_800":0.0},"n_unidades":3,"cos":[33176760,33065195,33105154]},"veredicto":{"dif":-36.9,"ic95":26.5,"tipo":"derrota","txt":"derrota real"}}},"pracas":[{"titulo":"Botafogo","municipio":"Rio de Janeiro","nossa_co":33186260,"nota":"Pensi (Flamengo e Copacabana) e CEL (Jardim Botânico e Maria Angélica) exibidos como praças adjacentes - as duas redes não têm unidade em Botafogo. pH Botafogo 2 sem dados no ENEM 2024 e 2025.","massa":{"dif":-50.0,"ic95":31.7,"tipo":"derrota","txt":"derrota real","co":33110328,"label":"pH - Botafogo 1","rede":"pH","n_inscritos":152,"n_validos":147,"ng":663.5,"seleta":false},"topo":{"dif":-50.0,"ic95":31.7,"tipo":"derrota","txt":"derrota real","co":33110328,"label":"pH - Botafogo 1","rede":"pH","n_inscritos":152,"n_validos":147,"ng":663.5,"seleta":false},"mesmo_dono":true},{"titulo":"Barra da Tijuca (ABM)","municipio":"Rio de Janeiro","nossa_co":33178828,"nota":"Pensi não tem unidade na Barra - a unidade do Recreio é exibida como adjacente. Alfa CEM Barra da Tijuca 2 sem dados no ENEM 2024 e 2025.","massa":{"dif":-29.3,"ic95":40.9,"tipo":"empate","txt":"empate técnico","co":33447225,"label":"AZ - Barra da Tijuca","rede":"AZ","n_inscritos":184,"n_validos":174,"ng":654.7,"seleta":false},"topo":{"dif":-133.9,"ic95":42.1,"tipo":"derrota","txt":"derrota real","co":33184739,"label":"Alfa CEM - Barra da Tijuca 1","rede":"Alfa CEM","n_inscritos":14,"n_validos":14,"ng":759.3,"seleta":true},"mesmo_dono":false}],"placar":{"massa":{"vitoria":0,"empate":1,"derrota":1,"resumo":"0 · 1 · 1"},"topo":{"vitoria":0,"empate":0,"derrota":2,"resumo":"0 · 0 · 2"},"pareado":{"vitoria":0,"empate":1,"derrota":4,"resumo":"0 · 1 · 4"}},"unidades":[{"co":33178828,"rede":"Cubo Global","nossa":true,"label":"Cubo Global - Barra da Tijuca (ABM)","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":18,"n_presentes_2dias":16,"taxa_presenca_pct":88.9,"areas":{"CN":{"n":16,"media":568.2,"mediana":574.8,"dp":80.0,"min":422.2,"max":683.2,"p25":524.5,"p75":622.8,"p90":653.2,"pct_acima_500":81.2,"pct_acima_600":43.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":16,"media":598.9,"mediana":612.6,"dp":61.2,"min":442.9,"max":675.1,"p25":593.8,"p75":625.8,"p90":656.6,"pct_acima_500":87.5,"pct_acima_600":62.5,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":16,"media":604.6,"mediana":611.8,"dp":44.7,"min":530.0,"max":682.1,"p25":579.2,"p75":626.9,"p90":658.4,"pct_acima_500":100.0,"pct_acima_600":56.2,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":16,"media":622.9,"mediana":656.0,"dp":143.8,"min":366.5,"max":819.3,"p25":539.9,"p75":722.3,"p90":781.9,"pct_acima_500":81.2,"pct_acima_600":62.5,"pct_acima_700":31.2,"pct_acima_800":6.2}},"redacao":{"n":16,"media":732.5,"mediana":750.0,"dp":150.2,"min":380.0,"max":920.0,"p25":635.0,"p75":850.0,"p90":910.0,"pct_acima_500":93.8,"pct_acima_600":87.5,"pct_acima_700":56.2,"pct_acima_800":37.5,"comps":{"C1":130.0,"C2":161.2,"C3":140.0,"C4":145.0,"C5":156.2}},"nota_geral":{"n":16,"media":625.4,"mediana":653.1,"dp":81.1,"min":441.5,"max":728.3,"p25":590.7,"p75":679.0,"p90":701.6,"pct_acima_500":87.5,"pct_acima_600":68.8,"pct_acima_700":12.5,"pct_acima_800":0.0}},{"co":33186260,"rede":"Cubo Global","nossa":true,"label":"Cubo Global - Botafogo","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":39,"n_presentes_2dias":37,"taxa_presenca_pct":94.9,"areas":{"CN":{"n":37,"media":532.2,"mediana":517.9,"dp":89.7,"min":360.3,"max":757.0,"p25":469.4,"p75":588.0,"p90":638.5,"pct_acima_500":62.2,"pct_acima_600":16.2,"pct_acima_700":5.4,"pct_acima_800":0.0},"CH":{"n":38,"media":571.3,"mediana":571.7,"dp":77.6,"min":378.5,"max":742.4,"p25":526.9,"p75":620.1,"p90":652.8,"pct_acima_500":86.8,"pct_acima_600":31.6,"pct_acima_700":7.9,"pct_acima_800":0.0},"LC":{"n":38,"media":577.7,"mediana":589.6,"dp":78.6,"min":363.4,"max":759.2,"p25":544.2,"p75":619.0,"p90":662.4,"pct_acima_500":84.2,"pct_acima_600":39.5,"pct_acima_700":5.3,"pct_acima_800":0.0},"MT":{"n":37,"media":633.6,"mediana":619.3,"dp":127.7,"min":371.6,"max":857.1,"p25":569.1,"p75":734.7,"p90":796.6,"pct_acima_500":78.4,"pct_acima_600":62.2,"pct_acima_700":32.4,"pct_acima_800":10.8}},"redacao":{"n":38,"media":751.1,"mediana":740.0,"dp":130.5,"min":380.0,"max":960.0,"p25":660.0,"p75":875.0,"p90":920.0,"pct_acima_500":97.4,"pct_acima_600":92.1,"pct_acima_700":63.2,"pct_acima_800":36.8,"comps":{"C1":136.3,"C2":164.2,"C3":140.5,"C4":153.7,"C5":156.3}},"nota_geral":{"n":37,"media":613.5,"mediana":618.2,"dp":91.2,"min":396.3,"max":798.0,"p25":558.7,"p75":677.1,"p90":704.4,"pct_acima_500":86.5,"pct_acima_600":56.8,"pct_acima_700":10.8,"pct_acima_800":0.0}},{"co":33065195,"rede":"CEL","nossa":false,"label":"CEL - Maria Angélica","municipio":"Rio de Janeiro","bairro":"JARDIM BOTANICO","n_inscritos":19,"n_presentes_2dias":19,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":19,"media":578.0,"mediana":594.6,"dp":54.1,"min":490.0,"max":657.9,"p25":530.4,"p75":615.1,"p90":632.5,"pct_acima_500":84.2,"pct_acima_600":42.1,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":19,"media":587.3,"mediana":602.7,"dp":49.6,"min":499.6,"max":667.7,"p25":542.2,"p75":619.0,"p90":644.0,"pct_acima_500":94.7,"pct_acima_600":57.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":19,"media":588.2,"mediana":578.4,"dp":43.0,"min":518.9,"max":649.7,"p25":561.4,"p75":631.6,"p90":641.6,"pct_acima_500":100.0,"pct_acima_600":42.1,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":19,"media":646.6,"mediana":675.5,"dp":92.2,"min":449.9,"max":764.0,"p25":580.9,"p75":720.2,"p90":737.7,"pct_acima_500":89.5,"pct_acima_600":68.4,"pct_acima_700":36.8,"pct_acima_800":0.0}},"redacao":{"n":19,"media":789.5,"mediana":800.0,"dp":122.6,"min":520.0,"max":960.0,"p25":700.0,"p75":900.0,"p90":928.0,"pct_acima_500":100.0,"pct_acima_600":94.7,"pct_acima_700":78.9,"pct_acima_800":52.6,"comps":{"C1":145.3,"C2":166.3,"C3":143.2,"C4":163.2,"C5":171.6}},"nota_geral":{"n":19,"media":637.9,"mediana":643.9,"dp":56.3,"min":501.5,"max":728.9,"p25":612.4,"p75":681.0,"p90":704.9,"pct_acima_500":100.0,"pct_acima_600":78.9,"pct_acima_700":15.8,"pct_acima_800":0.0}},{"co":33105154,"rede":"CEL","nossa":false,"label":"CEL - Barra da Tijuca","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":16,"n_presentes_2dias":16,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":16,"media":598.5,"mediana":608.4,"dp":87.3,"min":448.6,"max":785.0,"p25":560.5,"p75":638.5,"p90":681.0,"pct_acima_500":87.5,"pct_acima_600":50.0,"pct_acima_700":12.5,"pct_acima_800":0.0},"CH":{"n":16,"media":608.9,"mediana":595.0,"dp":53.1,"min":514.6,"max":688.9,"p25":570.4,"p75":650.8,"p90":678.1,"pct_acima_500":100.0,"pct_acima_600":43.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":16,"media":604.9,"mediana":618.8,"dp":52.4,"min":490.3,"max":655.8,"p25":584.4,"p75":646.7,"p90":654.6,"pct_acima_500":93.8,"pct_acima_600":68.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":16,"media":694.0,"mediana":719.2,"dp":120.3,"min":511.5,"max":948.8,"p25":581.5,"p75":763.2,"p90":796.6,"pct_acima_500":100.0,"pct_acima_600":68.8,"pct_acima_700":50.0,"pct_acima_800":12.5}},"redacao":{"n":16,"media":882.5,"mediana":890.0,"dp":61.0,"min":760.0,"max":960.0,"p25":870.0,"p75":920.0,"p90":950.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":87.5,"comps":{"C1":157.5,"C2":178.8,"C3":161.2,"C4":187.5,"C5":197.5}},"nota_geral":{"n":16,"media":677.8,"mediana":679.8,"dp":64.3,"min":570.4,"max":798.5,"p25":645.6,"p75":718.6,"p90":743.8,"pct_acima_500":100.0,"pct_acima_600":81.2,"pct_acima_700":37.5,"pct_acima_800":0.0}},{"co":33110328,"rede":"pH","nossa":false,"label":"pH - Botafogo 1","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":152,"n_presentes_2dias":148,"taxa_presenca_pct":97.4,"areas":{"CN":{"n":148,"media":595.9,"mediana":608.8,"dp":78.1,"min":376.7,"max":748.0,"p25":553.7,"p75":652.2,"p90":688.2,"pct_acima_500":85.1,"pct_acima_600":54.1,"pct_acima_700":5.4,"pct_acima_800":0.0},"CH":{"n":149,"media":602.7,"mediana":606.1,"dp":77.3,"min":377.5,"max":786.3,"p25":555.7,"p75":655.9,"p90":694.4,"pct_acima_500":87.9,"pct_acima_600":54.4,"pct_acima_700":8.7,"pct_acima_800":0.0},"LC":{"n":149,"media":604.4,"mediana":607.4,"dp":57.1,"min":335.1,"max":725.0,"p25":568.7,"p75":641.1,"p90":671.4,"pct_acima_500":96.0,"pct_acima_600":55.7,"pct_acima_700":2.7,"pct_acima_800":0.0},"MT":{"n":148,"media":694.7,"mediana":698.8,"dp":131.7,"min":351.1,"max":942.8,"p25":621.3,"p75":803.5,"p90":853.8,"pct_acima_500":90.5,"pct_acima_600":77.7,"pct_acima_700":48.6,"pct_acima_800":26.4}},"redacao":{"n":148,"media":814.3,"mediana":840.0,"dp":113.5,"min":300.0,"max":960.0,"p25":755.0,"p75":900.0,"p90":920.0,"pct_acima_500":98.6,"pct_acima_600":95.3,"pct_acima_700":86.5,"pct_acima_800":64.9,"comps":{"C1":145.5,"C2":169.7,"C3":152.0,"C4":170.3,"C5":176.8}},"nota_geral":{"n":147,"media":663.5,"mediana":670.1,"dp":73.5,"min":443.7,"max":808.0,"p25":614.7,"p75":726.4,"p90":750.0,"pct_acima_500":98.6,"pct_acima_600":78.9,"pct_acima_700":35.4,"pct_acima_800":0.7}},{"co":33155852,"rede":"pH","nossa":false,"label":"pH - Barra da Tijuca","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":112,"n_presentes_2dias":106,"taxa_presenca_pct":94.6,"areas":{"CN":{"n":107,"media":572.0,"mediana":588.7,"dp":84.9,"min":346.5,"max":732.2,"p25":517.1,"p75":638.2,"p90":674.2,"pct_acima_500":78.5,"pct_acima_600":43.0,"pct_acima_700":1.9,"pct_acima_800":0.0},"CH":{"n":107,"media":583.4,"mediana":595.1,"dp":77.3,"min":402.1,"max":780.0,"p25":541.8,"p75":636.0,"p90":675.1,"pct_acima_500":84.1,"pct_acima_600":44.9,"pct_acima_700":2.8,"pct_acima_800":0.0},"LC":{"n":107,"media":588.5,"mediana":591.9,"dp":58.9,"min":340.3,"max":678.0,"p25":559.2,"p75":628.8,"p90":654.8,"pct_acima_500":92.5,"pct_acima_600":45.8,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":107,"media":670.2,"mediana":691.7,"dp":131.4,"min":360.1,"max":967.7,"p25":575.6,"p75":767.2,"p90":825.1,"pct_acima_500":87.9,"pct_acima_600":68.2,"pct_acima_700":48.6,"pct_acima_800":15.0}},"redacao":{"n":106,"media":820.0,"mediana":840.0,"dp":106.4,"min":380.0,"max":960.0,"p25":760.0,"p75":900.0,"p90":930.0,"pct_acima_500":99.1,"pct_acima_600":97.2,"pct_acima_700":85.8,"pct_acima_800":65.1,"comps":{"C1":147.0,"C2":169.2,"C3":156.0,"C4":171.5,"C5":176.2}},"nota_geral":{"n":105,"media":648.7,"mediana":656.3,"dp":71.8,"min":428.7,"max":802.7,"p25":598.6,"p75":701.5,"p90":733.0,"pct_acima_500":98.1,"pct_acima_600":74.3,"pct_acima_700":27.6,"pct_acima_800":1.0}},{"co":33161402,"rede":"Pensi","nossa":false,"label":"Pensi - Recreio","municipio":"Rio de Janeiro","bairro":"RECREIO","n_inscritos":98,"n_presentes_2dias":97,"taxa_presenca_pct":99.0,"areas":{"CN":{"n":97,"media":561.1,"mediana":549.5,"dp":78.0,"min":388.1,"max":785.7,"p25":506.2,"p75":616.7,"p90":665.9,"pct_acima_500":78.4,"pct_acima_600":28.9,"pct_acima_700":4.1,"pct_acima_800":0.0},"CH":{"n":97,"media":574.2,"mediana":590.6,"dp":89.8,"min":354.9,"max":756.6,"p25":521.8,"p75":623.4,"p90":673.4,"pct_acima_500":81.4,"pct_acima_600":46.4,"pct_acima_700":9.3,"pct_acima_800":0.0},"LC":{"n":97,"media":585.7,"mediana":589.4,"dp":58.6,"min":329.4,"max":703.6,"p25":544.7,"p75":622.8,"p90":655.2,"pct_acima_500":93.8,"pct_acima_600":38.1,"pct_acima_700":2.1,"pct_acima_800":0.0},"MT":{"n":97,"media":642.4,"mediana":651.4,"dp":127.7,"min":352.1,"max":959.3,"p25":548.1,"p75":724.5,"p90":784.6,"pct_acima_500":83.5,"pct_acima_600":67.0,"pct_acima_700":37.1,"pct_acima_800":8.2}},"redacao":{"n":96,"media":744.8,"mediana":760.0,"dp":143.6,"min":360.0,"max":960.0,"p25":640.0,"p75":860.0,"p90":910.0,"pct_acima_500":93.8,"pct_acima_600":86.5,"pct_acima_700":66.7,"pct_acima_800":43.8,"comps":{"C1":136.5,"C2":159.6,"C3":140.8,"C4":157.1,"C5":150.8}},"nota_geral":{"n":96,"media":623.0,"mediana":621.6,"dp":79.2,"min":465.9,"max":815.7,"p25":561.0,"p75":674.6,"p90":729.5,"pct_acima_500":93.8,"pct_acima_600":60.4,"pct_acima_700":18.8,"pct_acima_800":1.0}},{"co":33176760,"rede":"CEL","nossa":false,"label":"CEL - Jardim Botânico","municipio":"Rio de Janeiro","bairro":"JARDIM BOTANICO","n_inscritos":41,"n_presentes_2dias":41,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":41,"media":565.8,"mediana":567.8,"dp":52.0,"min":460.4,"max":687.3,"p25":529.0,"p75":595.5,"p90":622.2,"pct_acima_500":87.8,"pct_acima_600":22.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":41,"media":580.5,"mediana":592.7,"dp":64.1,"min":389.7,"max":687.6,"p25":556.2,"p75":631.8,"p90":647.8,"pct_acima_500":85.4,"pct_acima_600":39.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"LC":{"n":41,"media":597.2,"mediana":597.0,"dp":42.3,"min":506.4,"max":672.8,"p25":567.1,"p75":633.3,"p90":643.8,"pct_acima_500":100.0,"pct_acima_600":43.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":41,"media":643.3,"mediana":646.9,"dp":99.9,"min":452.7,"max":865.4,"p25":574.7,"p75":704.2,"p90":767.2,"pct_acima_500":90.2,"pct_acima_600":65.9,"pct_acima_700":26.8,"pct_acima_800":7.3}},"redacao":{"n":41,"media":874.1,"mediana":880.0,"dp":62.3,"min":680.0,"max":960.0,"p25":860.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":97.6,"pct_acima_800":90.2,"comps":{"C1":152.7,"C2":183.9,"C3":165.4,"C4":182.9,"C5":189.3}},"nota_geral":{"n":41,"media":652.2,"mediana":647.4,"dp":45.6,"min":570.4,"max":752.5,"p25":618.4,"p75":689.9,"p90":710.0,"pct_acima_500":100.0,"pct_acima_600":85.4,"pct_acima_700":14.6,"pct_acima_800":0.0}},{"co":33184739,"rede":"Alfa CEM","nossa":false,"label":"Alfa CEM - Barra da Tijuca 1","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":14,"n_presentes_2dias":14,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":14,"media":694.7,"mediana":684.2,"dp":45.2,"min":636.3,"max":777.8,"p25":666.2,"p75":728.2,"p90":756.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":35.7,"pct_acima_800":0.0},"CH":{"n":14,"media":679.4,"mediana":674.1,"dp":30.5,"min":629.4,"max":736.1,"p25":658.7,"p75":690.5,"p90":723.5,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":21.4,"pct_acima_800":0.0},"LC":{"n":14,"media":662.3,"mediana":660.4,"dp":28.5,"min":623.0,"max":726.2,"p25":642.3,"p75":678.3,"p90":691.7,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":7.1,"pct_acima_800":0.0},"MT":{"n":14,"media":875.9,"mediana":869.0,"dp":56.3,"min":783.4,"max":967.7,"p25":834.2,"p75":921.0,"p90":952.8,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9}},"redacao":{"n":14,"media":884.3,"mediana":900.0,"dp":67.1,"min":700.0,"max":960.0,"p25":865.0,"p75":920.0,"p90":940.0,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":92.9,"comps":{"C1":160.0,"C2":185.7,"C3":161.4,"C4":180.0,"C5":197.1}},"nota_geral":{"n":14,"media":759.3,"mediana":757.9,"dp":26.3,"min":708.9,"max":805.9,"p25":742.2,"p75":770.7,"p90":796.9,"pct_acima_500":100.0,"pct_acima_600":100.0,"pct_acima_700":100.0,"pct_acima_800":14.3}},{"co":33193118,"rede":"Pensi","nossa":false,"label":"Pensi - Flamengo","municipio":"Rio de Janeiro","bairro":"FLAMENGO","n_inscritos":42,"n_presentes_2dias":42,"taxa_presenca_pct":100.0,"areas":{"CN":{"n":42,"media":549.4,"mediana":567.0,"dp":75.0,"min":356.1,"max":681.8,"p25":498.2,"p75":612.4,"p90":626.5,"pct_acima_500":73.8,"pct_acima_600":28.6,"pct_acima_700":0.0,"pct_acima_800":0.0},"CH":{"n":42,"media":545.8,"mediana":552.5,"dp":124.7,"min":0.0,"max":730.4,"p25":498.5,"p75":630.5,"p90":673.4,"pct_acima_500":73.8,"pct_acima_600":35.7,"pct_acima_700":4.8,"pct_acima_800":0.0},"LC":{"n":42,"media":581.0,"mediana":596.2,"dp":60.1,"min":437.6,"max":669.2,"p25":549.6,"p75":624.3,"p90":648.3,"pct_acima_500":88.1,"pct_acima_600":42.9,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":42,"media":632.7,"mediana":650.2,"dp":110.7,"min":390.4,"max":840.9,"p25":561.3,"p75":707.5,"p90":776.9,"pct_acima_500":83.3,"pct_acima_600":66.7,"pct_acima_700":26.2,"pct_acima_800":4.8}},"redacao":{"n":42,"media":800.5,"mediana":860.0,"dp":126.0,"min":520.0,"max":960.0,"p25":710.0,"p75":900.0,"p90":938.0,"pct_acima_500":100.0,"pct_acima_600":92.9,"pct_acima_700":76.2,"pct_acima_800":54.8,"comps":{"C1":144.8,"C2":170.0,"C3":153.3,"C4":162.4,"C5":170.0}},"nota_geral":{"n":42,"media":621.9,"mediana":634.7,"dp":81.8,"min":440.8,"max":761.0,"p25":576.7,"p75":693.1,"p90":715.0,"pct_acima_500":90.5,"pct_acima_600":69.0,"pct_acima_700":14.3,"pct_acima_800":0.0}},{"co":33228604,"rede":"AZ","nossa":false,"label":"AZ - Botafogo","municipio":"Rio de Janeiro","bairro":"BOTAFOGO","n_inscritos":94,"n_presentes_2dias":92,"taxa_presenca_pct":97.9,"areas":{"CN":{"n":92,"media":583.2,"mediana":585.2,"dp":83.1,"min":364.5,"max":738.9,"p25":531.4,"p75":649.7,"p90":684.1,"pct_acima_500":81.5,"pct_acima_600":47.8,"pct_acima_700":7.6,"pct_acima_800":0.0},"CH":{"n":94,"media":605.4,"mediana":609.2,"dp":69.1,"min":438.3,"max":778.3,"p25":551.2,"p75":655.5,"p90":686.5,"pct_acima_500":93.6,"pct_acima_600":56.4,"pct_acima_700":5.3,"pct_acima_800":0.0},"LC":{"n":94,"media":603.7,"mediana":607.5,"dp":48.8,"min":440.8,"max":720.9,"p25":576.1,"p75":632.8,"p90":660.8,"pct_acima_500":97.9,"pct_acima_600":57.4,"pct_acima_700":3.2,"pct_acima_800":0.0},"MT":{"n":92,"media":686.7,"mediana":688.4,"dp":112.4,"min":334.3,"max":904.0,"p25":609.8,"p75":763.4,"p90":826.0,"pct_acima_500":94.6,"pct_acima_600":80.4,"pct_acima_700":47.8,"pct_acima_800":17.4}},"redacao":{"n":93,"media":784.5,"mediana":800.0,"dp":115.8,"min":420.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":920.0,"pct_acima_500":98.9,"pct_acima_600":92.5,"pct_acima_700":75.3,"pct_acima_800":51.6,"comps":{"C1":143.9,"C2":164.7,"C3":146.2,"C4":161.9,"C5":167.7}},"nota_geral":{"n":92,"media":653.4,"mediana":664.6,"dp":69.1,"min":466.3,"max":790.9,"p25":598.8,"p75":704.0,"p90":735.9,"pct_acima_500":98.9,"pct_acima_600":75.0,"pct_acima_700":29.3,"pct_acima_800":0.0}},{"co":33421226,"rede":"Pensi","nossa":false,"label":"Pensi - Copacabana","municipio":"Rio de Janeiro","bairro":"COPACABANA","n_inscritos":78,"n_presentes_2dias":75,"taxa_presenca_pct":96.2,"areas":{"CN":{"n":75,"media":569.6,"mediana":563.3,"dp":69.5,"min":390.4,"max":745.8,"p25":533.6,"p75":624.8,"p90":650.6,"pct_acima_500":84.0,"pct_acima_600":32.0,"pct_acima_700":2.7,"pct_acima_800":0.0},"CH":{"n":77,"media":597.4,"mediana":609.6,"dp":68.2,"min":430.1,"max":716.1,"p25":563.7,"p75":641.1,"p90":675.7,"pct_acima_500":88.3,"pct_acima_600":57.1,"pct_acima_700":2.6,"pct_acima_800":0.0},"LC":{"n":77,"media":597.3,"mediana":606.2,"dp":45.6,"min":496.2,"max":678.2,"p25":559.2,"p75":627.6,"p90":650.4,"pct_acima_500":96.1,"pct_acima_600":61.0,"pct_acima_700":0.0,"pct_acima_800":0.0},"MT":{"n":75,"media":665.3,"mediana":680.9,"dp":105.0,"min":395.9,"max":905.9,"p25":609.0,"p75":732.4,"p90":789.7,"pct_acima_500":94.7,"pct_acima_600":76.0,"pct_acima_700":38.7,"pct_acima_800":6.7}},"redacao":{"n":76,"media":788.4,"mediana":830.0,"dp":123.2,"min":420.0,"max":960.0,"p25":720.0,"p75":880.0,"p90":900.0,"pct_acima_500":97.4,"pct_acima_600":92.1,"pct_acima_700":77.6,"pct_acima_800":56.6,"comps":{"C1":145.3,"C2":171.8,"C3":147.1,"C4":162.9,"C5":161.3}},"nota_geral":{"n":75,"media":644.7,"mediana":647.1,"dp":60.7,"min":512.6,"max":784.8,"p25":611.3,"p75":686.3,"p90":716.4,"pct_acima_500":100.0,"pct_acima_600":77.3,"pct_acima_700":17.3,"pct_acima_800":0.0}},{"co":33447225,"rede":"AZ","nossa":false,"label":"AZ - Barra da Tijuca","municipio":"Rio de Janeiro","bairro":"BARRA DA TIJUCA","n_inscritos":184,"n_presentes_2dias":175,"taxa_presenca_pct":95.1,"areas":{"CN":{"n":175,"media":583.0,"mediana":594.1,"dp":82.9,"min":327.7,"max":732.9,"p25":542.4,"p75":636.3,"p90":675.4,"pct_acima_500":82.9,"pct_acima_600":46.3,"pct_acima_700":6.9,"pct_acima_800":0.0},"CH":{"n":177,"media":595.5,"mediana":607.1,"dp":66.5,"min":327.6,"max":710.6,"p25":564.4,"p75":639.6,"p90":668.6,"pct_acima_500":92.1,"pct_acima_600":54.8,"pct_acima_700":1.7,"pct_acima_800":0.0},"LC":{"n":177,"media":599.3,"mediana":601.8,"dp":46.7,"min":391.1,"max":713.5,"p25":574.5,"p75":631.9,"p90":648.1,"pct_acima_500":96.6,"pct_acima_600":52.5,"pct_acima_700":0.6,"pct_acima_800":0.0},"MT":{"n":175,"media":711.2,"mediana":736.1,"dp":103.5,"min":360.5,"max":915.8,"p25":659.8,"p75":781.0,"p90":821.8,"pct_acima_500":96.0,"pct_acima_600":84.6,"pct_acima_700":61.7,"pct_acima_800":16.6}},"redacao":{"n":176,"media":782.8,"mediana":800.0,"dp":125.1,"min":300.0,"max":960.0,"p25":700.0,"p75":880.0,"p90":940.0,"pct_acima_500":98.3,"pct_acima_600":95.5,"pct_acima_700":76.1,"pct_acima_800":52.3,"comps":{"C1":144.7,"C2":163.6,"C3":145.6,"C4":163.3,"C5":165.7}},"nota_geral":{"n":174,"media":654.7,"mediana":662.6,"dp":66.5,"min":425.8,"max":787.1,"p25":611.6,"p75":706.1,"p90":733.7,"pct_acima_500":98.3,"pct_acima_600":79.3,"pct_acima_700":27.6,"pct_acima_800":0.0}}],"bench_municipal":{"Juiz de Fora (MG)":{"municipio":"Juiz de Fora","uf":"MG","n_escolas":22,"n_alunos":1237,"areas":{"CN":{"n":1202,"media":572.4,"mediana":574.4,"dp":79.6,"p25":517.7,"p75":629.0,"pct_500":81.6,"pct_600":38.9,"pct_700":4.7,"pct_800":0.1},"CH":{"n":1214,"media":589.6,"mediana":598.9,"dp":74.3,"p25":550.9,"p75":641.8,"pct_500":88.2,"pct_600":49.6,"pct_700":3.5,"pct_800":0.0},"LC":{"n":1214,"media":593.3,"mediana":599.0,"dp":60.5,"p25":559.8,"p75":633.5,"pct_500":93.8,"pct_600":48.9,"pct_700":2.0,"pct_800":0.0},"MT":{"n":1202,"media":655.7,"mediana":669.6,"dp":122.2,"p25":576.9,"p75":740.8,"pct_500":88.2,"pct_600":69.6,"pct_700":39.4,"pct_800":10.4}},"redacao":{"n":1209,"media":798.9,"mediana":840.0,"dp":127.9,"p25":720.0,"p75":900.0,"pct_500":97.8,"pct_600":91.8,"pct_700":80.0,"pct_800":61.4}},"Rio de Janeiro (RJ)":{"municipio":"Rio de Janeiro","uf":"RJ","n_escolas":417,"n_alunos":14466,"areas":{"CN":{"n":13789,"media":548.6,"mediana":552.2,"dp":82.8,"p25":490.7,"p75":607.9,"pct_500":71.8,"pct_600":28.1,"pct_700":2.6,"pct_800":0.1},"CH":{"n":13982,"media":568.8,"mediana":579.5,"dp":82.7,"p25":520.5,"p75":625.8,"pct_500":80.8,"pct_600":38.9,"pct_700":3.0,"pct_800":0.0},"LC":{"n":13982,"media":580.6,"mediana":586.1,"dp":60.2,"p25":547.0,"p75":620.7,"pct_500":91.0,"pct_600":39.7,"pct_700":1.1,"pct_800":0.0},"MT":{"n":13789,"media":623.5,"mediana":631.1,"dp":133.8,"p25":525.4,"p75":720.7,"pct_500":79.7,"pct_600":58.2,"pct_700":30.8,"pct_800":9.2}},"redacao":{"n":13811,"media":735.5,"mediana":760.0,"dp":148.1,"p25":620.0,"p75":860.0,"pct_500":93.4,"pct_600":82.2,"pct_700":62.7,"pct_800":42.4}},"Duque de Caxias (RJ)":{"municipio":"Duque de Caxias","uf":"RJ","n_escolas":24,"n_alunos":946,"areas":{"CN":{"n":874,"media":519.4,"mediana":523.5,"dp":74.6,"p25":472.1,"p75":569.9,"pct_500":62.5,"pct_600":12.4,"pct_700":0.1,"pct_800":0.0},"CH":{"n":898,"media":537.2,"mediana":548.5,"dp":78.4,"p25":484.4,"p75":594.5,"pct_500":70.5,"pct_600":22.0,"pct_700":0.1,"pct_800":0.0},"LC":{"n":898,"media":559.8,"mediana":564.2,"dp":57.6,"p25":524.3,"p75":599.5,"pct_500":87.3,"pct_600":24.6,"pct_700":0.0,"pct_800":0.0},"MT":{"n":874,"media":562.4,"mediana":567.7,"dp":119.9,"p25":474.4,"p75":649.1,"pct_500":66.7,"pct_600":39.6,"pct_700":13.2,"pct_800":1.9}},"redacao":{"n":882,"media":691.8,"mediana":700.0,"dp":139.7,"p25":600.0,"p75":800.0,"pct_500":91.6,"pct_600":76.5,"pct_700":51.5,"pct_800":28.2}},"Nova Iguaçu (RJ)":{"municipio":"Nova Iguaçu","uf":"RJ","n_escolas":42,"n_alunos":1146,"areas":{"CN":{"n":1053,"media":517.9,"mediana":516.7,"dp":77.1,"p25":465.3,"p75":569.7,"pct_500":58.8,"pct_600":14.0,"pct_700":0.7,"pct_800":0.0},"CH":{"n":1095,"media":535.3,"mediana":543.9,"dp":79.9,"p25":480.2,"p75":595.6,"pct_500":68.0,"pct_600":22.0,"pct_700":0.5,"pct_800":0.0},"LC":{"n":1095,"media":555.7,"mediana":562.8,"dp":59.2,"p25":519.0,"p75":597.8,"pct_500":82.5,"pct_600":23.3,"pct_700":0.0,"pct_800":0.0},"MT":{"n":1053,"media":564.5,"mediana":563.2,"dp":119.8,"p25":472.4,"p75":648.3,"pct_500":68.2,"pct_600":37.6,"pct_700":15.2,"pct_800":2.0}},"redacao":{"n":1071,"media":673.6,"mediana":660.0,"dp":142.2,"p25":560.0,"p75":780.0,"pct_500":89.7,"pct_600":71.0,"pct_700":43.8,"pct_800":23.7}},"São João de Meriti (RJ)":{"municipio":"São João de Meriti","uf":"RJ","n_escolas":11,"n_alunos":454,"areas":{"CN":{"n":418,"media":510.7,"mediana":510.1,"dp":69.9,"p25":462.2,"p75":564.4,"pct_500":54.8,"pct_600":11.2,"pct_700":0.2,"pct_800":0.0},"CH":{"n":433,"media":529.5,"mediana":540.6,"dp":80.9,"p25":485.7,"p75":587.2,"pct_500":69.5,"pct_600":18.9,"pct_700":0.0,"pct_800":0.0},"LC":{"n":433,"media":552.4,"mediana":561.3,"dp":57.6,"p25":519.8,"p75":591.3,"pct_500":83.8,"pct_600":19.9,"pct_700":0.0,"pct_800":0.0},"MT":{"n":418,"media":548.8,"mediana":544.1,"dp":113.3,"p25":459.9,"p75":625.4,"pct_500":66.3,"pct_600":32.3,"pct_700":10.8,"pct_800":1.7}},"redacao":{"n":421,"media":675.2,"mediana":680.0,"dp":145.6,"p25":580.0,"p75":780.0,"pct_500":87.6,"pct_600":71.5,"pct_700":45.6,"pct_800":24.9}},"Porto Alegre (RS)":{"municipio":"Porto Alegre","uf":"RS","n_escolas":72,"n_alunos":3256,"areas":{"CN":{"n":2986,"media":561.1,"mediana":566.0,"dp":79.6,"p25":510.3,"p75":617.4,"pct_500":78.1,"pct_600":33.1,"pct_700":2.9,"pct_800":0.1},"CH":{"n":3061,"media":583.5,"mediana":595.0,"dp":78.2,"p25":545.9,"p75":633.7,"pct_500":86.6,"pct_600":46.7,"pct_700":3.2,"pct_800":0.0},"LC":{"n":3061,"media":598.2,"mediana":605.2,"dp":57.9,"p25":567.5,"p75":636.9,"pct_500":94.4,"pct_600":53.9,"pct_700":1.6,"pct_800":0.0},"MT":{"n":2986,"media":651.7,"mediana":668.4,"dp":126.1,"p25":570.5,"p75":739.9,"pct_500":86.2,"pct_600":69.1,"pct_700":38.9,"pct_800":10.4}},"redacao":{"n":3013,"media":747.0,"pct_600":87.7,"pct_700":67.4,"pct_800":43.2}}},"concorrentes_sem_dados_2025":["pH - Botafogo 2","Alfa CEM - Barra da Tijuca 2"]};
+const PRACAS = [{"titulo":"Botafogo","municipio":"Rio de Janeiro","nossa":33186260,"diretos":[33110328,33158240,33228604],"adjacentes":[33193118,33421226,33176760,33065195],"nota":"Pensi (Flamengo e Copacabana) e CEL (Jardim Botânico e Maria Angélica) exibidos como praças adjacentes - as duas redes não têm unidade em Botafogo. pH Botafogo 2 sem dados no ENEM 2024 e 2025."},{"titulo":"Barra da Tijuca (ABM)","municipio":"Rio de Janeiro","nossa":33178828,"diretos":[33447225,33155852,33184739,33196273,33105154],"adjacentes":[33161402],"nota":"Pensi não tem unidade na Barra - a unidade do Recreio é exibida como adjacente. Alfa CEM Barra da Tijuca 2 sem dados no ENEM 2024 e 2025."}];
+const REF2024 = {};
+const HIST = {"anos":["2024","2025"],"redes":{"Cubo Global":{"2024":{"n":76,"CN":580.5,"CH":589.2,"LC":583.6,"MT":668.2,"RD":813.4,"NG":649.5},"2025":{"n":57,"CN":543.0,"CH":579.4,"LC":585.7,"MT":630.4,"RD":745.6,"NG":617.1}},"AZ":{"2024":{"n":241,"CN":575.5,"CH":607.8,"LC":592.7,"MT":687.9,"RD":838.3,"NG":661.9},"2025":{"n":278,"CN":583.1,"CH":598.9,"LC":600.8,"MT":702.8,"RD":783.4,"NG":654.3}},"Pensi":{"2024":{"n":211,"CN":561.9,"CH":584.1,"LC":572.8,"MT":633.3,"RD":784.6,"NG":628.1},"2025":{"n":218,"CN":561.8,"CH":576.9,"LC":589.0,"MT":648.5,"RD":771.2,"NG":630.4}},"pH":{"2024":{"n":260,"CN":590.7,"CH":616.7,"LC":601.0,"MT":703.4,"RD":861.0,"NG":674.6},"2025":{"n":264,"CN":585.9,"CH":594.6,"LC":597.7,"MT":684.4,"RD":816.7,"NG":657.3}},"Alfa CEM":{"2024":{"n":17,"CN":666.3,"CH":703.4,"LC":643.9,"MT":868.0,"RD":916.5,"NG":759.6},"2025":{"n":14,"CN":694.7,"CH":679.4,"LC":662.3,"MT":875.9,"RD":884.3,"NG":759.3}},"CEL":{"2024":{"n":77,"CN":575.3,"CH":605.1,"LC":577.1,"MT":655.9,"RD":869.4,"NG":656.5},"2025":{"n":76,"CN":575.8,"CH":588.2,"LC":596.6,"MT":654.8,"RD":854.7,"NG":654.0}}},"privada_municipal":{"Rio de Janeiro":{"2024":{"n":14800,"CN":547.0,"CH":574.3,"LC":567.5,"MT":621.2,"RD":768.7,"NG":617.2},"2025":{"n":14545,"CN":548.6,"CH":568.8,"LC":580.6,"MT":623.5,"RD":735.5,"NG":613.0}}},"privada_brasil":{"2024":{"NG":615.9,"n":243273,"CN":549.0,"CH":569.5,"LC":564.6,"MT":616.2,"RD":772.8},"2025":{"NG":612.7,"n":249577,"CN":551.9,"CH":566.2,"LC":577.6,"MT":620.3,"RD":738.9}},"top100":{"2024":{"CN":643.8,"CH":662.6,"LC":624.1,"MT":770.4,"RD":896.7,"NG":715.2,"n_escolas":100},"2025":{"CN":660.5,"CH":657.0,"LC":643.6,"MT":786.9,"RD":873.0,"NG":720.3,"n_escolas":100}}};
+const MARCA = "Cubo Global";
+const CURTO = "Cubo";
+const CORES = {"Cubo Global": "#0f9d96", "AZ": "#1d4ed8", "Pensi": "#ca8a04", "pH": "#be123c", "Alfa CEM": "#ea580c", "CEL": "#7c3aed"};
+const CINZA = "#334155";
+// N_MIN_PAREADO (corte binário de 100 alunos) foi substituído pelo IC 95%:
+// o intervalo já mede a incerteza da amostra de forma contínua.
+const AREAS5 = ["CN","CH","LC","MT","RD"];
+const REDES = ["Cubo Global", "AZ", "Pensi", "pH", "Alfa CEM", "CEL"];
+const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
+
+const fmt = v => (v==null || isNaN(v)) ? "-" : v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmtInt = v => v==null ? "-" : v.toLocaleString("pt-BR");
+const areaStat = (u,a) => a==="RD" ? (u.redacao||{}) : ((u.areas||{})[a]||{});
+const ngOf = u => (u.nota_geral||{}).media ?? null;
+const dot = rede => '<span class="rede-dot" style="background:'+CORES[rede]+'"></span>';
+const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
+  : '<span class="'+(d>=0?'delta-pos':'delta-neg')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+'</span>';
+
+// ---------- Veredictos (calculados no 12_analise_concorrencia.py) ----------
+// A tela NÃO recalcula significância: lê o que o Python já decidiu. Ter duas
+// implementações do mesmo veredicto é como a página e os planos de ação
+// passaram a divergir - a segunda a mudar seria descoberta por acidente.
+const PRACA_VER = {}; (DATA.pracas||[]).forEach(p => PRACA_VER[p.titulo] = p);
+const PLACAR = DATA.placar || {};
+
+// Contagem ABSOLUTA de alunos num patamar - imune ao tamanho da turma.
+const acimaDe = (u, corte) => { const g = u.nota_geral||{};
+  const p = g["pct_acima_"+corte];
+  return (p == null || g.n == null) ? null : Math.round(p * g.n / 100); };
+
+const seletaTag = seleta => seleta
+  ? ' <span class="tag-seleta" title="turma menor que 30 alunos válidos: lidera com base muito menor que a nossa">TURMA SELETA</span>'
+  : "";
+
+const CLS_VER = {vitoria:"delta-pos", derrota:"delta-neg", empate:"delta-neutro", indef:"delta-neutro"};
+const linhaVeredicto = (eixo, v) => {
+  if (!v || v.dif == null) return "";
+  const sinal = v.dif >= 0 ? "+" : "−";
+  return '<p class="verdict-eixo"><span class="eixo">'+eixo+'</span> '+
+    dot(v.rede)+v.label+' ('+fmtInt(v.n_inscritos)+' alunos)'+seletaTag(v.seleta)+
+    ' <span class="'+CLS_VER[v.tipo]+'">'+sinal+fmt(Math.abs(v.dif))+' · '+v.txt+'</span>'+
+    (v.ic95 != null ? '<span class="ic">margem ±'+fmt(v.ic95)+'</span>' : "")+'</p>';
+};
+
+// ---------- Cards do topo ----------
+(function(){
+  const r = DATA.redes;
+  const alunos = DATA.unidades.reduce((s,u)=>s+u.n_inscritos,0);
+  const nossas = DATA.unidades.filter(u=>u.nossa).length;
+  const cards = [
+    {t:"Unidades comparadas", v: fmtInt(DATA.unidades.length), s: nossas+" "+CURTO+" · "+(DATA.unidades.length-nossas)+" concorrentes"},
+    {t:"Alunos analisados", v: fmtInt(alunos), s: "inscritos no ENEM 2025"},
+  ];
+  REDES.forEach(rd => {
+    const x = r[rd];
+    if (rd === MARCA) {
+      cards.push({t: rd, v: fmt((x.nota_geral||{}).media), dot: CORES[rd],
+        s: "rede completa · "+x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+      return;
+    }
+    const p = (DATA.pareado||{})[rd];
+    if (!p || !p.deles) {
+      cards.push({t: rd, v: "-", dot: CORES[rd], s: "sem praça em comum em 2025"});
+      return;
+    }
+    const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
+    const v = p.veredicto;
+    cards.push({t: rd, dot: CORES[rd], v: fmt(b.media),
+      s: p.pracas.length+" praças em comum · "+CURTO+" "+fmt(a.media)+" aqui"+
+         (v ? ' · <span class="'+CLS_VER[v.tipo]+'">'+v.txt+"</span>" : "")});
+  });
+  document.getElementById("statsRow").innerHTML = cards.map(c =>
+    '<div class="stat"><small>'+(c.dot?'<span class="dot" style="background:'+c.dot+'"></span>':'')+c.t+
+    '</small><strong>'+c.v+'</strong><span>'+c.s+'</span></div>').join("");
+})();
+
+// ---------- Confronto pareado por praça ----------
+(function(){
+  const P = DATA.pareado || {};
+  const ngFull = rd => ((DATA.redes[rd]||{}).nota_geral||{}).media ?? null;
+  const nosFull = ngFull(MARCA);
+  let invertidos = 0, comparaveis = 0;
+
+  const rows = REDES.slice(1).map(rd => {
+    const p = P[rd];
+    if (!p || !p.nossa || !p.deles)
+      return '<tr><td>'+dot(rd)+rd+'</td><td colspan="10" class="muted-cell">sem praça em comum com dados em 2025</td></tr>';
+    const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
+    const dif = (a.media!=null && b.media!=null) ? a.media-b.media : null;
+    const difFull = (nosFull!=null && ngFull(rd)!=null) ? nosFull-ngFull(rd) : null;
+    if (dif!=null && difFull!=null) { comparaveis++; if ((dif<0) !== (difFull<0)) invertidos++; }
+    // Mesmo critério da batalha territorial, decidido no Python.
+    const v = p.veredicto;
+    const cel = v
+      ? '<span class="'+CLS_VER[v.tipo]+'">'+v.txt+"</span>"+
+        (v.ic95!=null ? '<span class="ic"> ±'+fmt(v.ic95)+"</span>" : "")
+      : '<span class="delta-neutro">-</span>';
+    return '<tr><td>'+dot(rd)+rd+'</td>'+
+      '<td title="'+p.pracas.join(" · ")+'">'+p.pracas.length+'</td>'+
+      '<td>'+p.nossa.n_unidades+'</td><td>'+fmtInt(a.n)+'</td><td><strong>'+fmt(a.media)+'</strong></td>'+
+      '<td>'+p.deles.n_unidades+'</td><td>'+fmtInt(b.n)+'</td><td><strong>'+fmt(b.media)+'</strong></td>'+
+      '<td>'+deltaHtml(dif)+'</td>'+
+      '<td>'+cel+'</td>'+
+      '<td class="muted-cell">'+(difFull==null ? "-" : (difFull>=0?"+":"−")+fmt(Math.abs(difFull)))+'</td></tr>';
+  }).join("");
+
+  document.getElementById("tblPareado").innerHTML =
+    '<thead><tr><th rowspan="2">Rede</th><th rowspan="2">Praças</th>'+
+    '<th colspan="3">'+CURTO+' nessas praças</th><th colspan="3">Concorrente nessas praças</th>'+
+    '<th rowspan="2">Diferença</th><th rowspan="2">Veredicto (IC 95%)</th><th rowspan="2">Dif. rede inteira</th></tr>'+
+    '<tr><th>Un.</th><th>Alunos</th><th>NG</th><th>Un.</th><th>Alunos</th><th>NG</th></tr></thead><tbody>'+rows+'</tbody>';
+
+  document.getElementById("obsPareado").innerHTML =
+    "<strong>Placar pareado: "+((PLACAR.pareado||{}).resumo || "-")+"</strong> "+
+    "(vitórias reais · empates técnicos · derrotas reais). "+
+    (invertidos === 0
+      ? "Nenhum confronto muda de sinal em relação à leitura de rede inteira."
+      : "<strong>"+invertidos+" de "+comparaveis+" confrontos mudam de sinal</strong> em relação à leitura de rede inteira (última coluna), "+
+        "que mistura praças onde o "+CURTO+" não está.")+
+    " Praça = onde as duas redes têm unidade com dados, pelo mapa de praças (concorrentes diretos e adjacentes); passe o mouse sobre o número para ver os nomes."+
+    " O veredicto compara a diferença com a margem de erro da amostra: quando ela cabe dentro da margem, "+
+    "a vantagem não é distinguível de zero e o confronto é <strong>empate técnico</strong>, não vitória.";
+})();
+
+// ---------- Panorama ----------
+new Chart(document.getElementById("chartPanorama"), {
+  type: "bar",
+  data: { labels: AREAS5, datasets: REDES.map(rd => ({
+    label: rd, backgroundColor: CORES[rd]+"cc", borderColor: CORES[rd],
+    borderRadius: 6, borderSkipped: false,
+    data: AREAS5.map(a => a==="RD" ? DATA.redes[rd].redacao.media : DATA.redes[rd].areas[a].media)
+  })) },
+  options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+    scales: { x:{ grid:{ display:false } },
+      y:{ min:400, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+});
+(function(){
+  const rows = REDES.map(rd => {
+    const x = DATA.redes[rd];
+    return "<tr><td>"+dot(rd)+rd+"</td><td>"+x.n_unidades+"</td><td>"+fmtInt(x.n_inscritos)+"</td><td>"+
+      fmt(x.taxa_presenca_pct)+"%</td><td><strong>"+fmt((x.nota_geral||{}).media)+"</strong></td><td>"+
+      fmt(x.areas.MT.pct_acima_700)+"%</td><td>"+fmt(x.redacao.pct_acima_800)+"%</td></tr>";
+  }).join("");
+  document.getElementById("tblRedes").innerHTML =
+    "<thead><tr><th>Rede</th><th>Un.</th><th>Alunos</th><th>Presença</th><th>NG</th><th>MT ≥700</th><th>RD ≥800</th></tr></thead><tbody>"+rows+"</tbody>";
+  const ngRede = r => (DATA.redes[r].nota_geral||{}).media||0;
+  const rel = d => d>=0 ? fmt(d)+" acima" : fmt(-d)+" abaixo";
+  const lider = REDES.reduce((a,b)=> ngRede(b)>ngRede(a) ? b : a);
+  const maiores = REDES.slice(1).sort((a,b)=>DATA.redes[b].n_inscritos-DATA.redes[a].n_inscritos).slice(0,2);
+  document.getElementById("obsPanorama").textContent =
+    "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
+    rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
+    (lider===MARCA ? CURTO : lider) + " lidera o grupo. Leitura de rede completa: cada concorrente "+
+    "carrega aqui praças que o "+CURTO+" não disputa, então esses números medem escala, não posição competitiva.";
+})();
+
+// ---------- Preenchimentos dos cards laterais ----------
+(function(){
+  const melhor = rede => DATA.unidades
+    .filter(u => u.rede===rede && u.n_inscritos>=30 && ngOf(u)!=null)
+    .sort((a,b)=>ngOf(b)-ngOf(a))[0];
+  const labelMun = u => u.label + (u.label.includes(u.municipio) ? "" : " · "+u.municipio);
+  document.getElementById("fillRedes").innerHTML =
+    '<div class="mini-head">Melhor unidade de cada rede · 30+ alunos</div>' +
+    REDES.map(rd => { const u = melhor(rd); return u ?
+      '<div class="mini-row"><span>'+dot(rd)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
+      '</span><strong>'+fmt(ngOf(u))+'</strong></div>' : ''; }).join("");
+
+  const comRD = DATA.unidades.filter(u => u.n_inscritos>=30 && (u.redacao||{}).media!=null)
+    .sort((a,b)=>b.redacao.media-a.redacao.media);
+  const top3 = comRD.slice(0,3);
+  const melhorNossa = comRD.find(u=>u.nossa);
+  const pos = comRD.indexOf(melhorNossa)+1;
+  document.getElementById("fillRedacao").innerHTML =
+    '<div class="mini-head">Referências em redação · 30+ alunos</div>' +
+    top3.map(u => '<div class="mini-row"><span>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+labelMun(u)+
+      '</span><strong>'+fmt(u.redacao.media)+'</strong></div>').join("") +
+    (melhorNossa && !top3.includes(melhorNossa) ? '<div class="mini-row"><span>'+dot(melhorNossa.rede)+'<span class="star">★ </span>'+
+      melhorNossa.label+' · melhor do '+CURTO+' ('+pos+'ª de '+comRD.length+')</span><strong>'+
+      fmt(melhorNossa.redacao.media)+'</strong></div>' : '');
+})();
+
+// ---------- Ranking unificado ----------
+let fRede = "*", fMun = "*", fN30 = false, sortKey = "ng", sortDir = -1;
+const colDefs = [
+  {k:"label", t:"Unidade"}, {k:"municipio", t:"Município"}, {k:"n", t:"Alunos"},
+  {k:"CN", t:"CN"}, {k:"CH", t:"CH"}, {k:"LC", t:"LC"}, {k:"MT", t:"MT"}, {k:"RD", t:"RD"}, {k:"ng", t:"NG"}
+];
+const valOf = (u,k) => k==="label" ? u.label : k==="municipio" ? u.municipio : k==="n" ? u.n_inscritos
+  : k==="ng" ? ngOf(u) : (areaStat(u,k).media ?? null);
+
+function renderRanking(){
+  let lista = DATA.unidades.filter(u =>
+    (fRede==="*" || u.rede===fRede) && (fMun==="*" || u.municipio===fMun) && (!fN30 || u.n_inscritos>=30));
+  lista.sort((a,b)=>{
+    const va = valOf(a,sortKey), vb = valOf(b,sortKey);
+    if (va==null && vb==null) return 0; if (va==null) return 1; if (vb==null) return -1;
+    return (typeof va==="string" ? va.localeCompare(vb,"pt-BR") : va-vb) * sortDir;
+  });
+  const head = "<thead><tr>"+colDefs.map(c =>
+    '<th class="sortable'+(sortKey===c.k ? (sortDir<0?' sorted-desc':' sorted-asc') : '')+'" data-k="'+c.k+'">'+c.t+"</th>").join("")+"<th>Pos.</th></tr></thead>";
+  const rows = lista.map((u,i) => {
+    const peq = ((u.nota_geral||{}).n ?? 0) < 30 ? " †" : "";
+    return '<tr class="'+(u.nossa?'nossa-row':'')+'"><td>'+dot(u.rede)+(u.nossa?'<span class="star">★ </span>':'')+
+      u.label+peq+"</td><td>"+u.municipio+"</td><td>"+fmtInt(u.n_inscritos)+"</td>"+
+      ["CN","CH","LC","MT","RD"].map(a=>"<td>"+fmt(areaStat(u,a).media)+"</td>").join("")+
+      "<td><strong>"+fmt(ngOf(u))+"</strong></td><td>"+(i+1)+"º</td></tr>";
+  }).join("");
+  document.getElementById("tblRanking").innerHTML = head+"<tbody>"+rows+"</tbody>";
+  document.querySelectorAll("#tblRanking th.sortable").forEach(th => th.onclick = () => {
+    const k = th.dataset.k;
+    if (sortKey===k) sortDir *= -1; else { sortKey = k; sortDir = (k==="label"||k==="municipio") ? 1 : -1; }
+    renderRanking();
+  });
+}
+document.querySelectorAll("#filtrosRanking .chip").forEach(ch => ch.onclick = () => {
+  fRede = ch.dataset.rede;
+  document.querySelectorAll("#filtrosRanking .chip").forEach(c => { c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? (CORES[c.dataset.rede]||"#334155") : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155"; });
+  renderRanking();
+});
+(function(){
+  const muns = [...new Set(DATA.unidades.map(u=>u.municipio))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const sel = document.getElementById("filtroMun");
+  muns.forEach(m => sel.insertAdjacentHTML("beforeend", '<option value="'+m+'">'+m+"</option>"));
+  sel.onchange = () => { fMun = sel.value; renderRanking(); };
+  const chk = document.getElementById("filtroN30");
+  chk.onchange = () => { fN30 = chk.checked; renderRanking(); };
+  // o browser pode restaurar estado do formulário no reload; sincroniza antes do 1º render
+  fMun = sel.value; fN30 = chk.checked;
+  document.querySelector('#filtrosRanking .chip[data-rede="*"]').click();
+})();
+
+// ---------- Confronto direto ----------
+let chConfAreas = null, chConfComps = null;
+const benchByMun = {};
+Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
+
+(function(){
+  const selA = document.getElementById("selA"), selB = document.getElementById("selB");
+  DATA.unidades.filter(u=>u.nossa).forEach(u =>
+    selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+u.label+" · "+u.municipio+"</option>"));
+  REDES.forEach(rd => {
+    const grupo = DATA.unidades.filter(u=>u.rede===rd);
+    if (!grupo.length) return;
+    const og = document.createElement("optgroup"); og.label = rd;
+    grupo.sort((a,b)=>(ngOf(b)||0)-(ngOf(a)||0)).forEach(u => {
+      const o = document.createElement("option"); o.value = u.co;
+      o.textContent = u.label+" · "+u.municipio+" (NG "+fmt(ngOf(u))+")";
+      og.appendChild(o);
+    });
+    selB.appendChild(og);
+  });
+  selA.value = "33186260";
+  if (!byCo[selA.value]) selA.selectedIndex = 0;
+  selB.value = "33110328";
+  if (!byCo[selB.value]) { const o = selB.querySelector("optgroup option"); if (o) selB.value = o.value; }
+  selA.onchange = selB.onchange = renderConfronto;
+  renderConfronto();
+})();
+
+function renderConfronto(){
+  const A = byCo[document.getElementById("selA").value];
+  const B = byCo[document.getElementById("selB").value];
+  const ngA = ngOf(A), ngB = ngOf(B), d = (ngA!=null && ngB!=null) ? ngA-ngB : null;
+  document.getElementById("placar").innerHTML =
+    '<div><div class="num" style="color:'+CORES[A.rede]+'">'+fmt(ngA)+'</div><span class="who">'+A.label+"</span></div>"+
+    '<div class="vs">NG<br><span class="badge-delta" style="background:'+(d>=0?"#15803d":"#b91c1c")+'">'+
+      (d==null?"-":(d>=0?"+":"−")+fmt(Math.abs(d)))+"</span></div>"+
+    '<div><div class="num" style="color:'+CORES[B.rede]+'">'+fmt(ngB)+'</div><span class="who">'+B.label+"</span></div>";
+
+  const bench = benchByMun[A.municipio];
+  document.getElementById("subConfArea").textContent =
+    bench ? "Linha cinza = rede privada de "+A.municipio+" ("+fmtInt(bench.n_alunos)+" alunos)" : "Média entre presentes";
+
+  const dsets = [
+    { label: A.label+" ★", backgroundColor: CORES[A.rede]+"cc", borderColor: CORES[A.rede],
+      borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(A,a).media ?? null) },
+    { label: B.label, backgroundColor: CORES[B.rede]+"cc", borderColor: CORES[B.rede],
+      borderRadius:6, borderSkipped:false, data: AREAS5.map(a=>areaStat(B,a).media ?? null) },
+  ];
+  if (bench) dsets.push({ label:"Privada "+A.municipio, type:"line", borderColor:CINZA, borderWidth:2,
+    borderDash:[6,4], pointRadius:3, pointBackgroundColor:CINZA, fill:false,
+    data: AREAS5.map(a => a==="RD" ? bench.redacao.media : bench.areas[a].media) });
+  if (chConfAreas) chConfAreas.destroy();
+  chConfAreas = new Chart(document.getElementById("chartConfAreas"), {
+    type:"bar", data:{ labels:AREAS5, datasets:dsets },
+    options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ min:400, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+
+  const compsA = (A.redacao||{}).comps||{}, compsB = (B.redacao||{}).comps||{};
+  if (chConfComps) chConfComps.destroy();
+  chConfComps = new Chart(document.getElementById("chartConfComps"), {
+    type:"bar", data:{ labels:["C1","C2","C3","C4","C5"], datasets:[
+      { label:A.label+" ★", backgroundColor:CORES[A.rede]+"cc", borderColor:CORES[A.rede], borderRadius:6, borderSkipped:false,
+        data:["C1","C2","C3","C4","C5"].map(c=>compsA[c] ?? null) },
+      { label:B.label, backgroundColor:CORES[B.rede]+"cc", borderColor:CORES[B.rede], borderRadius:6, borderSkipped:false,
+        data:["C1","C2","C3","C4","C5"].map(c=>compsB[c] ?? null) } ] },
+    options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+
+  const corA = h => '<span style="color:'+CORES[A.rede]+';font-weight:600">'+h+"</span>";
+  const corB = h => '<span style="color:'+CORES[B.rede]+';font-weight:600">'+h+"</span>";
+  const par = (va, vb, suf) => corA(fmt(va)+(va!=null?suf:"")) + " × " + corB(fmt(vb)+(vb!=null?suf:""));
+  const linhas = [["NG", u=>u.nota_geral||{}]].concat(AREAS5.map(a => [a, u=>areaStat(u,a)]));
+  const rows = linhas.map(([nome, get]) => {
+    const sa = get(A), sb = get(B);
+    const dd = (sa.media!=null && sb.media!=null) ? sa.media-sb.media : null;
+    return "<tr><td><strong>"+nome+"</strong></td><td>"+par(sa.media, sb.media, "")+"</td><td>"+deltaHtml(dd)+
+      "</td><td>"+par(sa.mediana, sb.mediana, "")+"</td><td>"+par(sa.p90, sb.p90, "")+
+      "</td><td>"+par(sa.pct_acima_600, sb.pct_acima_600, "%")+"</td><td>"+
+      par(sa.pct_acima_700, sb.pct_acima_700, "%")+"</td></tr>";
+  }).join("");
+  document.getElementById("tblConfronto").innerHTML =
+    "<thead><tr><th></th><th>Média</th><th>Δ</th><th>Mediana</th>"+
+    "<th>P90</th><th>≥600</th><th>≥700</th></tr></thead><tbody>"+rows+
+    '</tbody><tfoot><tr><td colspan="7" style="text-align:left;color:#64748b;font-size:12px;border:0;padding-top:10px">'+
+    "Cada par: "+corA("★ "+A.label)+" × "+corB(B.label)+" · Δ = média da unidade ★ menos o concorrente · Alunos: "+
+    corA(fmtInt(A.n_inscritos))+" ("+fmt(A.taxa_presenca_pct)+"% presença) × "+
+    corB(fmtInt(B.n_inscritos))+" ("+fmt(B.taxa_presenca_pct)+"% presença)<br>"+
+    "Mediana = nota que divide a turma ao meio · P90 = nota superada apenas pelos 10% melhores alunos "+
+    "· ≥600 e ≥700 = % dos alunos que atingem esse patamar</td></tr></tfoot>";
+}
+
+// ---------- Batalha territorial ----------
+(function(){
+  const grid = document.getElementById("pracasGrid");
+  grid.innerHTML = PRACAS.map(p => {
+    const nossa = byCo[p.nossa];
+    if (!nossa) return "";
+    const rivais = p.diretos.map(co=>({u:byCo[co],adj:false})).concat(p.adjacentes.map(co=>({u:byCo[co],adj:true})))
+      .filter(x=>x.u);
+    const refs = (p.ref2024||[]).map(co=>REF2024[co]).filter(Boolean);
+    const ngN = ngOf(nossa);
+    let corpo;
+    if (!rivais.length && !refs.length) {
+      corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
+    } else {
+      const linhas = [{u:nossa, nossa:true, adj:false}].concat(rivais.map(x=>({u:x.u, nossa:false, adj:x.adj})));
+      const val = (u,m) => m==="NG" ? ngOf(u) : areaStat(u,m).media;
+      const best = {};
+      ["NG","MT","RD"].forEach(m => best[m] = Math.max(...linhas.map(l=>val(l.u,m)).filter(v=>v!=null)));
+      const cel = (u,m) => { const v = val(u,m);
+        return "<td"+(v!=null && v===best[m] ? ' style="font-weight:800"' : "")+">"+fmt(v)+"</td>"; };
+      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th>'+
+        '<th title="alunos com nota geral 700 ou mais — contagem absoluta, imune ao tamanho da turma">700+</th></tr></thead><tbody>'+
+        linhas.map(l => '<tr class="'+(l.nossa?'nossa-row':'')+'"><td>'+dot(l.u.rede)+(l.nossa?'<span class="star">★ </span>':'')+
+          l.u.label+seletaTag(((l.u.nota_geral||{}).n ?? 0) < 30)+
+          (l.adj?'<span class="tag-adj">ADJACENTE</span>':'')+"</td><td>"+
+          fmtInt(l.u.n_inscritos)+"</td>"+cel(l.u,"NG")+cel(l.u,"MT")+cel(l.u,"RD")+
+          "<td>"+fmtInt(acimaDe(l.u,700))+"</td></tr>").join("")+
+        refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.label.split(" - ")[0])+r.label+
+          '<span class="tag-adj">ENEM 2024</span></td><td>'+fmtInt(r.n_inscritos)+"</td><td>"+fmt(r.ng)+
+          "</td><td>"+fmt(r.mt)+"</td><td>"+fmt(r.rd)+"</td><td>-</td></tr>").join("")+
+        "</tbody></table></div>";
+      // Dois donos por praça, decididos no Python.
+      const vp = PRACA_VER[p.titulo] || {};
+      if (vp.massa) {
+        corpo += linhaVeredicto("massa", vp.massa);
+        if (vp.mesmo_dono)
+          corpo += '<p class="obs" style="margin:2px 0 0">Mesma unidade lidera massa e topo nesta praça.</p>';
+        else
+          corpo += linhaVeredicto("topo", vp.topo);
+      }
+    }
+    return '<div class="card praca"><h4>'+p.titulo+'</h4><div class="mun">'+p.municipio+
+      " · médias ENEM 2025 · melhor valor da praça em negrito · 700+ = contagem absoluta de alunos</div>"+corpo+
+      (p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
+  }).join("");
+
+  // Consolidado por praça (tabela expansível)
+  // Consolidado com os DOIS placares: nunca se escolhe entre massa e topo.
+  const consol = (DATA.pracas||[]).filter(v => byCo[v.nossa_co]).map(v => ({
+    v, nossa: byCo[v.nossa_co], ordem: v.massa ? v.massa.dif : -1e9
+  })).sort((a,b) => b.ordem - a.ordem);
+
+  const celVer = v => {
+    if (!v || v.dif == null)
+      return '<td colspan="2"><span class="delta-neutro">sem concorrente com dados</span></td>';
+    const sinal = v.dif >= 0 ? "+" : "−";
+    return "<td>"+dot(v.rede)+v.label+seletaTag(v.seleta)+
+      ' <span class="obs-inline">'+fmtInt(v.n_inscritos)+" alunos</span></td>"+
+      '<td><span class="'+CLS_VER[v.tipo]+'">'+sinal+fmt(Math.abs(v.dif))+"</span> "+
+      '<span class="obs-inline">'+v.txt+"</span></td>";
+  };
+
+  const resumo = document.getElementById("placarResumo");
+  if (resumo && PLACAR.massa) resumo.innerHTML =
+    'Placar de massa: <strong>'+PLACAR.massa.resumo+
+    "</strong> (vitórias · empates técnicos · derrotas, IC 95%)"+
+    (PLACAR.topo ? " · no topo: <strong>"+PLACAR.topo.resumo+"</strong>" : "");
+
+  document.getElementById("tblConsol").innerHTML =
+    "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th>"+
+    "<th>Concorrente de massa</th><th>Situação</th><th>Concorrente de topo</th><th>Situação</th></tr></thead><tbody>"+
+    consol.map(c =>
+      "<tr><td><strong>"+c.v.titulo+"</strong></td><td>"+c.v.municipio+"</td><td>"+
+      fmtInt(c.nossa.n_inscritos)+"</td><td><strong>"+fmt(ngOf(c.nossa))+"</strong></td>"+
+      celVer(c.v.massa)+celVer(c.v.topo)+"</tr>"
+    ).join("")+"</tbody>";
+})();
+
+// ---------- Evolução histórica ----------
+let histMetric = "NG", chartHist = null;
+function renderHist(){
+  const anos = ["2024", "2025"];
+  const munSel = document.getElementById("histMun");
+  const series = REDES.map(rd => ({label: rd, cor: CORES[rd], dash: [],
+    data: anos.map(a => ((HIST.redes[rd]||{})[a]||{})[histMetric] ?? null)}));
+  if (histMetric === "NG") {
+    // NG é leitura de rede: régua nacional, sem recorte municipal
+    munSel.style.display = "none";
+    series.push({label: "Privada Brasil", cor: CINZA, dash: [],
+      data: anos.map(a => ((HIST.privada_brasil||{})[a]||{}).NG ?? null)});
+  } else {
+    munSel.style.display = "";
+    const mun = munSel.value;
+    series.push({label: "Privada "+mun, cor: CINZA, dash: [],
+      data: anos.map(a => (((HIST.privada_municipal||{})[mun]||{})[a]||{})[histMetric] ?? null)});
+  }
+  series.push({label: "Top 100 BR", cor: "#64748b", dash: [6,4],
+    data: anos.map(a => ((HIST.top100||{})[a]||{})[histMetric] ?? null)});
+  if (chartHist) chartHist.destroy();
+  chartHist = new Chart(document.getElementById("chartHist"), {
+    type: "line",
+    data: { labels: anos, datasets: series.map(s => ({label: s.label, data: s.data,
+      borderColor: s.cor, backgroundColor: s.cor, borderDash: s.dash, borderWidth: 2.5,
+      pointRadius: 3.5, pointBackgroundColor: s.cor, spanGaps: false, fill: false, tension: .15})) },
+    options: { maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+      scales:{ x:{ grid:{ display:false } },
+        y:{ grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+  });
+  document.getElementById("tblHist").innerHTML =
+    "<thead><tr><th>Série</th>"+anos.map(a=>"<th>"+a+"</th>").join("")+
+    "<th>Variação 24→25</th><th>%</th></tr></thead><tbody>"+
+    series.map(s => {
+      const v24 = s.data[0], v25 = s.data[1];
+      const dv = (v24!=null && v25!=null) ? v25-v24 : null;
+      const pc = (dv!=null && v24) ? dv/v24*100 : null;
+      const cls = dv==null ? "delta-neutro" : (dv>=0 ? "delta-pos" : "delta-neg");
+      return '<tr><td><span class="rede-dot" style="background:'+s.cor+'"></span>'+s.label+"</td>"+
+        s.data.map(v=>"<td>"+fmt(v)+"</td>").join("")+
+        '<td><span class="'+cls+'">'+(dv==null?"-":(dv>=0?"+":"−")+fmt(Math.abs(dv)))+"</span></td>"+
+        '<td><span class="'+cls+'">'+(pc==null?"-":(pc>=0?"+":"−")+fmt(Math.abs(pc))+"%")+"</span></td></tr>";
+    }).join("")+"</tbody>";
+}
+document.querySelectorAll(".hm-chip").forEach(ch => ch.onclick = () => {
+  histMetric = ch.dataset.m;
+  document.querySelectorAll(".hm-chip").forEach(c => {
+    c.classList.toggle("on", c===ch);
+    c.style.background = c===ch ? CORES[MARCA] : "#fff";
+    c.style.color = c===ch ? "#fff" : "#334155";
+  });
+  renderHist();
+});
+document.getElementById("histMun").onchange = renderHist;
+document.querySelector('.hm-chip[data-m="NG"]').click();
+
+// ---------- Redação por rede ----------
+new Chart(document.getElementById("chartRedacaoRedes"), {
+  type:"bar",
+  data:{ labels:["C1","C2","C3","C4","C5"], datasets: REDES.map(rd => ({
+    label: rd, backgroundColor: CORES[rd]+"cc", borderColor: CORES[rd], borderRadius:6, borderSkipped:false,
+    data: ["C1","C2","C3","C4","C5"].map(c => DATA.redes[rd].redacao.comps[c])
+  })) },
+  options:{ maintainAspectRatio:false, plugins:{ legend:{ labels:{ usePointStyle:true, boxWidth:8 } } },
+    scales:{ x:{ grid:{ display:false } },
+      y:{ min:80, max:200, grid:{ color:"#eef2f6" }, ticks:{ font:{size:11.5}, color:"#64748b" } } } }
+});
+
+// o Chart.js pode perder o último resize com a aba ocupada; força o ajuste
+let _rsz = null;
+window.addEventListener("resize", () => {
+  clearTimeout(_rsz);
+  _rsz = setTimeout(() => Object.values(Chart.instances).forEach(c => c.resize()), 150);
+});
+</script>
+</body>
+</html>

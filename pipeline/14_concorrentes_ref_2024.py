@@ -29,13 +29,25 @@ def main(marca: str, cfg: dict):
     meta = json.load(open(os.path.join(OUTPUT_DIR, f"concorrentes_unidades_{slug}.json"),
                           encoding="utf-8"))
     alvo = {int(co) for co, m in meta.items() if not m["tem_dados_2025"]}
+
+    # NOSSAS unidades sem 2025 (caso UAU: escola fora do Censo 2025 não recebe
+    # vínculo nenhum no ENEM 2025 — a tela mostra a última foto, ENEM 2024).
+    from config import ESCOLAS
+    mapa = json.load(open(os.path.join(OUTPUT_DIR, "mapa_escola_bairro.json"), encoding="utf-8"))
+    df_nossa = pd.read_csv(os.path.join(OUTPUT_DIR, f"{marca.replace(' ', '_')}_resultados.csv"),
+                           dtype={"CO_ESCOLA": "Int64"})
+    nossas_2025 = set(df_nossa["CO_ESCOLA"].dropna().astype(int))
+    nossas_sem_2025 = {co for co in ESCOLAS.get(marca, []) if co not in nossas_2025}
+    alvo |= nossas_sem_2025
+
     destino = os.path.join(OUTPUT_DIR, f"concorrencia_ref2024_{slug}.json")
     if not alvo:
         json.dump({}, open(destino, "w", encoding="utf-8"))
         print("Nenhuma unidade sem dados 2025 - referência vazia.")
         return
 
-    print(f"[{marca}] Varrendo {RESULTADOS_2024} para {len(alvo)} código(s)...")
+    print(f"[{marca}] Varrendo {RESULTADOS_2024} para {len(alvo)} código(s) "
+          f"({len(nossas_sem_2025)} nossos)...")
     partes = []
     for chunk in pd.read_csv(RESULTADOS_2024, sep=CSV_SEP, encoding=CSV_ENCODING,
                              usecols=extrair11.COLUNAS_UTEIS, dtype={"CO_ESCOLA": "Int64"},
@@ -48,11 +60,18 @@ def main(marca: str, cfg: dict):
     if partes:
         df = pd.concat(partes, ignore_index=True)
         for co, grupo in df.groupby("CO_ESCOLA"):
-            m = meta[str(co)]
+            co = int(co)
             s = analise12.stats_df(grupo)
-            ref[str(int(co))] = {
-                "label": m["label"].replace("—", "-"),
-                "municipio": m["municipio"],
+            if co in nossas_sem_2025:
+                m = mapa.get(str(co), {})
+                base = {"label": m.get("label", f"Escola {co}").replace("—", "-"),
+                        "municipio": m.get("municipio", ""), "rede": marca, "nossa": True}
+            else:
+                m = meta[str(co)]
+                base = {"label": m["label"].replace("—", "-"), "municipio": m["municipio"],
+                        "rede": m.get("rede"), "nossa": False}
+            ref[str(co)] = {
+                **base,
                 "n_inscritos": s["n_inscritos"],
                 "ng": (s.get("nota_geral") or {}).get("media"),
                 "mt": (s["areas"].get("MT") or {}).get("media"),

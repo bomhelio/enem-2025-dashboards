@@ -12,6 +12,7 @@ Saída: output/concorrencia_{slug}.json
 
 import importlib
 import json
+import math
 import os
 import sys
 import pandas as pd
@@ -22,6 +23,86 @@ from concorrencia_config import get_marca
 quant = importlib.import_module("02_quantitativo")
 estatisticas_area = quant.estatisticas_area
 AREAS = list(quant.AREAS)  # ["CN", "CH", "LC", "MT"]
+
+N_SELETA = 30   # abaixo disso, turma seleta: sinaliza, não exclui
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Veredicto — calculado UMA vez, aqui. A tela só renderiza.
+#
+# "Lidera" só quando a diferença supera a margem de erro da amostra. Um corte
+# binário de tamanho (o antigo †) não distingue uma unidade de 12 alunos com
+# gap de 113 pontos (real) de uma de 20 alunos com gap de 26 (ruído); o
+# intervalo distingue, porque é contínuo.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def erro_padrao(ng: dict) -> float | None:
+    n, dp = ng.get("n"), ng.get("dp")
+    return dp / math.sqrt(n) if (n and n > 1 and dp) else None
+
+
+def veredicto(ng_nosso: dict, ng_deles: dict) -> dict | None:
+    a, b = ng_nosso.get("media"), ng_deles.get("media")
+    if a is None or b is None:
+        return None
+    dif = round(a - b, 1)
+    ea, eb = erro_padrao(ng_nosso), erro_padrao(ng_deles)
+    if ea is None or eb is None:
+        return {"dif": dif, "ic95": None, "tipo": "indef", "txt": "amostra insuficiente"}
+    ic = round(1.96 * math.sqrt(ea ** 2 + eb ** 2), 1)
+    if abs(dif) <= ic:
+        return {"dif": dif, "ic95": ic, "tipo": "empate", "txt": "empate técnico"}
+    venceu = dif > 0
+    return {"dif": dif, "ic95": ic, "tipo": "vitoria" if venceu else "derrota",
+            "txt": "vitória real" if venceu else "derrota real"}
+
+
+def confrontos_por_praca(cfg: dict, unidades: list) -> list:
+    """Dois donos por praça: massa (mais alunos) e topo (maior nota).
+
+    Nunca se escolhe um dos dois — são disputas de naturezas diferentes e as
+    duas contam. Turma pequena no topo recebe alerta, não exclusão.
+    """
+    byco = {u["co"]: u for u in unidades}
+    saida = []
+    for p in cfg["pracas"]:
+        nossa = byco.get(p["nossa"])
+        if not nossa:
+            # Nossa unidade sem dados 2025 (ex.: UAU fora do Censo 2025) — a
+            # praça continua na tela, com a nossa linha vinda do ref2024.
+            saida.append({"titulo": p["titulo"], "municipio": p["municipio"],
+                          "nossa_co": p["nossa"], "nota": p.get("nota", ""),
+                          "estado": "nossa_ref2024"})
+            continue
+        advs = [byco[c] for c in p.get("diretos", []) + p.get("adjacentes", [])
+                if c in byco and (byco[c].get("nota_geral") or {}).get("media") is not None]
+        item = {"titulo": p["titulo"], "municipio": p["municipio"],
+                "nossa_co": p["nossa"], "nota": p.get("nota", "")}
+        if not advs:
+            item["estado"] = "sem_concorrente"
+        else:
+            eixos = {"massa": max(advs, key=lambda u: u["n_inscritos"]),
+                     "topo": max(advs, key=lambda u: u["nota_geral"]["media"])}
+            for eixo, adv in eixos.items():
+                v = veredicto(nossa["nota_geral"], adv["nota_geral"]) or {}
+                n_val = (adv.get("nota_geral") or {}).get("n") or 0
+                item[eixo] = {**v, "co": adv["co"], "label": adv["label"],
+                              "rede": adv["rede"], "n_inscritos": adv["n_inscritos"],
+                              "n_validos": n_val, "ng": adv["nota_geral"].get("media"),
+                              "seleta": n_val < N_SELETA}
+            item["mesmo_dono"] = eixos["massa"]["co"] == eixos["topo"]["co"]
+        saida.append(item)
+    return saida
+
+
+def placar(itens: list, chave: str) -> dict:
+    p = {"vitoria": 0, "empate": 0, "derrota": 0}
+    for it in itens:
+        tipo = (it.get(chave) or {}).get("tipo")
+        if tipo in p:
+            p[tipo] += 1
+    p["resumo"] = f"{p['vitoria']} · {p['empate']} · {p['derrota']}"
+    return p
 
 
 def stats_df(df: pd.DataFrame) -> dict:
@@ -97,7 +178,9 @@ def pareado_por_rede(cfg: dict, unidades: list, df_nossa: pd.DataFrame,
         lado_b = stats_df(df_conc[df_conc["CO_ESCOLA"].isin(deles)])
         lado_a["n_unidades"], lado_a["cos"] = len(nossos), list(nossos)
         lado_b["n_unidades"], lado_b["cos"] = len(deles), list(deles)
-        out[rede] = {"pracas": list(pracas), "nossa": lado_a, "deles": lado_b}
+        out[rede] = {"pracas": list(pracas), "nossa": lado_a, "deles": lado_b,
+                     "veredicto": veredicto(lado_a.get("nota_geral") or {},
+                                            lado_b.get("nota_geral") or {})}
 
     return out
 
@@ -158,18 +241,37 @@ def main(marca: str, cfg: dict):
 
     sem_dados = [m["label"].replace("—", "-") for m in conc_meta.values() if not m["tem_dados_2025"]]
 
+    # Nossas unidades sem nenhum vínculo no ENEM 2025 (fora do Censo 2025)
+    from config import ESCOLAS
+    nossas_2025 = set(df_nossa["CO_ESCOLA"].dropna().astype(int))
+    nossas_sem_dados = [mapa.get(str(co), {}).get("label", f"Escola {co}").replace("—", "-")
+                        for co in ESCOLAS.get(marca, []) if co not in nossas_2025]
+
+    pareado = pareado_por_rede(cfg, unidades, df_nossa, df_conc, conc_meta)
+    pracas = confrontos_por_praca(cfg, unidades)
+
     saida = {
         "marca": marca,
         "redes": redes,
-        "pareado": pareado_por_rede(cfg, unidades, df_nossa, df_conc, conc_meta),
+        "pareado": pareado,
+        "pracas": pracas,
+        "placar": {
+            "massa": placar(pracas, "massa"),
+            "topo": placar(pracas, "topo"),
+            "pareado": placar([{"v": p.get("veredicto")} for p in pareado.values()], "v"),
+        },
         "unidades": unidades,
         "bench_municipal": bench,
         "concorrentes_sem_dados_2025": sem_dados,
+        "nossas_sem_dados_2025": nossas_sem_dados,
     }
     destino = os.path.join(OUTPUT_DIR, f"concorrencia_{slug}.json")
     with open(destino, "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
     print(f"{len(unidades)} unidades ({sum(1 for u in unidades if u['nossa'])} nossas) -> {destino}")
+    print(f"  placar massa {saida['placar']['massa']['resumo']} · "
+          f"topo {saida['placar']['topo']['resumo']} · "
+          f"pareado {saida['placar']['pareado']['resumo']}")
     for rede, r in redes.items():
         ng = r.get("nota_geral", {}).get("media")
         print(f"  [{rede}] {r['n_unidades']} unidades, {r['n_inscritos']} inscritos, NG {ng}")
