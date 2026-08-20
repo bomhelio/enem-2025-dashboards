@@ -28,6 +28,16 @@ def _insight_redacao(data: dict, marca: str, curto: str) -> str:
     redes = data["redes"]
     nome = lambda r: curto if r == marca else r
     medias = {r: redes[r]["redacao"].get("media") or 0 for r in redes}
+    if not medias.get(marca):
+        # Marca sem dados 2025 (caso UAU) - insight só entre os concorrentes
+        conc = {r: v for r, v in medias.items() if r != marca and v}
+        if not conc:
+            return ""
+        lider = max(conc, key=conc.get)
+        outros = sorted((r for r in conc if r != lider), key=lambda r: -conc[r])
+        outros_txt = ", ".join(f"{_pt(conc[r])} do {nome(r)}" for r in outros)
+        return (f"O {nome(lider)} lidera a redação entre os concorrentes (média {_pt(conc[lider])}, "
+                f"contra {outros_txt}). O {curto} não tem base 2025 - ver o aviso no topo da tela.")
     lider = max(medias, key=medias.get)
     outros = sorted((r for r in medias if r != lider), key=lambda r: -medias[r])
     outros_txt = ", ".join(f"{_pt(medias[r])} do {nome(r)}" for r in outros)
@@ -135,6 +145,11 @@ TEMPLATE = r"""<!DOCTYPE html>
   .praca .mun { color:var(--muted); font-size:12px; margin:2px 0 10px; }
   .praca .nota { color:var(--muted); font-size:12px; margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
   .verdict { font-size:12.5px; font-weight:600; margin:9px 0 0; }
+  .verdict-eixo { font-size:12.5px; margin:8px 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:6px; line-height:1.5; }
+  .verdict-eixo .eixo { font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:#334155; border-radius:5px; padding:2px 7px; }
+  .verdict-eixo .ic { color:var(--muted); font-size:11.5px; font-weight:400; }
+  .tag-seleta { font-size:9.5px; font-weight:800; letter-spacing:.05em; color:#92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:1px 6px; margin-left:5px; vertical-align:middle; white-space:nowrap; }
+  .obs-inline { color:var(--muted); font-size:11.5px; font-weight:400; }
   .consol { margin-top:14px; }
   .consol summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:#fff; border:1px solid var(--line); border-radius:14px; font-size:13.5px; font-weight:700; color:#334155; box-shadow:0 1px 2px rgba(15,23,42,.04); }
   .consol summary::-webkit-details-marker { display:none; }
@@ -143,6 +158,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   .consol .body { background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:14px 18px; }
   .tag-adj { font-size:10px; font-weight:800; letter-spacing:.04em; color:#64748b; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
   .obs { color:var(--muted); font-size:12px; margin-top:10px; }
+  .aviso { background:#fffbeb; border:1px solid #fcd34d; border-left:4px solid #d97706; border-radius:12px; padding:12px 16px; margin:0 0 16px; color:#78350f; font-size:13px; line-height:1.55; }
   .warn-n { color:#b45309; font-weight:800; cursor:help; margin-left:2px; }
   .muted-cell { color:var(--muted); }
   #tblPareado th, #tblPareado td { padding:6px 8px; }
@@ -163,6 +179,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   </div>
 </header>
 <main>
+__AVISO__
   <div class="stats" id="statsRow"></div>
 
   <div class="section-title">Confronto pareado - só onde disputamos</div>
@@ -244,12 +261,19 @@ TEMPLATE = r"""<!DOCTYPE html>
   </div>
 
   <div class="section-title">Batalha territorial - praça a praça</div>
+  <p class="obs" style="margin:-6px 0 12px">Cada praça tem <strong>dois donos</strong>: o concorrente
+  de <strong>massa</strong> (mais alunos, disputa a mesma base) e o de <strong>topo</strong> (maior
+  nota, leva os melhores). São disputas de naturezas diferentes e as duas contam. Liderança só é
+  declarada quando a diferença supera a margem de erro (IC 95%); caso contrário é empate técnico.</p>
   <div class="pracas" id="pracasGrid"></div>
   <details class="consol">
-    <summary>Consolidado por praça<span class="hint">uma linha por bairro, da melhor para a pior situação · clique para abrir</span></summary>
+    <summary>Consolidado por praça<span class="hint">uma linha por bairro, da melhor para a pior situação de massa · clique para abrir</span></summary>
     <div class="body">
+      <p class="obs" id="placarResumo" style="margin:0 0 8px"></p>
       <div class="tbl-scroll"><table id="tblConsol"></table></div>
-      <p class="obs">Situação = diferença de NG entre a nossa unidade e o melhor concorrente com dados 2025 na praça · † menos de 30 alunos</p>
+      <p class="obs">Situação = diferença de NG contra cada um dos dois donos da praça, com veredicto
+      por IC 95% · <span class="tag-seleta">TURMA SELETA</span> = concorrente com menos de 30 alunos
+      válidos: lidera com base muito menor que a nossa, mas continua no jogo</p>
     </div>
   </details>
 
@@ -291,7 +315,8 @@ const MARCA = "__MARCA__";
 const CURTO = "__CURTO__";
 const CORES = __CORES__;
 const CINZA = "#334155";
-const N_MIN_PAREADO = 100;
+// N_MIN_PAREADO (corte binário de 100 alunos) foi substituído pelo IC 95%:
+// o intervalo já mede a incerteza da amostra de forma contínua.
 const AREAS5 = ["CN","CH","LC","MT","RD"];
 const REDES = __REDES__;
 const byCo = {}; DATA.unidades.forEach(u => byCo[u.co] = u);
@@ -303,6 +328,32 @@ const ngOf = u => (u.nota_geral||{}).media ?? null;
 const dot = rede => '<span class="rede-dot" style="background:'+CORES[rede]+'"></span>';
 const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
   : '<span class="'+(d>=0?'delta-pos':'delta-neg')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+'</span>';
+
+// ---------- Veredictos (calculados no 12_analise_concorrencia.py) ----------
+// A tela NÃO recalcula significância: lê o que o Python já decidiu. Ter duas
+// implementações do mesmo veredicto é como a página e os planos de ação
+// passaram a divergir - a segunda a mudar seria descoberta por acidente.
+const PRACA_VER = {}; (DATA.pracas||[]).forEach(p => PRACA_VER[p.titulo] = p);
+const PLACAR = DATA.placar || {};
+
+// Contagem ABSOLUTA de alunos num patamar - imune ao tamanho da turma.
+const acimaDe = (u, corte) => { const g = u.nota_geral||{};
+  const p = g["pct_acima_"+corte];
+  return (p == null || g.n == null) ? null : Math.round(p * g.n / 100); };
+
+const seletaTag = seleta => seleta
+  ? ' <span class="tag-seleta" title="turma menor que 30 alunos válidos: lidera com base muito menor que a nossa">TURMA SELETA</span>'
+  : "";
+
+const CLS_VER = {vitoria:"delta-pos", derrota:"delta-neg", empate:"delta-neutro", indef:"delta-neutro"};
+const linhaVeredicto = (eixo, v) => {
+  if (!v || v.dif == null) return "";
+  const sinal = v.dif >= 0 ? "+" : "−";
+  return '<p class="verdict-eixo"><span class="eixo">'+eixo+'</span> '+
+    dot(v.rede)+v.label+' ('+fmtInt(v.n_inscritos)+' alunos)'+seletaTag(v.seleta)+
+    ' <span class="'+CLS_VER[v.tipo]+'">'+sinal+fmt(Math.abs(v.dif))+' · '+v.txt+'</span>'+
+    (v.ic95 != null ? '<span class="ic">margem ±'+fmt(v.ic95)+'</span>' : "")+'</p>';
+};
 
 // ---------- Cards do topo ----------
 (function(){
@@ -316,8 +367,16 @@ const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
   REDES.forEach(rd => {
     const x = r[rd];
     if (rd === MARCA) {
-      cards.push({t: rd, v: fmt((x.nota_geral||{}).media), dot: CORES[rd],
-        s: "rede completa · "+x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+      const ng25 = (x.nota_geral||{}).media;
+      if (ng25 != null) {
+        cards.push({t: rd, v: fmt(ng25), dot: CORES[rd],
+          s: "rede completa · "+x.n_unidades+" unidades · "+fmtInt(x.n_inscritos)+" alunos"});
+      } else {
+        // marca sem vínculo no ENEM 2025 (fora do Censo 2025) — referência 2024
+        const ng24 = ((((HIST||{}).redes||{})[rd]||{})["2024"]||{}).NG;
+        cards.push({t: rd, v: fmt(ng24), dot: CORES[rd],
+          s: "rede completa · <strong>referência ENEM 2024</strong> - sem vínculo em 2025"});
+      }
       return;
     }
     const p = (DATA.pareado||{})[rd];
@@ -326,10 +385,10 @@ const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
       return;
     }
     const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
-    const fino = (a.n||0) < N_MIN_PAREADO || (b.n||0) < N_MIN_PAREADO;
-    cards.push({t: rd, dot: CORES[rd],
-      v: fmt(b.media) + (fino ? '<span class="warn-n" title="menos de '+N_MIN_PAREADO+' alunos válidos de um dos lados">†</span>' : ''),
-      s: p.pracas.length+" praças em comum · "+CURTO+" "+fmt(a.media)+" aqui"});
+    const v = p.veredicto;
+    cards.push({t: rd, dot: CORES[rd], v: fmt(b.media),
+      s: p.pracas.length+" praças em comum · "+CURTO+" "+fmt(a.media)+" aqui"+
+         (v ? ' · <span class="'+CLS_VER[v.tipo]+'">'+v.txt+"</span>" : "")});
   });
   document.getElementById("statsRow").innerHTML = cards.map(c =>
     '<div class="stat"><small>'+(c.dot?'<span class="dot" style="background:'+c.dot+'"></span>':'')+c.t+
@@ -341,39 +400,47 @@ const deltaHtml = d => d==null ? '<span class="delta-neutro">-</span>'
   const P = DATA.pareado || {};
   const ngFull = rd => ((DATA.redes[rd]||{}).nota_geral||{}).media ?? null;
   const nosFull = ngFull(MARCA);
-  const flag = n => n < N_MIN_PAREADO
-    ? '<span class="warn-n" title="menos de '+N_MIN_PAREADO+' alunos válidos - diferença sujeita a ruído">†</span>' : '';
   let invertidos = 0, comparaveis = 0;
 
   const rows = REDES.slice(1).map(rd => {
     const p = P[rd];
     if (!p || !p.nossa || !p.deles)
-      return '<tr><td>'+dot(rd)+rd+'</td><td colspan="9" class="muted-cell">sem praça em comum com dados em 2025</td></tr>';
+      return '<tr><td>'+dot(rd)+rd+'</td><td colspan="10" class="muted-cell">sem praça em comum com dados em 2025</td></tr>';
     const a = p.nossa.nota_geral||{}, b = p.deles.nota_geral||{};
     const dif = (a.media!=null && b.media!=null) ? a.media-b.media : null;
     const difFull = (nosFull!=null && ngFull(rd)!=null) ? nosFull-ngFull(rd) : null;
     if (dif!=null && difFull!=null) { comparaveis++; if ((dif<0) !== (difFull<0)) invertidos++; }
+    // Mesmo critério da batalha territorial, decidido no Python.
+    const v = p.veredicto;
+    const cel = v
+      ? '<span class="'+CLS_VER[v.tipo]+'">'+v.txt+"</span>"+
+        (v.ic95!=null ? '<span class="ic"> ±'+fmt(v.ic95)+"</span>" : "")
+      : '<span class="delta-neutro">-</span>';
     return '<tr><td>'+dot(rd)+rd+'</td>'+
       '<td title="'+p.pracas.join(" · ")+'">'+p.pracas.length+'</td>'+
-      '<td>'+p.nossa.n_unidades+'</td><td>'+fmtInt(a.n)+flag(a.n||0)+'</td><td><strong>'+fmt(a.media)+'</strong></td>'+
-      '<td>'+p.deles.n_unidades+'</td><td>'+fmtInt(b.n)+flag(b.n||0)+'</td><td><strong>'+fmt(b.media)+'</strong></td>'+
+      '<td>'+p.nossa.n_unidades+'</td><td>'+fmtInt(a.n)+'</td><td><strong>'+fmt(a.media)+'</strong></td>'+
+      '<td>'+p.deles.n_unidades+'</td><td>'+fmtInt(b.n)+'</td><td><strong>'+fmt(b.media)+'</strong></td>'+
       '<td>'+deltaHtml(dif)+'</td>'+
+      '<td>'+cel+'</td>'+
       '<td class="muted-cell">'+(difFull==null ? "-" : (difFull>=0?"+":"−")+fmt(Math.abs(difFull)))+'</td></tr>';
   }).join("");
 
   document.getElementById("tblPareado").innerHTML =
     '<thead><tr><th rowspan="2">Rede</th><th rowspan="2">Praças</th>'+
     '<th colspan="3">'+CURTO+' nessas praças</th><th colspan="3">Concorrente nessas praças</th>'+
-    '<th rowspan="2">Diferença</th><th rowspan="2">Dif. rede inteira</th></tr>'+
+    '<th rowspan="2">Diferença</th><th rowspan="2">Veredicto (IC 95%)</th><th rowspan="2">Dif. rede inteira</th></tr>'+
     '<tr><th>Un.</th><th>Alunos</th><th>NG</th><th>Un.</th><th>Alunos</th><th>NG</th></tr></thead><tbody>'+rows+'</tbody>';
 
   document.getElementById("obsPareado").innerHTML =
+    "<strong>Placar pareado: "+((PLACAR.pareado||{}).resumo || "-")+"</strong> "+
+    "(vitórias reais · empates técnicos · derrotas reais). "+
     (invertidos === 0
       ? "Nenhum confronto muda de sinal em relação à leitura de rede inteira."
       : "<strong>"+invertidos+" de "+comparaveis+" confrontos mudam de sinal</strong> em relação à leitura de rede inteira (última coluna), "+
         "que mistura praças onde o "+CURTO+" não está.")+
     " Praça = onde as duas redes têm unidade com dados, pelo mapa de praças (concorrentes diretos e adjacentes); passe o mouse sobre o número para ver os nomes."+
-    ' <span class="warn-n">†</span> menos de '+N_MIN_PAREADO+" alunos válidos: a diferença fica sujeita a ruído e deve ser lida como indicativa.";
+    " O veredicto compara a diferença com a margem de erro da amostra: quando ela cabe dentro da margem, "+
+    "a vantagem não é distinguível de zero e o confronto é <strong>empate técnico</strong>, não vitória.";
 })();
 
 // ---------- Panorama ----------
@@ -401,11 +468,14 @@ new Chart(document.getElementById("chartPanorama"), {
   const rel = d => d>=0 ? fmt(d)+" acima" : fmt(-d)+" abaixo";
   const lider = REDES.reduce((a,b)=> ngRede(b)>ngRede(a) ? b : a);
   const maiores = REDES.slice(1).sort((a,b)=>DATA.redes[b].n_inscritos-DATA.redes[a].n_inscritos).slice(0,2);
-  document.getElementById("obsPanorama").textContent =
-    "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
-    rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
-    (lider===MARCA ? CURTO : lider) + " lidera o grupo. Leitura de rede completa: cada concorrente "+
-    "carrega aqui praças que o "+CURTO+" não disputa, então esses números medem escala, não posição competitiva.";
+  document.getElementById("obsPanorama").textContent = ngRede(MARCA)
+    ? "O "+CURTO+" está " + rel(ngRede(MARCA)-ngRede(maiores[0])) + " do "+maiores[0]+" e " +
+      rel(ngRede(MARCA)-ngRede(maiores[1])) + " do "+maiores[1]+" na nota geral de rede; o " +
+      (lider===MARCA ? CURTO : lider) + " lidera o grupo. Leitura de rede completa: cada concorrente "+
+      "carrega aqui praças que o "+CURTO+" não disputa, então esses números medem escala, não posição competitiva."
+    : "O "+CURTO+" não tem base 2025 (ver aviso no topo) - entre os concorrentes, o "+lider+
+      " lidera a nota geral de rede. Leitura de rede completa: cada concorrente carrega aqui praças que o "+
+      CURTO+" não disputa, então esses números medem escala, não posição competitiva.";
 })();
 
 // ---------- Preenchimentos dos cards laterais ----------
@@ -495,6 +565,9 @@ Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
   const selA = document.getElementById("selA"), selB = document.getElementById("selB");
   DATA.unidades.filter(u=>u.nossa).forEach(u =>
     selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+u.label+" · "+u.municipio+"</option>"));
+  if (!selA.options.length)  // marca sem unidades com dados 2025: A×B entre concorrentes
+    DATA.unidades.forEach(u =>
+      selA.insertAdjacentHTML("beforeend", '<option value="'+u.co+'">'+u.label+" · "+u.municipio+"</option>"));
   REDES.forEach(rd => {
     const grupo = DATA.unidades.filter(u=>u.rede===rd);
     if (!grupo.length) return;
@@ -517,6 +590,7 @@ Object.values(DATA.bench_municipal).forEach(b => benchByMun[b.municipio] = b);
 function renderConfronto(){
   const A = byCo[document.getElementById("selA").value];
   const B = byCo[document.getElementById("selB").value];
+  if (!A || !B) return;
   const ngA = ngOf(A), ngB = ngOf(B), d = (ngA!=null && ngB!=null) ? ngA-ngB : null;
   document.getElementById("placar").innerHTML =
     '<div><div class="num" style="color:'+CORES[A.rede]+'">'+fmt(ngA)+'</div><span class="who">'+A.label+"</span></div>"+
@@ -586,75 +660,87 @@ function renderConfronto(){
   const grid = document.getElementById("pracasGrid");
   grid.innerHTML = PRACAS.map(p => {
     const nossa = byCo[p.nossa];
-    if (!nossa) return "";
+    // Nossa unidade sem dados 2025 (fora do Censo 2025): linha vem do REF2024
+    const nossaRef = nossa ? null : REF2024[p.nossa];
+    if (!nossa && !nossaRef) return "";
     const rivais = p.diretos.map(co=>({u:byCo[co],adj:false})).concat(p.adjacentes.map(co=>({u:byCo[co],adj:true})))
       .filter(x=>x.u);
     const refs = (p.ref2024||[]).map(co=>REF2024[co]).filter(Boolean);
-    const ngN = ngOf(nossa);
+    const ngN = nossa ? ngOf(nossa) : null;
+    const refNossaRow = nossaRef ? '<tr class="nossa-row" style="color:#64748b"><td>'+dot(nossaRef.rede||MARCA)+
+      '<span class="star">★ </span>'+nossaRef.label+'<span class="tag-adj">ENEM 2024</span></td><td>'+
+      fmtInt(nossaRef.n_inscritos)+'</td><td>'+fmt(nossaRef.ng)+'</td><td>'+fmt(nossaRef.mt)+
+      '</td><td>'+fmt(nossaRef.rd)+'</td><td>-</td></tr>' : "";
     let corpo;
     if (!rivais.length && !refs.length) {
-      corpo = '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
+      corpo = (refNossaRow ? '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th><th>700+</th></tr></thead><tbody>'+refNossaRow+'</tbody></table></div>' : '')+
+        '<p class="obs" style="margin:6px 0 0">Sem concorrente direto com dados no ENEM 2025 nesta praça.</p>';
     } else {
-      const linhas = [{u:nossa, nossa:true, adj:false}].concat(rivais.map(x=>({u:x.u, nossa:false, adj:x.adj})));
+      const linhas = (nossa ? [{u:nossa, nossa:true, adj:false}] : []).concat(rivais.map(x=>({u:x.u, nossa:false, adj:x.adj})));
       const val = (u,m) => m==="NG" ? ngOf(u) : areaStat(u,m).media;
       const best = {};
       ["NG","MT","RD"].forEach(m => best[m] = Math.max(...linhas.map(l=>val(l.u,m)).filter(v=>v!=null)));
       const cel = (u,m) => { const v = val(u,m);
         return "<td"+(v!=null && v===best[m] ? ' style="font-weight:800"' : "")+">"+fmt(v)+"</td>"; };
-      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th></tr></thead><tbody>'+
+      corpo = '<div class="tbl-scroll"><table><thead><tr><th>Unidade</th><th>Alunos</th><th>NG</th><th>MT</th><th>RD</th>'+
+        '<th title="alunos com nota geral 700 ou mais — contagem absoluta, imune ao tamanho da turma">700+</th></tr></thead><tbody>'+
+        refNossaRow+
         linhas.map(l => '<tr class="'+(l.nossa?'nossa-row':'')+'"><td>'+dot(l.u.rede)+(l.nossa?'<span class="star">★ </span>':'')+
-          l.u.label+(l.u.n_inscritos<30?' †':'')+(l.adj?'<span class="tag-adj">ADJACENTE</span>':'')+"</td><td>"+
-          fmtInt(l.u.n_inscritos)+"</td>"+cel(l.u,"NG")+cel(l.u,"MT")+cel(l.u,"RD")+"</tr>").join("")+
-        refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.label.split(" - ")[0])+r.label+
+          l.u.label+seletaTag(((l.u.nota_geral||{}).n ?? 0) < 30)+
+          (l.adj?'<span class="tag-adj">ADJACENTE</span>':'')+"</td><td>"+
+          fmtInt(l.u.n_inscritos)+"</td>"+cel(l.u,"NG")+cel(l.u,"MT")+cel(l.u,"RD")+
+          "<td>"+fmtInt(acimaDe(l.u,700))+"</td></tr>").join("")+
+        refs.map(r => '<tr style="color:#64748b"><td>'+dot(r.rede||r.label.split(" - ")[0])+r.label+
           '<span class="tag-adj">ENEM 2024</span></td><td>'+fmtInt(r.n_inscritos)+"</td><td>"+fmt(r.ng)+
-          "</td><td>"+fmt(r.mt)+"</td><td>"+fmt(r.rd)+"</td></tr>").join("")+
+          "</td><td>"+fmt(r.mt)+"</td><td>"+fmt(r.rd)+"</td><td>-</td></tr>").join("")+
         "</tbody></table></div>";
-      if (rivais.length) {
-        const ord = linhas.filter(l=>val(l.u,"NG")!=null).sort((a,b)=>val(b.u,"NG")-val(a.u,"NG"));
-        const lider = ord[0];
-        const peq = u => u.n_inscritos<30 ? " †" : "";
-        if (lider.nossa) {
-          const vice = ord[1];
-          corpo += '<p class="verdict" style="color:var(--pos)">O '+CURTO+' lidera a praça em NG, '+
-            fmt(val(lider.u,"NG")-val(vice.u,"NG"))+' pontos à frente do '+vice.u.label+peq(vice.u)+'.</p>';
-        } else {
-          corpo += '<p class="verdict" style="color:var(--neg)">O '+lider.u.label+peq(lider.u)+
-            ' lidera a praça em NG; o '+CURTO+' está '+fmt(val(lider.u,"NG")-ngN)+' pontos atrás.</p>';
-        }
+      // Dois donos por praça, decididos no Python.
+      const vp = PRACA_VER[p.titulo] || {};
+      if (vp.massa) {
+        corpo += linhaVeredicto("massa", vp.massa);
+        if (vp.mesmo_dono)
+          corpo += '<p class="obs" style="margin:2px 0 0">Mesma unidade lidera massa e topo nesta praça.</p>';
+        else
+          corpo += linhaVeredicto("topo", vp.topo);
+      } else if (nossaRef) {
+        corpo += '<p class="obs" style="margin:6px 0 0">Sem veredicto: a nossa unidade não tem base 2025 - a linha marcada é referência ENEM 2024.</p>';
       }
     }
     return '<div class="card praca"><h4>'+p.titulo+'</h4><div class="mun">'+p.municipio+
-      " · médias ENEM 2025 · melhor valor da praça em negrito · † menos de 30 alunos</div>"+corpo+
+      " · médias ENEM 2025 · melhor valor da praça em negrito · 700+ = contagem absoluta de alunos</div>"+corpo+
       (p.nota?'<div class="nota">'+p.nota+"</div>":"")+"</div>";
   }).join("");
 
   // Consolidado por praça (tabela expansível)
-  const peqTag = u => u.n_inscritos<30 ? " †" : "";
-  const consol = PRACAS.filter(p=>byCo[p.nossa]).map(p => {
-    const nossa = byCo[p.nossa];
-    const rivaisU = p.diretos.concat(p.adjacentes).map(co=>byCo[co]).filter(u=>u && ngOf(u)!=null);
-    const ngN = ngOf(nossa);
-    if (!rivaisU.length) return {p, nossa, ngN, melhor:null, diff:null};
-    const melhor = [...rivaisU].sort((a,b)=>ngOf(b)-ngOf(a))[0];
-    return {p, nossa, ngN, melhor, diff: ngN-ngOf(melhor)};
-  }).sort((a,b) => (b.diff==null?-1e9:b.diff) - (a.diff==null?-1e9:a.diff));
+  // Consolidado com os DOIS placares: nunca se escolhe entre massa e topo.
+  const consol = (DATA.pracas||[]).filter(v => byCo[v.nossa_co]).map(v => ({
+    v, nossa: byCo[v.nossa_co], ordem: v.massa ? v.massa.dif : -1e9
+  })).sort((a,b) => b.ordem - a.ordem);
+
+  const celVer = v => {
+    if (!v || v.dif == null)
+      return '<td colspan="2"><span class="delta-neutro">sem concorrente com dados</span></td>';
+    const sinal = v.dif >= 0 ? "+" : "−";
+    return "<td>"+dot(v.rede)+v.label+seletaTag(v.seleta)+
+      ' <span class="obs-inline">'+fmtInt(v.n_inscritos)+" alunos</span></td>"+
+      '<td><span class="'+CLS_VER[v.tipo]+'">'+sinal+fmt(Math.abs(v.dif))+"</span> "+
+      '<span class="obs-inline">'+v.txt+"</span></td>";
+  };
+
+  const resumo = document.getElementById("placarResumo");
+  if (resumo && PLACAR.massa) resumo.innerHTML =
+    'Placar de massa: <strong>'+PLACAR.massa.resumo+
+    "</strong> (vitórias · empates técnicos · derrotas, IC 95%)"+
+    (PLACAR.topo ? " · no topo: <strong>"+PLACAR.topo.resumo+"</strong>" : "");
+
   document.getElementById("tblConsol").innerHTML =
-    "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th><th>Melhor concorrente</th><th>NG conc.</th><th>Situação</th></tr></thead><tbody>"+
-    consol.map(c => {
-      let sit, conc, ngc;
-      if (c.melhor==null) {
-        sit = '<span class="delta-neutro">única com dados 2025 na praça</span>'; conc = "-"; ngc = "-";
-      } else {
-        conc = dot(c.melhor.rede)+c.melhor.label+peqTag(c.melhor);
-        ngc = fmt(ngOf(c.melhor));
-        sit = c.diff>=0
-          ? '<span class="delta-pos">à frente por '+fmt(c.diff)+'</span>'
-          : '<span class="delta-neg">atrás por '+fmt(-c.diff)+'</span>';
-      }
-      return "<tr><td><strong>"+c.p.titulo+"</strong></td><td>"+c.p.municipio+"</td><td>"+
-        fmtInt(c.nossa.n_inscritos)+"</td><td><strong>"+fmt(c.ngN)+"</strong></td><td>"+conc+
-        "</td><td>"+ngc+"</td><td>"+sit+"</td></tr>";
-    }).join("")+"</tbody>";
+    "<thead><tr><th>Praça</th><th>Município</th><th>Alunos ★</th><th>NG ★</th>"+
+    "<th>Concorrente de massa</th><th>Situação</th><th>Concorrente de topo</th><th>Situação</th></tr></thead><tbody>"+
+    consol.map(c =>
+      "<tr><td><strong>"+c.v.titulo+"</strong></td><td>"+c.v.municipio+"</td><td>"+
+      fmtInt(c.nossa.n_inscritos)+"</td><td><strong>"+fmt(ngOf(c.nossa))+"</strong></td>"+
+      celVer(c.v.massa)+celVer(c.v.topo)+"</tr>"
+    ).join("")+"</tbody>";
 })();
 
 // ---------- Evolução histórica ----------
@@ -766,6 +852,7 @@ def main(marca: str, cfg: dict):
             .replace("__CURTO__", cfg["curto"])
             .replace("__COR_MARCA__", cfg["cor"])
             .replace("__HERO_SUB__", cfg["hero_sub"])
+            .replace("__AVISO__", f'  <div class="aviso">{cfg["aviso"]}</div>' if cfg.get("aviso") else "")
             .replace("__CHIPS_REDES__", chips)
             .replace("__HIST_MUN_OPCOES__", hist_muns)
             .replace("__STATS_COLS__", str(stats_cols))

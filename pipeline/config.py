@@ -12,9 +12,14 @@ ESCOLAS: dict[str, list[int]] = {
     # Retiro dos Artistas e Tijuca sem código INEP — não entram na análise
     "Matriz Educação": [33187789, 33183368, 33048185, 33197466, 33187762, 33192685, 33190674, 33187770],
     "União":                    [43162703],
-    "Unificado":                [43214754],
+    # Ramiro (43186700) veio do Censo 2024 — pontuou no ENEM 2024 (13º de POA)
+    "Unificado":                [43214754, 43186700],
     "Americano":                [43107524],
     "Colégio Leonardo da Vinci": [43172423, 43172440, 43213278],
+    # Marca agregada p/ a tela de concorrência RS: Unificado (ZS + Ramiro),
+    # Americano (POA) e União (Uruguaiana). Sem Censo 2025 → sem vínculo no
+    # ENEM 2025; a tela usa referência 2024 (nossa_ref2024).
+    "UAU":                      [43214754, 43186700, 43107524, 43162703],
     "Cubo Global":              [33178828, 33186260],
 }
 

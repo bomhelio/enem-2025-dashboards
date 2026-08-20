@@ -264,6 +264,186 @@ MARCAS: dict[str, dict] = {
              "nota": "A unidade QI Bilíngue Botafogo foi encerrada para 2026; dados referem-se a 2025."},
         ],
     },
+    # ──────────────────────────────────────────────────────────────────────
+    "Cubo Global": {
+        "slug": "cubo",
+        "curto": "Cubo",
+        "cor": "#0f9d96",
+        "tile": "#097570",
+        "logo": "Cubo_Global.imgtag",
+        "html_out": "Concorrencia_Cubo.html",
+        "deploy_file": "cubo.html",
+        "hero_sub": "Comparação unidade a unidade com AZ, Pensi, pH, Alfa CEM e CEL · Microdados INEP · Uso interno",
+        "municipios_bench": {3304557: "Rio de Janeiro"},
+        "confronto_default": [33186260, 33110328],
+        "cores_redes": {"AZ": "#1d4ed8", "Pensi": "#ca8a04", "pH": "#be123c",
+                        "Alfa CEM": "#ea580c", "CEL": "#7c3aed"},
+        "concorrentes": {
+            "AZ": {
+                33228604: {"label": "Botafogo",            "municipio": "Rio de Janeiro", "bairro": "BOTAFOGO"},
+                33447225: {"label": "Barra da Tijuca",     "municipio": "Rio de Janeiro", "bairro": "BARRA DA TIJUCA"},
+            },
+            "Pensi": {
+                33193118: {"label": "Flamengo",            "municipio": "Rio de Janeiro", "bairro": "FLAMENGO"},
+                33421226: {"label": "Copacabana",          "municipio": "Rio de Janeiro", "bairro": "COPACABANA"},
+                33161402: {"label": "Recreio",             "municipio": "Rio de Janeiro", "bairro": "RECREIO"},
+            },
+            "pH": {
+                33110328: {"label": "Botafogo 1",          "municipio": "Rio de Janeiro", "bairro": "BOTAFOGO"},
+                33158240: {"label": "Botafogo 2",          "municipio": "Rio de Janeiro", "bairro": "BOTAFOGO"},
+                33155852: {"label": "Barra da Tijuca",     "municipio": "Rio de Janeiro", "bairro": "BARRA DA TIJUCA"},
+            },
+            "Alfa CEM": {
+                33184739: {"label": "Barra da Tijuca 1",   "municipio": "Rio de Janeiro", "bairro": "BARRA DA TIJUCA"},
+                33196273: {"label": "Barra da Tijuca 2",   "municipio": "Rio de Janeiro", "bairro": "BARRA DA TIJUCA"},
+            },
+            "CEL": {
+                33176760: {"label": "Jardim Botânico",     "municipio": "Rio de Janeiro", "bairro": "JARDIM BOTANICO"},
+                33065195: {"label": "Maria Angélica",      "municipio": "Rio de Janeiro", "bairro": "JARDIM BOTANICO"},
+                33105154: {"label": "Barra da Tijuca",     "municipio": "Rio de Janeiro", "bairro": "BARRA DA TIJUCA"},
+            },
+        },
+        "pracas": [
+            {"titulo": "Botafogo", "municipio": "Rio de Janeiro", "nossa": 33186260,
+             "diretos": [33110328, 33158240, 33228604],
+             "adjacentes": [33193118, 33421226, 33176760, 33065195],
+             "nota": "Pensi (Flamengo e Copacabana) e CEL (Jardim Botânico e Maria Angélica) exibidos como praças adjacentes - as duas redes não têm unidade em Botafogo. pH Botafogo 2 sem dados no ENEM 2024 e 2025."},
+            {"titulo": "Barra da Tijuca (ABM)", "municipio": "Rio de Janeiro", "nossa": 33178828,
+             "diretos": [33447225, 33155852, 33184739, 33196273, 33105154],
+             "adjacentes": [33161402],
+             "nota": "Pensi não tem unidade na Barra - a unidade do Recreio é exibida como adjacente. Alfa CEM Barra da Tijuca 2 sem dados no ENEM 2024 e 2025."},
+        ],
+    },
+    # ──────────────────────────────────────────────────────────────────────
+    # RS: as duas telas compartilham o mesmo mapa de concorrentes de POA.
+    # No ENEM 2025 as 14 primeiras escolas de Porto Alegre são exatamente as
+    # deste mapa (régua INEP: presença completa + redação, n>=10).
+    "Colégio Leonardo da Vinci": {
+        "slug": "ldv",
+        "curto": "LDV",
+        "cor": "#0284c7",
+        "tile": "#075985",
+        "logo": "Colegio_Leonardo_da_Vinci.imgtag",
+        "html_out": "Concorrencia_LDV.html",
+        "deploy_file": "ldv.html",
+        "hero_sub": "Comparação unidade a unidade com João Paulo I, Farroupilha, Fleming e as tradicionais de POA · Microdados INEP · Uso interno",
+        "municipios_bench": {4314902: "Porto Alegre", 4304606: "Canoas"},
+        "confronto_default": [43172423, 43213995],
+        "cores_redes": {"João Paulo I": "#b45309", "Marista": "#1d4ed8", "Fleming": "#0f766e",
+                        "Bertoni": "#65a30d", "Farroupilha": "#db2777", "Tradicionais POA": "#7c3aed"},
+        "concorrentes": {
+            "João Paulo I": {
+                43173330: {"label": "Zona Sul",            "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+                43238203: {"label": "Higienópolis",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
+                43216684: {"label": "Praia de Belas",      "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
+            },
+            "Marista": {
+                43108164: {"label": "Rosário",             "municipio": "Porto Alegre", "bairro": "INDEPENDENCIA"},
+                43178740: {"label": "Ipanema",             "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+            },
+            "Fleming": {
+                43213995: {"label": "Rio Branco",          "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
+            },
+            "Bertoni": {
+                43215050: {"label": "Auxiliadora",         "municipio": "Porto Alegre", "bairro": "AUXILIADORA"},
+            },
+            "Farroupilha": {
+                43104975: {"label": "Três Figueiras",      "municipio": "Porto Alegre", "bairro": "TRES FIGUEIRAS"},
+            },
+            "Tradicionais POA": {
+                43105009: {"label": "Colégio Militar",     "municipio": "Porto Alegre", "bairro": "FARROUPILHA"},
+                43107419: {"label": "Mãe de Deus",         "municipio": "Porto Alegre", "bairro": "TRISTEZA"},
+                43107494: {"label": "Pastor Dohms",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
+                43104983: {"label": "Israelita",           "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
+                43105017: {"label": "Bom Conselho",        "municipio": "Porto Alegre", "bairro": "FLORESTA"},
+                43105068: {"label": "Santa Inês",          "municipio": "Porto Alegre", "bairro": "PETROPOLIS"},
+                43104991: {"label": "Maria Imaculada",     "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
+                43105408: {"label": "Adventista Camaquã",  "municipio": "Porto Alegre", "bairro": "CAMAQUA"},
+                43105637: {"label": "Adventista M. Rondon", "municipio": "Porto Alegre", "bairro": "VILA IPIRANGA"},
+            },
+        },
+        "pracas": [
+            {"titulo": "Rio Branco / Higienópolis (Alfa)", "municipio": "Porto Alegre", "nossa": 43172423,
+             "diretos": [43213995, 43104983, 43215050],
+             "adjacentes": [43238203, 43107494, 43105009, 43108164],
+             "nota": "Colégio Militar é rede federal (gratuito). Em 2025 a Alfa passou a operar no prédio do IPA, no mesmo bairro."},
+            {"titulo": "Cristal / Zona Sul (Beta)", "municipio": "Porto Alegre", "nossa": 43172440,
+             "diretos": [],
+             "adjacentes": [43216684, 43104991, 43173330],
+             "nota": "Sem concorrente mapeado no Cristal - exibidos os mais próximos (Praia de Belas e Zona Sul)."},
+            {"titulo": "Canoas (Gama)", "municipio": "Canoas", "nossa": 43213278,
+             "diretos": [], "adjacentes": [],
+             "nota": "Sem concorrente mapeado em Canoas. A unidade não tem participantes vinculados no ENEM 2025 - números de referência do ENEM 2024."},
+        ],
+    },
+    # ──────────────────────────────────────────────────────────────────────
+    "UAU": {
+        "slug": "uau",
+        "curto": "UAU",
+        "cor": "#dc2626",
+        "tile": "#7f1d1d",
+        "logo": "",
+        "html_out": "Concorrencia_UAU.html",
+        "deploy_file": "uau.html",
+        "hero_sub": "Unificado, Americano e União vs a concorrência de cada praça · Referência ENEM 2024 · Microdados INEP · Uso interno",
+        "aviso": "As escolas UAU não responderam o Censo Escolar 2025, e o ENEM só vincula aluno a escola pelo Censo do ano — por isso não existem números 2025 para as nossas unidades (as dos concorrentes são 2025 normais). As linhas marcadas ENEM 2024 são a última foto disponível. Ação: responder o Censo 2026 devolve o UAU ao ENEM por escola já na edição 2026. A âncora do grupo em POA com dados vivos é a tela LDV.",
+        "selo_card": "Referência ENEM 2024 · Censo 2025 não respondido",
+        "municipios_bench": {4314902: "Porto Alegre", 4322400: "Uruguaiana"},
+        "confronto_default": [43173330, 43108164],
+        "cores_redes": {"João Paulo I": "#b45309", "Marista": "#1d4ed8", "Fleming": "#0f766e",
+                        "Bertoni": "#65a30d", "Farroupilha": "#db2777", "Tradicionais POA": "#7c3aed",
+                        "Uruguaiana": "#ca8a04"},
+        "concorrentes": {
+            "João Paulo I": {
+                43173330: {"label": "Zona Sul",            "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+                43238203: {"label": "Higienópolis",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
+                43216684: {"label": "Praia de Belas",      "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
+            },
+            "Marista": {
+                43108164: {"label": "Rosário",             "municipio": "Porto Alegre", "bairro": "INDEPENDENCIA"},
+                43178740: {"label": "Ipanema",             "municipio": "Porto Alegre", "bairro": "IPANEMA"},
+            },
+            "Fleming": {
+                43213995: {"label": "Rio Branco",          "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
+            },
+            "Bertoni": {
+                43215050: {"label": "Auxiliadora",         "municipio": "Porto Alegre", "bairro": "AUXILIADORA"},
+            },
+            "Farroupilha": {
+                43104975: {"label": "Três Figueiras",      "municipio": "Porto Alegre", "bairro": "TRES FIGUEIRAS"},
+            },
+            "Tradicionais POA": {
+                43105009: {"label": "Colégio Militar",     "municipio": "Porto Alegre", "bairro": "FARROUPILHA"},
+                43107419: {"label": "Mãe de Deus",         "municipio": "Porto Alegre", "bairro": "TRISTEZA"},
+                43107494: {"label": "Pastor Dohms",        "municipio": "Porto Alegre", "bairro": "HIGIENOPOLIS"},
+                43104983: {"label": "Israelita",           "municipio": "Porto Alegre", "bairro": "RIO BRANCO"},
+                43105017: {"label": "Bom Conselho",        "municipio": "Porto Alegre", "bairro": "FLORESTA"},
+                43105068: {"label": "Santa Inês",          "municipio": "Porto Alegre", "bairro": "PETROPOLIS"},
+                43104991: {"label": "Maria Imaculada",     "municipio": "Porto Alegre", "bairro": "PRAIA DE BELAS"},
+                43105408: {"label": "Adventista Camaquã",  "municipio": "Porto Alegre", "bairro": "CAMAQUA"},
+                43105637: {"label": "Adventista M. Rondon", "municipio": "Porto Alegre", "bairro": "VILA IPIRANGA"},
+            },
+            "Uruguaiana": {
+                43162290: {"label": "Marista Sant'Ana",    "municipio": "Uruguaiana", "bairro": "CENTRO"},
+                43162690: {"label": "Laura Vicuña",        "municipio": "Uruguaiana", "bairro": "CENTRO"},
+                43050921: {"label": "IF Farroupilha",      "municipio": "Uruguaiana", "bairro": "CENTRO"},
+            },
+        },
+        "pracas": [
+            {"titulo": "Tristeza / Zona Sul (Unificado)", "municipio": "Porto Alegre", "nossa": 43214754,
+             "diretos": [43173330, 43107419], "adjacentes": [43178740],
+             "nota": "Unificado Zona Sul foi o 8º de Porto Alegre no ENEM 2024 (NG 669,0)."},
+            {"titulo": "Moinhos de Vento (Unificado Ramiro)", "municipio": "Porto Alegre", "nossa": 43186700,
+             "diretos": [43108164, 43105017], "adjacentes": [43104983, 43104975],
+             "nota": "Unificado Ramiro foi o 13º de Porto Alegre no ENEM 2024 (NG 662,5)."},
+            {"titulo": "Independência / Rio Branco (Americano)", "municipio": "Porto Alegre", "nossa": 43107524,
+             "diretos": [43213995, 43104983, 43215050], "adjacentes": [43238203, 43107494],
+             "nota": ""},
+            {"titulo": "Uruguaiana (União)", "municipio": "Uruguaiana", "nossa": 43162703,
+             "diretos": [43162290, 43162690], "adjacentes": [43050921],
+             "nota": "IF Farroupilha é rede federal (gratuito). No ENEM 2024 o União foi o 4º da cidade, atrás de Laura Vicuña, Marista Sant'Ana e IF."},
+        ],
+    },
 }
 
 

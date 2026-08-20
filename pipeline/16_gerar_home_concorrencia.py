@@ -54,11 +54,21 @@ def main():
             continue
         data = json.load(open(path, encoding="utf-8"))
         alunos = sum(u["n_inscritos"] for u in data["unidades"])
+        ng = (data["redes"][marca].get("nota_geral") or {}).get("media")
+        ng_ref2024 = False
+        if ng is None:
+            # marca sem vínculo no ENEM 2025 (fora do Censo 2025, caso UAU):
+            # o card mostra a referência 2024 vinda do histórico
+            hist_path = os.path.join(OUTPUT_DIR, f"concorrencia_historico_{cfg['slug']}.json")
+            if os.path.exists(hist_path):
+                hist = json.load(open(hist_path, encoding="utf-8"))
+                ng = ((hist.get("redes", {}).get(marca) or {}).get("2024") or {}).get("NG")
+                ng_ref2024 = ng is not None
         marcas.append({
             "marca": marca, "cfg": cfg,
             "n_unidades": len(data["unidades"]),
             "alunos": alunos,
-            "ng": (data["redes"][marca].get("nota_geral") or {}).get("media"),
+            "ng": ng, "ng_ref2024": ng_ref2024,
             "redes": list(cfg["concorrentes"]),
             "logo": logo_src(cfg.get("logo")),
         })
@@ -69,12 +79,17 @@ def main():
     cards = []
     for m in marcas:
         img = f'<img src="{m["logo"]}" alt="{m["marca"]}" />' if m["logo"] else m["cfg"]["curto"]
+        ng_txt = "NG -" if m["ng"] is None else (
+            f"NG {_pt(m['ng'])} <em>(ENEM 2024)</em>" if m["ng_ref2024"] else f"NG {_pt(m['ng'])}")
+        selo = (f'<span class="meta selo">{m["cfg"]["selo_card"]}</span>'
+                if m["cfg"].get("selo_card") else "")
         cards.append(f"""      <a class="card" style="--brand:{m['cfg']['cor']}" href="{m['cfg']['slug']}">
         <span class="mark" style="background:{m['cfg']['tile']}">{img}</span>
         <span class="card-body">
           <span class="name">{m['marca']}</span>
           <span class="meta">vs {lista_redes(m['redes'])}</span>
-          <span class="meta">{m['n_unidades']} unidades comparadas · {milhar(m['alunos'])} alunos · NG {_pt(m['ng'])}</span>
+          <span class="meta">{m['n_unidades']} unidades comparadas · {milhar(m['alunos'])} alunos · {ng_txt}</span>
+{selo}
         </span>
       </a>""")
 
@@ -122,6 +137,8 @@ def main():
   .card-body {{ display:block; }}
   .name {{ display:block; font-size:17px; font-weight:800; color:#0f172a; }}
   .meta {{ display:block; margin-top:4px; color:var(--muted); font-size:13px; }}
+  .meta em {{ font-style:normal; color:#b45309; font-weight:700; }}
+  .meta.selo {{ display:inline-block; margin-top:6px; font-size:11px; font-weight:800; letter-spacing:.03em; color:#92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:2px 8px; }}
   footer {{ max-width:1120px; margin:0 auto; padding:0 24px 36px; color:var(--muted); font-size:12px; line-height:1.6; }}
 </style>
 </head>
