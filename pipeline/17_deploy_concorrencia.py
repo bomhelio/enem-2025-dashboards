@@ -110,6 +110,14 @@ def empacota() -> list:
     for nome, cfg in MARCAS.items():
         pares.append((Path(OUTPUT_DIR) / cfg["html_out"], cfg["deploy_file"], True))
 
+    # Remove HTML órfão de deploy anterior (marca que saiu do config) — sem
+    # isso a rota antiga continua no ar, porque a Vercel sobe a pasta inteira.
+    esperados = {destino for _, destino, _ in pares}
+    for velho in DEPLOY_DIR.glob("*.html"):
+        if velho.name not in esperados:
+            velho.unlink()
+            print(f"    removido órfão: {velho.name}")
+
     for origem, destino, checar in pares:
         problemas += valida(origem, checar)
         if origem.exists():
